@@ -1174,6 +1174,60 @@
     .app-frame .qa-msg:empty { display: none; }
     .app-frame .nav-btn { padding: 10px 14px; }
   </style>
+  <style id="ui-single">
+    /* Single-page billing: 60% entry (left) / 40% invoice (right), no page scroll */
+    .app-frame .user-chip #userAvatar, .app-frame .user-chip .ua, .app-frame .user-chip img { display: none !important; }
+    .app-frame .nav-status .user-chip { padding: 3px; }
+    @media (min-width: 1081px) {
+      body[data-tab="bill"] .app-frame { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) !important; }
+    }
+    .app-frame .center-pane { padding: 0; overflow-y: auto; }
+    #p-bill { gap: 12px; padding: 0; flex: 1 1 auto; min-height: 0; }
+    #p-bill .bl-card { padding: 14px 16px; }
+    #p-bill .card-hdr { margin-bottom: 10px; }
+    #p-bill .card-title { font-size: 14px; }
+    .app-frame .fgrid.f4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; }
+    .app-frame .fgrid .span2 { grid-column: span 2; }
+    .app-frame .fgrid .span4 { grid-column: 1 / -1; }
+    .app-frame .bill-head { display: none; }
+
+    #p-bill .qa-card { flex: 1 1 auto; align-content: start; display: block; background: #fff; border: 1px solid var(--line2); padding: 16px; }
+    #p-bill .qa-card .fgrid { align-items: end; }
+    .app-frame #qaWeight { font-size: 24px; font-weight: 700; min-height: 56px; text-align: right; }
+    .app-frame .qa-amt { display: flex; flex-direction: column; justify-content: flex-end; }
+    .app-frame .qa-amt strong { font-size: 20px; line-height: 56px; }
+    .app-frame .qa-go .btn-pill { width: 100%; min-height: 56px; font-size: 15px; }
+    .app-frame .qa-msg { margin: 10px 0 0; }
+
+    .app-frame .right-pane { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; gap: 12px; overflow: hidden; min-height: 0; }
+    .app-frame .items-card { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; padding: 14px 16px; }
+    .app-frame .items-card .card-hdr { margin-bottom: 8px; flex-wrap: nowrap; }
+    .app-frame .items-card .wrap { flex: 1 1 auto; min-height: 0; max-height: none; overflow: auto; }
+    .app-frame #billing-table { min-width: 0; }
+    .app-frame #billing-table td { padding: 9px 8px; font-size: 13.5px; }
+    .app-frame #billing-table td .mu { font-size: 12px; }
+    .app-frame #billing-table tbody tr:nth-child(even) { background: transparent; }
+    .app-frame .summary-box { flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; padding: 14px 16px; }
+    .app-frame .summary-box .tot.gt { grid-column: 1 / -1; font-size: 22px; margin-top: 2px; padding-top: 10px; }
+    .app-frame .command-bar { flex: 0 0 auto; position: static; margin: 0; padding: 12px 14px; border: 1px solid var(--line2); border-radius: 16px; box-shadow: none; gap: 8px; }
+    .app-frame .command-actions { flex-wrap: wrap; gap: 8px; }
+    .app-frame .command-actions > div:first-child { flex: 1 1 100% !important; }
+    .app-frame .command-pills { width: 100%; }
+    .app-frame .command-pills .btn-pill { flex: 1 1 0; }
+    .app-frame #btnSaveBill { flex: 2 1 0; }
+
+    @media (max-height: 760px) and (min-width: 1081px) {
+      #p-bill { gap: 8px; }
+      #p-bill .bl-card { padding: 10px 14px; }
+      .app-frame input, .app-frame select { min-height: 38px; }
+      .app-frame #qaWeight { min-height: 48px; }
+    }
+    @media (max-width: 1080px) {
+      .app-frame .right-pane { overflow: visible; }
+      .app-frame .items-card .wrap { max-height: 360px; }
+    }
+    @media (max-width: 640px) { .app-frame .fgrid.f4 { grid-template-columns: 1fr 1fr; } }
+  </style>
 </head>
 <body data-tab="bill" class="gated">
 
@@ -1296,112 +1350,45 @@
 
       <!-- 1. BILLING VIEW -->
       <section class="pg on" id="p-bill">
-        <!-- Invoice header -->
-        <div class="bill-head">
-          <div>
-            <h2 class="bill-h">New tax invoice</h2>
-            <div class="mu">Fill in the details, add items, then save or print.</div>
+        <!-- Invoice details -->
+        <div class="card bl-card">
+          <div class="fgrid f4">
+            <div><label for="invNo">Invoice No.</label><input id="invNo" class="mono" style="font-weight:700" /></div>
+            <div><label for="invDate">Invoice Date</label><input id="invDate" type="date" class="mono" /></div>
+            <div><label for="invDcNo">Customer DC No.</label><input id="invDcNo" placeholder="Optional" /></div>
+            <div><label for="invDcDate">Customer DC Date</label><input id="invDcDate" type="date" class="mono" /></div>
           </div>
         </div>
 
-        <div class="bill-top">
-          <!-- 1. Invoice details -->
-          <div class="card">
-            <div class="card-hdr"><h3 class="card-title"><span class="step">1</span>Invoice details</h3></div>
-            <div class="fgrid">
-              <div>
-                <label for="invNo">Invoice No.</label>
-                <input id="invNo" class="mono" style="font-weight:700" />
-              </div>
-              <div>
-                <label for="invDate">Invoice Date</label>
-                <input id="invDate" type="date" class="mono" />
-              </div>
-              <div>
-                <label for="invDcNo">Customer DC No.</label>
-                <input id="invDcNo" placeholder="Optional" />
-              </div>
-              <div>
-                <label for="invDcDate">Customer DC Date</label>
-                <input id="invDcDate" type="date" class="mono" />
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. Bill to -->
-          <div class="card">
-            <div class="card-hdr">
-              <h3 class="card-title"><span class="step">2</span>Bill to (M/S)</h3>
-              <button type="button" class="btn-pill soft sm" id="btnQuickClient">+ Add Dealer</button>
-            </div>
-            <div class="fgrid">
-              <div class="span2">
-                <label for="clientSel">Dealer</label>
-                <select id="clientSel"></select>
-              </div>
-              <div>
-                <label for="cGst">GSTIN</label>
-                <input id="cGst" class="mono" readonly />
-              </div>
-              <div>
-                <label for="cMobile">Mobile</label>
-                <input id="cMobile" class="mono" readonly />
-              </div>
-              <div class="span2">
-                <label for="cAddr">Billing address</label>
-                <textarea id="cAddr" rows="2" readonly style="min-height:52px;resize:none"></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        
-<!-- Dynamic Billing Table -->
-        <div class="card">
+        <!-- Bill to -->
+        <div class="card bl-card">
           <div class="card-hdr">
-            <div>
-              <h3 class="card-title"><span class="step">3</span>Added products <span class="count-pill" id="itemCount">0</span></h3>
-              <div class="mu">Products appear here. Use <strong>Add product</strong> on the right: enter the weight and press Enter.</div>
-            </div>
-            <button type="button" class="btn-pill soft sm" id="btnAddRow">+ Blank row</button>
+            <h3 class="card-title">Bill to (M/S)</h3>
+            <button type="button" class="btn-pill soft sm" id="btnQuickClient">+ Add Dealer</button>
           </div>
-          <div class="wrap">
-            <table id="billing-table">
-              <thead>
-                <tr>
-                  <th style="width:42px;text-align:center">Sl.</th>
-                  <th style="min-width:140px">Part Number</th>
-                  <th style="min-width:130px">Color</th>
-                  <th style="width:105px;text-align:right">Rate/kg</th>
-                  <th style="width:105px;text-align:right">KG.</th>
-                  <th style="width:120px;text-align:right">Basic Amt</th>
-                  <th style="width:40px;text-align:center"></th>
-                </tr>
-              </thead>
-              <tbody id="billTbody"></tbody>
-            </table>
-            <datalist id="partsDatalist"></datalist>
+          <div class="fgrid f4">
+            <div class="span2"><label for="clientSel">Dealer</label><select id="clientSel"></select></div>
+            <div><label for="cGst">GSTIN</label><input id="cGst" class="mono" readonly /></div>
+            <div><label for="cMobile">Mobile</label><input id="cMobile" class="mono" readonly /></div>
+            <div class="span4"><label for="cAddr">Billing address</label><textarea id="cAddr" rows="2" readonly style="min-height:50px;resize:none"></textarea></div>
           </div>
         </div>
 
-        <!-- Bottom Prompt-Style Command Bar -->
-        <div class="command-bar">
-          <div class="command-top">
-            <div style="flex:1 1 260px">
-              <span class="mu" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em">Amount in words</span><br>
-              <strong id="sumWords" style="font-size:14px">Zero Rupees Only</strong>
-            </div>
+        <!-- Add product -->
+        <div class="card qa-card">
+          <div class="card-hdr">
+            <h3 class="card-title">Add product</h3>
+            <span class="qa-key">Weight, then Enter &crarr;</span>
           </div>
-          <div class="command-actions">
-            <div style="flex:1 1 220px">
-              <input id="invNote" placeholder="Remarks / delivery notes (optional)" />
-            </div>
-            <div class="command-pills">
-              <button type="button" class="btn-pill sm" id="btnSaveBill">Save</button>
-              <button type="button" class="btn-pill soft sm" id="btnResetBill" data-label="Reset">Reset</button>
-              <button type="button" class="btn-pill soft sm" id="btnPrintDlg">Print A4</button>
-            </div>
+          <div class="fgrid f4">
+            <div class="span2"><label for="qaPart">Part number</label><input id="qaPart" list="partsDatalist" placeholder="Search part no..." autocomplete="off" /></div>
+            <div><label for="qaColor">Colour</label><select id="qaColor" disabled><option value="">Select part first</option></select></div>
+            <div><label for="qaRate">Rate / kg</label><input id="qaRate" type="number" step="0.01" min="0" class="mono" placeholder="0.00" /></div>
+            <div class="span2"><label for="qaWeight">Weight (KG)</label><input id="qaWeight" type="number" step="0.01" min="0" inputmode="decimal" class="mono weight-inp" placeholder="0.00" /></div>
+            <div class="qa-amt"><label>Line amount</label><strong id="qaAmt" class="mono">&#8377;0.00</strong></div>
+            <div class="qa-go"><button type="button" class="btn-pill" id="btnQaAdd">Add &crarr;</button></div>
           </div>
+          <div class="qa-msg" id="qaMsg" role="status"></div>
         </div>
       </section>
 
@@ -1518,23 +1505,19 @@
 
     <!-- RIGHT FLOATING PANEL (Tax Summary + Recent Bills History, matching reference right panel) -->
     <aside class="right-pane">
-      <div class="qa-card">
-        <div class="right-hdr"><h2>Add product</h2><span class="qa-key">Enter &crarr; to add</span></div>
-        <div class="qa-grid">
-          <div class="span2"><label for="qaPart">Part number</label><input id="qaPart" list="partsDatalist" placeholder="Search part no..." autocomplete="off" /></div>
-          <div><label for="qaColor">Colour</label><select id="qaColor" disabled><option value="">Select part first</option></select></div>
-          <div><label for="qaRate">Rate / kg</label><input id="qaRate" type="number" step="0.01" min="0" class="mono" placeholder="0.00" /></div>
-          <div class="span2"><label for="qaWeight">Weight (KG)</label><input id="qaWeight" type="number" step="0.01" min="0" inputmode="decimal" class="mono weight-inp" placeholder="0.00" /></div>
+      <div class="card items-card">
+        <div class="card-hdr">
+          <h3 class="card-title">Added products <span class="count-pill" id="itemCount">0</span></h3>
+          <button type="button" id="btnAddRow" hidden>+ Blank row</button>
         </div>
-        <div class="qa-foot"><span>Line amount</span><strong id="qaAmt" class="mono">&#8377;0.00</strong></div>
-        <button type="button" class="btn-pill" id="btnQaAdd" style="width:100%">Add to invoice</button>
-        <div class="qa-msg" id="qaMsg" role="status"></div>
+        <div class="wrap">
+          <table id="billing-table">
+            <thead><tr><th style="width:34px">#</th><th>Product</th><th>Weight</th><th style="text-align:right">Amount</th><th style="width:40px"></th></tr></thead>
+            <tbody id="billTbody"></tbody>
+          </table>
+          <datalist id="partsDatalist"></datalist>
+        </div>
       </div>
-      <div class="right-hdr">
-        <h2>Invoice Summary</h2>
-        <span class="mu mono" style="font-size:11px">18% GST</span>
-      </div>
-
       <div class="summary-box">
         <div class="tot"><span>Total Weight</span><strong id="sumWeight" class="mono">0.00 kg</strong></div>
         <div class="tot"><span>Basic Amount</span><strong id="sumBasic" class="mono">&#8377;0.00</strong></div>
@@ -1542,7 +1525,25 @@
         <div class="tot"><span>SGST @ 9%</span><span id="sumSgst" class="mono">&#8377;0.00</span></div>
         <div class="tot gt"><span>Grand Total</span><span id="sumGrand" class="mono">&#8377;0.00</span></div>
       </div>
-
+      <div class="command-bar">
+          <div class="command-top">
+            <div style="flex:1 1 260px">
+              <span class="mu" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em">Amount in words</span><br>
+              <strong id="sumWords" style="font-size:14px">Zero Rupees Only</strong>
+            </div>
+          </div>
+          <div class="command-actions">
+            <div style="flex:1 1 220px">
+              <input id="invNote" placeholder="Remarks / delivery notes (optional)" />
+            </div>
+            <div class="command-pills">
+              <button type="button" class="btn-pill sm" id="btnSaveBill">Save</button>
+              <button type="button" class="btn-pill soft sm" id="btnResetBill" data-label="Reset">Reset</button>
+              <button type="button" class="btn-pill soft sm" id="btnPrintDlg">Print A4</button>
+            </div>
+          </div>
+        </div>
+      <div class="hist-hidden" hidden>
       <div class="right-hdr" style="margin-top:4px">
         <h2>Bill history</h2>
       </div>
@@ -1556,6 +1557,7 @@
       <button type="button" class="btn-pill" id="btnRightPrint" style="width:100%;padding:12px 18px">
         Print A4 Invoice
       </button>
+      </div>
     </aside>
   </div>
 
@@ -2094,151 +2096,24 @@
 
       function renderBillingTable() {
         renderPartsDatalist();
-        const tbody = $('billTbody');
-        tbody.innerHTML = '';
-
-        if (S.rows.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" class="mu" style="text-align:center;padding:20px">No products yet. Add one from the panel on the right: weight, then Enter.</td></tr>';
-          updateTotalsUI();
-          return;
-        }
-
-        S.rows.forEach((row, idx) => {
-          const partObj = getPart(row.partNo);
-          const amt = (Number(row.rate) || 0) * (Number(row.weight) || 0);
-          const tr = document.createElement('tr');
-
-          const td0 = document.createElement('td');
-          td0.style.textAlign = 'center';
-          td0.className = 'mono mu';
-          td0.textContent = idx + 1;
-          tr.appendChild(td0);
-
-          const td1 = document.createElement('td');
-          const pInp = document.createElement('input');
-          pInp.type = 'text';
-          pInp.setAttribute('list', 'partsDatalist');
-          pInp.placeholder = 'Search part no...';
-          pInp.autocomplete = 'off';
-          pInp.value = row.partNo || '';
-          pInp.addEventListener('input', e => {
-            const val = e.target.value;
-            row.partNo = val;
-            const p = getPart(val);
-            if (p && p.colors.length) {
-              row.partNo = p.partNo;
-              row.color = p.colors[0].color;
-              row.rate = p.colors[0].rate;
-              row.hsn = p.hsn || '3902';
-              cSel.disabled = false;
-              cSel.innerHTML = '<option value="">-- Color --</option>' +
-                p.colors.map(c => `<option value="${esc(c.color)}">${esc(c.color)}</option>`).join('');
-              cSel.value = row.color;
-              rInp.value = Number(row.rate).toFixed(2);
-            } else {
-              row.color = '';
-              row.rate = 0;
-              row.hsn = '';
-              cSel.disabled = true;
-              cSel.innerHTML = '<option value="">Select part first</option>';
-              rInp.value = '';
-            }
-            const cell = document.getElementById('amt-' + row.id);
-            if (cell) cell.textContent = fm((Number(row.rate) || 0) * (Number(row.weight) || 0));
-            updateTotalsUI();
-          });
-          pInp.addEventListener('change', () => {
-            const p = getPart(pInp.value);
-            if (p) pInp.value = p.partNo;
-          });
-          td1.appendChild(pInp);
-          tr.appendChild(td1);
-
-          const td2 = document.createElement('td');
-          const cSel = document.createElement('select');
-          cSel.disabled = !partObj;
-          if (!partObj) {
-            cSel.innerHTML = '<option value="">Select part first</option>';
-          } else {
-            cSel.innerHTML = '<option value="">-- Color --</option>' +
-              partObj.colors.map(c => `<option value="${esc(c.color)}">${esc(c.color)}</option>`).join('');
-            cSel.value = row.color || '';
-          }
-          cSel.addEventListener('change', e => {
-            row.color = e.target.value;
-            const currentPart = getPart(row.partNo);
-            if (currentPart) {
-              const found = currentPart.colors.find(c => c.color === row.color);
-              if (found) row.rate = found.rate;
-            }
-            renderBillingTable();
-          });
-          td2.appendChild(cSel);
-          tr.appendChild(td2);
-
-          const td3 = document.createElement('td');
-          const rInp = document.createElement('input');
-          rInp.type = 'number';
-          rInp.step = '0.01';
-          rInp.min = '0';
-          rInp.className = 'mono';
-          rInp.style.textAlign = 'right';
-          rInp.value = row.rate ? Number(row.rate).toFixed(2) : '';
-          rInp.placeholder = '0.00';
-          rInp.addEventListener('input', e => {
-            row.rate = parseFloat(e.target.value) || 0;
-            const cell = document.getElementById('amt-' + row.id);
-            if (cell) cell.textContent = fm(row.rate * (Number(row.weight) || 0));
-            updateTotalsUI();
-          });
-          td3.appendChild(rInp);
-          tr.appendChild(td3);
-
-          const td4 = document.createElement('td');
-          const wInp = document.createElement('input');
-          wInp.type = 'number';
-          wInp.step = '0.01';
-          wInp.min = '0';
-          wInp.className = 'mono weight-inp';
-          wInp.style.textAlign = 'right';
-          wInp.value = row.weight !== '' && row.weight !== null ? row.weight : '';
-          wInp.placeholder = '0.00';
-          wInp.addEventListener('input', e => {
-            row.weight = parseFloat(e.target.value) || 0;
-            const cell = document.getElementById('amt-' + row.id);
-            if (cell) cell.textContent = fm((Number(row.rate) || 0) * row.weight);
-            updateTotalsUI();
-          });
-          td4.appendChild(wInp);
-          tr.appendChild(td4);
-
-          const td5 = document.createElement('td');
-          td5.id = 'amt-' + row.id;
-          td5.className = 'mono';
-          td5.style.textAlign = 'right';
-          td5.style.fontWeight = '600';
-          td5.textContent = fm(amt);
-          tr.appendChild(td5);
-
-          const td6 = document.createElement('td');
-          td6.style.textAlign = 'center';
-          const del = document.createElement('button');
-          del.type = 'button';
-          del.className = 'btn-del';
-          del.textContent = '×';
-          del.title = 'Remove row';
-          del.addEventListener('click', () => {
-            S.rows = S.rows.filter(x => x.id !== row.id);
-            renderBillingTable();
-          });
-          td6.appendChild(del);
-          tr.appendChild(td6);
-
-          tbody.appendChild(tr);
-        });
-
+        const rows = S.rows.filter(r => r.partNo || Number(r.weight) > 0);
+        $('billTbody').innerHTML = rows.length ? rows.map((r, i) => `
+          <tr>
+            <td class="mono mu">${i + 1}</td>
+            <td><strong>${esc(r.partNo)}</strong><div class="mu">${esc(r.color)}</div></td>
+            <td class="mono">${(Number(r.weight) || 0).toFixed(2)} kg<div class="mu">@ ${fm(r.rate)}</div></td>
+            <td class="mono" style="text-align:right"><strong id="amt-${r.id}">${fm((Number(r.rate) || 0) * (Number(r.weight) || 0))}</strong></td>
+            <td style="text-align:center"><button type="button" class="btn-del" data-del-row="${r.id}" title="Remove product" aria-label="Remove product">&times;</button></td>
+          </tr>`).join('') : '<tr><td colspan="5" class="mu" style="text-align:center;padding:28px 12px">No products yet. Pick a part on the left, enter the weight and press Enter.</td></tr>';
         updateTotalsUI();
       }
+
+      $('billTbody').addEventListener('click', e => {
+        const b = e.target.closest('[data-del-row]');
+        if (!b) return;
+        S.rows = S.rows.filter(x => String(x.id) !== b.getAttribute('data-del-row'));
+        renderBillingTable();
+      });
 
       $('btnAddRow').addEventListener('click', () => {
         S.rows.push({ id: S.nextRowId++, partNo: '', color: '', hsn: '3902', rate: 0, weight: '' });
