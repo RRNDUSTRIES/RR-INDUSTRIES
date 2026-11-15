@@ -891,6 +891,106 @@
       .inv-sheet { width: 100% !important; min-height: 277mm !important; border: 0 !important; padding: 0 !important; }
     }
   </style>
+  <style id="ui-polish">
+    /* UI polish layer: scoped to the app shell so the invoice sheet and print output are unchanged */
+    :root {
+      --mu: #4b5563;
+      --bd: #dfe3ea;
+      --bd-input: #c4cbd6;
+      --canvas: #f4f6fa;
+      --accent: #1d4ed8;
+      --accent-soft: #e8efff;
+      --ok: #15803d;
+      --danger: #b91c1c;
+    }
+    body { background: #e9edf3; font-size: 14.5px; }
+    .app-frame { background: #e9edf3; gap: 14px; padding: 14px; }
+
+    /* Sidebar: solid, high-contrast navigation */
+    .app-frame .sidebar { background: #fff; border: 1px solid var(--bd); border-radius: 20px; padding: 14px 10px; }
+    .app-frame .brand-title { font-size: 16px; }
+    .app-frame .nav-btn { color: #374151; font-size: 14px; font-weight: 500; padding: 11px 14px; border-radius: 12px; position: relative; }
+    .app-frame .nav-btn svg { opacity: .9; width: 18px; height: 18px; }
+    .app-frame .nav-btn:hover { background: #f1f4f9; color: var(--tx); }
+    .app-frame .nav-btn.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; box-shadow: none; }
+    .app-frame .nav-btn.on::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px; border-radius: 3px; background: var(--accent); }
+    .app-frame .nav-badge { background: var(--accent); }
+    .app-frame .nav-divider-label { color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; padding-top: 16px; }
+    .app-frame .side-profile { background: #1f2937; }
+
+    /* Workspace */
+    .app-frame .center-pane { background: var(--canvas); border: 1px solid var(--bd); padding: 20px 22px; gap: 16px; }
+    .app-frame .hero-title { font-size: 24px; }
+    .app-frame .hero-sub { font-size: 13px; color: var(--mu); }
+    .app-frame .soft-pill { font-size: 12.5px; color: #374151; border-color: var(--bd); }
+    .app-frame .card, .app-frame .command-bar, .app-frame .right-pane { border-color: var(--bd); box-shadow: 0 1px 3px rgba(15, 23, 42, .07); }
+    .app-frame .card { padding: 18px; }
+    .app-frame .card-title { font-size: 15px; font-weight: 700; }
+
+    /* Forms: readable labels, stronger field borders, obvious focus */
+    .app-frame label { font-size: 12.5px; color: #374151; font-weight: 600; margin-bottom: 5px; }
+    .app-frame input, .app-frame select, .app-frame textarea { font-size: 14px; min-height: 42px; border-color: var(--bd-input); border-radius: 10px; }
+    .app-frame input::placeholder, .app-frame textarea::placeholder { color: #8b93a1; }
+    .app-frame input[readonly], .app-frame textarea[readonly] { background: #eef1f6; color: #374151; }
+    .app-frame input:focus, .app-frame select:focus, .app-frame textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(29, 78, 216, .18); }
+    .app-frame :is(button, a, [tabindex]):focus-visible { outline: 3px solid rgba(29, 78, 216, .45); outline-offset: 2px; }
+
+    /* Buttons */
+    .app-frame .btn-pill { font-size: 13.5px; min-height: 42px; padding: 9px 20px; }
+    .app-frame .btn-pill:not(.soft) { background: var(--accent); border-color: var(--accent); }
+    .app-frame .btn-pill:not(.soft):hover { background: #1e40af; border-color: #1e40af; }
+    .app-frame .btn-pill.soft { border-color: var(--bd-input); color: #1f2937; }
+    .app-frame .btn-pill.soft:hover { background: #f1f4f9; border-color: #94a3b8; }
+    .app-frame .btn-pill.sm { min-height: 36px; font-size: 12.5px; }
+    .app-frame .btn-del { width: 36px; height: 36px; color: #6b7280; }
+    .app-frame .btn-del:hover { background: #fee2e2; color: var(--danger); }
+    .app-frame .sidebar-toggle { width: 40px; height: 40px; border-color: var(--bd-input); }
+
+    /* Tables: sticky header, zebra rows, hover highlight */
+    .app-frame .wrap { max-height: 62vh; overflow: auto; border-radius: 12px; }
+    .app-frame th { font-size: 11.5px; color: #374151; background: #eef1f6; position: sticky; top: 0; z-index: 1; padding: 11px 8px; border-bottom: 1px solid var(--bd-input); }
+    .app-frame td { font-size: 14px; padding: 11px 8px; }
+    .app-frame tbody tr:nth-child(even) { background: #f8fafc; }
+    .app-frame tbody tr:hover { background: var(--accent-soft); }
+    .app-frame #billing-table td { padding: 7px 6px; }
+    .app-frame #billing-table input, .app-frame #billing-table select { font-size: 13.5px; min-height: 40px; }
+    .app-frame .weight-inp { background: #fef9c3 !important; border-color: #eab308 !important; }
+    .app-frame .mu { color: var(--mu); font-size: 13px; }
+
+    /* Totals and history panel */
+    .app-frame .right-pane { background: #fff; padding: 18px; }
+    .app-frame .right-hdr h2 { font-size: 17px; }
+    .app-frame .summary-box { background: #f4f6fa; border-color: var(--bd-input); padding: 14px 16px; gap: 8px; }
+    .app-frame .tot { font-size: 14px; color: #374151; }
+    .app-frame .tot.gt { font-size: 22px; color: var(--accent); border-top: 2px solid var(--bd-input); padding-top: 10px; }
+    .app-frame .search-pill input { background: #fff; border-color: var(--bd-input); font-size: 13.5px; min-height: 40px; }
+    .app-frame .hist-item { border-color: var(--bd); padding: 12px 14px; }
+    .app-frame .hist-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .app-frame .hist-top { font-size: 13.5px; }
+    .app-frame .hist-sub { font-size: 12.5px; color: var(--mu); }
+
+    /* Command bar sticks to the bottom so Save/Print stay reachable on long invoices */
+    .app-frame .command-bar { position: sticky; bottom: 0; z-index: 5; border: 1px solid var(--bd-input); box-shadow: 0 -4px 16px rgba(15, 23, 42, .08); }
+
+    /* Sign-in, user chip, toast */
+    #authGate .gate-note { color: #6b6257; font-size: 13px; }
+    .app-frame .user-chip { border-color: var(--bd-input); font-size: 13px; }
+    #toast { font-size: 14px; padding: 12px 22px; background: #111827; }
+
+    /* Phones: bigger tap targets, no iOS zoom on focus */
+    @media (max-width: 1080px) {
+      .app-frame .sidebar { padding: 6px; border-radius: 16px; }
+      .app-frame .nav-btn.on::before { display: none; }
+      .app-frame .wrap { max-height: none; }
+    }
+    @media (max-width: 640px) {
+      .app-frame { padding: 8px; gap: 10px; }
+      .app-frame input, .app-frame select, .app-frame textarea { font-size: 16px; }
+      .app-frame .center-pane { padding: 14px 12px; }
+      .app-frame .hero-title { font-size: 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .app-frame * { transition: none !important; } }
+  </style>
 </head>
 <body data-tab="bill" class="gated">
 
