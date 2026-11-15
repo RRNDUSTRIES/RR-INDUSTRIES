@@ -1257,6 +1257,10 @@
     .app-frame .nav-group .nav-btn.on { background: #111; color: #fff; box-shadow: 0 8px 16px -10px rgba(0, 0, 0, .7); }
     .app-frame .nav-group .nav-badge { background: #d71920; color: #fff; margin-left: 8px; min-width: 20px; height: 20px; }
 
+    /* Fix: keep the tray on one horizontal row (the base style stacked the links in a column) */
+    .app-frame .nav-group { flex-direction: row; flex-wrap: nowrap; align-items: center; }
+    .app-frame .nav-group .nav-btn { width: auto; flex: 0 0 auto; white-space: nowrap; justify-content: center; }
+    .app-frame .nav-group .nav-btn .nav-btn-left { white-space: nowrap; }
     .app-frame .nav-status { order: 2; margin-left: 0; gap: 8px; }
     .app-frame .nav-status #btnSyncSheet { order: 1; background: #f6f3ee; border: 1px solid #e4dfd7; color: #374151; min-height: 40px; padding: 0 14px; font-weight: 600; }
     .app-frame .nav-status #btnSyncSheet:hover { background: #ece8e1; }
