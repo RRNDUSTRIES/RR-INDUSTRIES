@@ -1342,6 +1342,92 @@
     #authGate .g-btn:hover { background: #b9141a; }
     #authGate .g-btn::after { background: #fff; color: #d71920; }
   </style>
+  <style id="ui-panels">
+    /* ---------- Add product (left) ---------- */
+    #p-bill .qa-card { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 18px 20px 20px; background: #fff; border: 1px solid #eddcda; border-radius: 20px; box-shadow: 0 18px 36px -30px rgba(120, 10, 14, .45); }
+    #p-bill .qa-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #f03e44, #d71920 55%, #9e0f15); }
+    .app-frame .qa-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .app-frame .qa-title { display: flex; align-items: center; gap: 12px; }
+    .app-frame .qa-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: #fdecec; color: #d71920; }
+    .app-frame .qa-ico svg { width: 21px; height: 21px; }
+    #p-bill .qa-card .card-title { font: 700 16px/1.2 var(--sans); letter-spacing: -.01em; color: #1a1a1a; }
+    .app-frame .qa-sub, .app-frame .it-sub { margin: 3px 0 0; font-size: 12.5px; color: var(--mu); }
+    .app-frame .qa-key { display: inline-flex; align-items: center; gap: 6px; background: #fdf6f5; border: 1px solid #f1d9d7; color: #8a5a57; padding: 6px 10px; font-weight: 600; }
+    .app-frame .qa-key kbd { font: 700 10.5px/1 var(--mono); color: #b9141a; background: #fff; border: 1px solid #e8c6c3; border-bottom-width: 2px; border-radius: 6px; padding: 3px 6px; }
+
+    .app-frame .qa-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px; }
+    .app-frame .qa-fields label, .app-frame .qa-entry label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8a7f7d; margin-bottom: 6px; }
+    .app-frame .qa-fields input, .app-frame .qa-fields select { min-height: 46px; border-radius: 12px; font-size: 14.5px; background: #fff; }
+    .app-frame .qa-fields select:disabled { background: #faf6f5; color: #a49896; }
+    .app-frame .qa-search, .app-frame .qa-affix { position: relative; }
+    .app-frame .qa-search svg { position: absolute; left: 14px; top: 50%; width: 17px; height: 17px; transform: translateY(-50%); color: #b3a5a3; pointer-events: none; }
+    .app-frame .qa-search input { padding-left: 40px; font-weight: 600; }
+    .app-frame .qa-affix span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-weight: 700; color: #b3a5a3; pointer-events: none; }
+    .app-frame .qa-affix input { padding-left: 28px; text-align: right; }
+
+    .app-frame .qa-entry { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(170px, auto); align-items: end; gap: 14px; padding: 16px; border-radius: 16px; background: linear-gradient(180deg, #fdf6f5, #fbefee); border: 1px solid #f1d9d7; }
+    .app-frame .qa-wbox { position: relative; }
+    .app-frame #qaWeight { min-height: 60px; padding-right: 52px; border-radius: 14px; border: 1.5px solid #e8c6c3; background: #fff !important; font-size: 26px; font-weight: 700; text-align: right; color: #1a1a1a; }
+    .app-frame #qaWeight:focus { border-color: #d71920; box-shadow: 0 0 0 4px rgba(215, 25, 32, .14); }
+    .app-frame .qa-wbox span { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font: 700 13px/1 var(--sans); color: #b9141a; letter-spacing: .04em; text-transform: uppercase; }
+    .app-frame .qa-amt { display: flex; flex-direction: column; justify-content: flex-end; min-height: 60px; padding: 0 4px; }
+    .app-frame .qa-amt strong { font-size: 24px; line-height: 1.1; color: #1a1a1a; font-weight: 700; padding-bottom: 14px; }
+    .app-frame .qa-go .btn-pill { width: 100%; min-height: 60px; border-radius: 14px; font-size: 15px; font-weight: 700; gap: 8px; box-shadow: 0 14px 24px -14px rgba(215, 25, 32, .9); }
+    .app-frame .qa-go .btn-pill span { font-size: 18px; opacity: .85; }
+    .app-frame .qa-msg { margin: -4px 0 0; padding: 9px 12px; border-radius: 10px; background: #fdecec; color: #b9141a; font-size: 13px; font-weight: 600; }
+    .app-frame .qa-msg:empty { display: none; }
+
+    @media (max-width: 1240px) {
+      .app-frame .qa-fields { grid-template-columns: 1fr 1fr; }
+      .app-frame .qa-f-part { grid-column: 1 / -1; }
+      .app-frame .qa-entry { grid-template-columns: 1fr 1fr; }
+      .app-frame .qa-go { grid-column: 1 / -1; }
+    }
+
+    /* ---------- Invoice panel (right) ---------- */
+    .app-frame .items-card { padding: 18px 18px 16px; border: 1px solid #eddcda; border-radius: 20px; box-shadow: 0 18px 36px -30px rgba(120, 10, 14, .45); }
+    .app-frame .items-card .card-hdr { margin-bottom: 12px; align-items: flex-start; }
+    .app-frame .items-card .card-title { font: 700 16px/1.2 var(--sans); letter-spacing: -.01em; color: #1a1a1a; }
+    .app-frame .count-pill { background: #d71920; color: #fff; height: 22px; min-width: 24px; }
+
+    .app-frame .items-card .wrap { border: 1px solid #f1e4e2; border-radius: 14px; background: #fff; }
+    .app-frame #billing-table thead th { position: sticky; top: 0; z-index: 1; background: #fdf6f5; color: #8a7f7d; font-size: 10.5px; letter-spacing: .07em; padding: 10px 10px; border-bottom: 1px solid #f1e4e2; }
+    .app-frame #billing-table td { padding: 11px 10px; border-bottom: 1px solid #f5eceb; vertical-align: middle; }
+    .app-frame #billing-table tbody tr:last-child td { border-bottom: 0; }
+    .app-frame #billing-table tbody tr { transition: background-color .15s; }
+    .app-frame #billing-table tbody tr:hover { background: #fdf6f5; }
+    .app-frame .it-no { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: #fdecec; color: #b9141a; font: 700 11px/1 var(--mono); }
+    .app-frame #billing-table td strong { color: #1a1a1a; }
+    .app-frame #billing-table td .mu { font-size: 12px; margin-top: 2px; }
+    .app-frame #billing-table .btn-del { width: 28px; height: 28px; color: #c4b5b3; opacity: .55; transition: opacity .15s, background-color .15s, color .15s; }
+    .app-frame #billing-table tr:hover .btn-del { opacity: 1; }
+    .app-frame #billing-table .btn-del:hover { background: #fdecec; color: #d71920; }
+    .app-frame .it-empty { text-align: center; padding: 36px 16px !important; color: var(--mu); font-size: 13px; line-height: 1.5; }
+    .app-frame .it-empty-ico { width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 14px; display: grid; place-items: center; background: #fdecec; color: #d71920; }
+    .app-frame .it-empty-ico svg { width: 22px; height: 22px; }
+    .app-frame .it-empty strong { display: block; color: #1a1a1a; font-size: 14px; margin-bottom: 2px; }
+
+    .app-frame .items-card .summary-box { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; padding: 0; background: none; border: 0; border-radius: 0; color: inherit; }
+    .app-frame .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .app-frame .summary-box .sum-grid .tot { flex-direction: column; justify-content: flex-start; gap: 4px; padding: 10px 12px; border-radius: 12px; background: #faf6f5; border: 1px solid #f1e4e2; color: #8a7f7d; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+    .app-frame .summary-box .sum-grid .tot strong, .app-frame .summary-box .sum-grid .tot .mono { color: #1a1a1a; font-size: 15px; font-weight: 700; letter-spacing: 0; text-transform: none; }
+    .app-frame .sum-grand { padding: 14px 16px; border-radius: 16px; color: #fff; background: linear-gradient(135deg, #e5262d 0%, #d71920 45%, #a50f15 100%); box-shadow: 0 16px 28px -18px rgba(215, 25, 32, .9), inset 0 1px 0 rgba(255, 255, 255, .25); }
+    .app-frame .summary-box .sum-grand .tot.gt { display: flex; justify-content: space-between; align-items: baseline; margin: 0; padding: 0; border: 0; color: #fff; font: 700 13px/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+    .app-frame .summary-box .sum-grand .tot.gt .mono { font-size: 26px; letter-spacing: -.01em; text-transform: none; color: #fff; }
+    .app-frame .summary-box .sum-words { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .22); color: rgba(255, 255, 255, .92); font-size: 12.5px; font-weight: 500; font-style: italic; line-height: 1.4; }
+    .app-frame .summary-box #sumWords { color: inherit; }
+
+    .app-frame .command-bar { padding: 12px; border: 1px solid #eddcda; border-radius: 18px; background: #fff; }
+    .app-frame .cb-note { position: relative; }
+    .app-frame .cb-note svg { position: absolute; left: 13px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); color: #b3a5a3; pointer-events: none; }
+    .app-frame .command-actions .cb-note input { padding-left: 38px; background: #faf6f5; border-color: #f1e4e2; }
+    .app-frame .command-actions .cb-note input:focus { background: #fff; }
+    .app-frame .command-pills .btn-pill { min-height: 46px; border-radius: 12px; font-size: 14px; font-weight: 700; gap: 7px; }
+    .app-frame .command-pills .btn-pill svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .app-frame #btnSaveBill { box-shadow: 0 12px 22px -14px rgba(215, 25, 32, .9); }
+    .app-frame #btnPrintDlg { background: #fff; border-color: #e2c9c6; color: #1a1a1a; }
+    .app-frame #btnResetBill[data-s="1"] { background: #fdecec; color: #b9141a; }
+  </style>
 </head>
 <body data-tab="bill" class="gated">
 
@@ -1491,17 +1577,39 @@
 
         <!-- Add product -->
         <div class="card qa-card">
-          <div class="card-hdr">
-            <h3 class="card-title">Add product</h3>
-            <span class="qa-key">Weight, then Enter &crarr;</span>
+          <div class="qa-head">
+            <div class="qa-title">
+              <span class="qa-ico" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></span>
+              <div>
+                <h3 class="card-title">Add product</h3>
+                <p class="qa-sub">Pick a part, enter the weight, press Enter</p>
+              </div>
+            </div>
+            <span class="qa-key"><kbd>Enter</kbd> to add</span>
           </div>
-          <div class="fgrid f4">
-            <div class="span2"><label for="qaPart">Part number</label><input id="qaPart" list="partsDatalist" placeholder="Search part no..." autocomplete="off" /></div>
+
+          <div class="qa-fields">
+            <div class="qa-f-part">
+              <label for="qaPart">Part number</label>
+              <div class="qa-search">
+                <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/></svg>
+                <input id="qaPart" list="partsDatalist" placeholder="Search part no..." autocomplete="off" />
+              </div>
+            </div>
             <div><label for="qaColor">Colour</label><select id="qaColor" disabled><option value="">Select part first</option></select></div>
-            <div><label for="qaRate">Rate / kg</label><input id="qaRate" type="number" step="0.01" min="0" class="mono" placeholder="0.00" /></div>
-            <div class="span2"><label for="qaWeight">Weight (KG)</label><input id="qaWeight" type="number" step="0.01" min="0" inputmode="decimal" class="mono weight-inp" placeholder="0.00" /></div>
+            <div>
+              <label for="qaRate">Rate / kg</label>
+              <div class="qa-affix"><span>&#8377;</span><input id="qaRate" type="number" step="0.01" min="0" class="mono" placeholder="0.00" /></div>
+            </div>
+          </div>
+
+          <div class="qa-entry">
+            <div class="qa-weight">
+              <label for="qaWeight">Weight</label>
+              <div class="qa-wbox"><input id="qaWeight" type="number" step="0.01" min="0" inputmode="decimal" class="mono" placeholder="0.00" /><span>kg</span></div>
+            </div>
             <div class="qa-amt"><label>Line amount</label><strong id="qaAmt" class="mono">&#8377;0.00</strong></div>
-            <div class="qa-go"><button type="button" class="btn-pill" id="btnQaAdd">Add &crarr;</button></div>
+            <div class="qa-go"><button type="button" class="btn-pill" id="btnQaAdd">Add to invoice <span aria-hidden="true">&crarr;</span></button></div>
           </div>
           <div class="qa-msg" id="qaMsg" role="status"></div>
         </div>
@@ -1622,7 +1730,10 @@
     <aside class="right-pane">
       <div class="card items-card">
         <div class="card-hdr">
-          <h3 class="card-title">Added products <span class="count-pill" id="itemCount">0</span></h3>
+          <div class="it-title">
+            <h3 class="card-title">Invoice items <span class="count-pill" id="itemCount">0</span></h3>
+            <p class="it-sub">Products added to this bill</p>
+          </div>
           <button type="button" id="btnAddRow" hidden>+ Blank row</button>
         </div>
         <div class="wrap">
@@ -1633,22 +1744,27 @@
           <datalist id="partsDatalist"></datalist>
         </div>
         <div class="summary-box">
-        <div class="tot"><span>Total Weight</span><strong id="sumWeight" class="mono">0.00 kg</strong></div>
-        <div class="tot"><span>Basic Amount</span><strong id="sumBasic" class="mono">&#8377;0.00</strong></div>
-        <div class="tot"><span>CGST @ 9%</span><span id="sumCgst" class="mono">&#8377;0.00</span></div>
-        <div class="tot"><span>SGST @ 9%</span><span id="sumSgst" class="mono">&#8377;0.00</span></div>
-        <div class="tot gt"><span>Grand Total</span><span id="sumGrand" class="mono">&#8377;0.00</span></div>
-        <div class="sum-words"><span id="sumWords">Zero Rupees Only</span></div>
-      </div>
+          <div class="sum-grid">
+            <div class="tot"><span>Total weight</span><strong id="sumWeight" class="mono">0.00 kg</strong></div>
+            <div class="tot"><span>Basic amount</span><strong id="sumBasic" class="mono">&#8377;0.00</strong></div>
+            <div class="tot"><span>CGST @ 9%</span><span id="sumCgst" class="mono">&#8377;0.00</span></div>
+            <div class="tot"><span>SGST @ 9%</span><span id="sumSgst" class="mono">&#8377;0.00</span></div>
+          </div>
+          <div class="sum-grand">
+            <div class="tot gt"><span>Grand total</span><span id="sumGrand" class="mono">&#8377;0.00</span></div>
+            <div class="sum-words"><span id="sumWords">Zero Rupees Only</span></div>
+          </div>
+        </div>
       </div>
       <div class="command-bar">
           <div class="command-actions">
-            <div style="flex:1 1 220px">
+            <div class="cb-note">
+              <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.4-9.6a2 2 0 112.8 2.8L11.8 15H9v-2.8l8.6-8.6z"/></svg>
               <input id="invNote" placeholder="Remarks / delivery notes (optional)" />
             </div>
             <div class="command-pills">
-              <button type="button" class="btn-pill sm" id="btnSaveBill">Save</button>
-              <button type="button" class="btn-pill soft sm" id="btnPrintDlg">Print</button>
+              <button type="button" class="btn-pill sm" id="btnSaveBill"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Save invoice</button>
+              <button type="button" class="btn-pill soft sm" id="btnPrintDlg"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4"/></svg>Print</button>
               <button type="button" class="btn-pill soft sm" id="btnResetBill" data-label="Reset">Reset</button>
             </div>
           </div>
@@ -2209,12 +2325,12 @@
         const rows = S.rows.filter(r => r.partNo || Number(r.weight) > 0);
         $('billTbody').innerHTML = rows.length ? rows.map((r, i) => `
           <tr>
-            <td class="mono mu">${i + 1}</td>
+            <td><span class="it-no">${i + 1}</span></td>
             <td><strong>${esc(r.partNo)}</strong><div class="mu">${esc(r.color)}</div></td>
             <td class="mono">${(Number(r.weight) || 0).toFixed(2)} kg<div class="mu">@ ${fm(r.rate)}</div></td>
             <td class="mono" style="text-align:right"><strong id="amt-${r.id}">${fm((Number(r.rate) || 0) * (Number(r.weight) || 0))}</strong></td>
             <td style="text-align:center"><button type="button" class="btn-del" data-del-row="${r.id}" title="Remove product" aria-label="Remove product">&times;</button></td>
-          </tr>`).join('') : '<tr><td colspan="5" class="mu" style="text-align:center;padding:28px 12px">No products yet. Pick a part on the left, enter the weight and press Enter.</td></tr>';
+          </tr>`).join('') : '<tr><td colspan="5" class="it-empty"><div class="it-empty-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div><strong>No products yet</strong>Pick a part on the left, enter the weight and press Enter.</td></tr>';
         updateTotalsUI();
       }
 
