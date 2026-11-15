@@ -1297,6 +1297,51 @@
       .app-frame .nav-status { flex: 0 0 auto; }
     }
   </style>
+  <style id="ui-red">
+    /* Red theme: brand colour taken from the existing RR red (#d71920 / hover #b9141a) */
+    :root {
+      --brand: #d71920; --brand-d: #b9141a; --brand-soft: #fdecec;
+      --dark: #d71920;
+      --bg: #f7f2f1; --line: #eddcda; --line2: #e2c9c6;
+    }
+
+    /* Primary buttons */
+    .btn-pill, .app-frame .btn-pill { background: #d71920; border-color: #d71920; color: #fff; }
+    .btn-pill:hover, .app-frame .btn-pill:hover { background: #b9141a; border-color: #b9141a; }
+    .app-frame .btn-pill.soft:hover { background: #fdecec; border-color: #e08a8d; color: #b9141a; }
+    .app-frame #btnAddRow { background: #d71920; }
+    .app-frame #btnResetBill { background: transparent; border-color: transparent; color: var(--mu); }
+    .app-frame #btnResetBill:hover { background: #fdecec; color: #b9141a; }
+
+    /* Focus states */
+    .app-frame input:focus, .app-frame select:focus, .app-frame textarea:focus { border-color: #d71920; box-shadow: 0 0 0 4px rgba(215, 25, 32, .12); }
+    .app-frame :is(button, a):focus-visible { outline: 3px solid rgba(215, 25, 32, .45); outline-offset: 2px; }
+    .app-frame #billing-table input:hover, .app-frame #billing-table select:hover { border-color: #e08a8d; }
+
+    /* Accents */
+    .app-frame .step { background: #d71920; }
+    .app-frame .count-pill { background: #fdecec; color: #b9141a; }
+    .app-frame .qa-foot strong { color: #d71920; }
+    .app-frame .hist-item:hover { border-color: #d71920; background: #fdecec; }
+    .app-frame .nav-group .nav-btn:hover { background: rgba(215, 25, 32, .08); color: #b9141a; }
+    .app-frame .nav-group { background: linear-gradient(180deg, rgba(250, 238, 237, .95), rgba(244, 226, 224, .95)); }
+    .app-frame .sidebar { border-color: #eddcda; }
+    .app-frame .nav-status #btnSyncSheet { background: #fdf3f2; border-color: #eddcda; }
+    .app-frame .nav-status #btnSyncSheet:hover { background: #fbe4e3; }
+    .app-frame .nav-status .user-chip button { border-color: #e2c9c6; }
+    .app-frame .nav-status .user-chip button:hover { background: #fdecec; }
+
+    /* Bill summary panel: deep red instead of black */
+    .app-frame .summary-box { background: linear-gradient(135deg, #9e0f15 0%, #6f0a0e 100%); color: #f7d7d8; }
+
+    /* Toast stays dark for contrast */
+    #toast { background: #1a0a0b; }
+
+    /* Sign-in gate: red pill with white arrow */
+    #authGate .g-btn, #authGate .g-btn:hover { background: #d71920; box-shadow: 0 18px 34px -18px rgba(215, 25, 32, .8); }
+    #authGate .g-btn:hover { background: #b9141a; }
+    #authGate .g-btn::after { background: #fff; color: #d71920; }
+  </style>
 </head>
 <body data-tab="bill" class="gated">
 
