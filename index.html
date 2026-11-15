@@ -6,6 +6,9 @@
   <title>R.R. Industries · Billing &amp; A4 Tax Invoice</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://sheets.googleapis.com" crossorigin />
+  <!-- Google sign-in (OAuth token) for direct Google Sheets API access -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -45,16 +48,18 @@
     .app-frame {
       width: 100%;
       height: 100%;
+      /* Plain translucent fill: a full-screen backdrop blur over a static gradient looked the same but cost GPU on every repaint */
       background: rgba(255, 255, 255, 0.86);
-      backdrop-filter: blur(18px);
       border: 0;
       border-radius: 0;
       display: grid;
-      grid-template-columns: 230px minmax(0, 1fr) 310px;
+      grid-template-columns: var(--side-w, 230px) minmax(0, 1fr) var(--right-w, 310px);
+      grid-template-rows: minmax(0, 1fr);
       gap: 12px;
       padding: 12px;
       overflow: hidden;
     }
+    .app-frame > * { min-width: 0; min-height: 0; }
 
     /* Left Sidebar */
     .sidebar {
@@ -107,7 +112,7 @@
       border-radius: 999px;
       font: 500 13px var(--sans);
       cursor: pointer;
-      transition: all .15s ease;
+      transition: background-color .15s ease, color .15s ease;
       text-align: left;
     }
     .nav-btn-left {
@@ -209,7 +214,8 @@
       gap: 14px;
     }
     .pg { display: none; flex-direction: column; gap: 14px; }
-    .pg.on { display: flex; }
+    /* Grow to fill the pane so the command bar's margin-top:auto pins it to the bottom */
+    .pg.on { display: flex; flex: 1 0 auto; }
 
     /* Center Top Company Banner */
     .hero-bar {
@@ -324,7 +330,8 @@
       border-radius: 999px;
       font: 600 12px var(--sans);
       cursor: pointer;
-      transition: all .15s ease;
+      white-space: nowrap;
+      transition: background-color .15s ease, border-color .15s ease;
     }
     .btn-pill:hover { background: #27272a; border-color: #27272a; }
     .btn-pill.soft {
@@ -366,6 +373,9 @@
       text-transform: uppercase;
       letter-spacing: .04em;
     }
+    /* Scroll sideways instead of crushing the inputs when the center pane is narrow */
+    #billing-table { min-width: 680px; }
+    #billing-table td { padding: 6px 6px; }
     #billing-table input, #billing-table select {
       min-height: 35px;
       padding: 5px 9px;
@@ -475,16 +485,18 @@
       border-radius: 14px;
       padding: 10px 12px;
       cursor: pointer;
-      transition: all .15s;
+      transition: background-color .15s, border-color .15s;
       background: #ffffff;
     }
     .hist-item:hover { border-color: #cbd5e1; background: #f9fafc; }
-    .hist-top { display: flex; justify-content: space-between; font-weight: 600; font-size: 12.5px; }
+    .hist-top { display: flex; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 12.5px; }
+    .hist-top > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hist-top > span:last-child { flex-shrink: 0; }
     .hist-sub { font-size: 11.5px; color: var(--mu); margin-top: 2px; display: flex; justify-content: space-between; }
 
     /* Responsive Mobile/Tablet */
     body:not([data-tab="bill"]) .app-frame {
-      grid-template-columns: 230px minmax(0, 1fr);
+      grid-template-columns: var(--side-w, 230px) minmax(0, 1fr);
     }
     body:not([data-tab="bill"]) .right-pane {
       display: none;
@@ -493,7 +505,7 @@
       display: none;
     }
     body.sidebar-collapsed .app-frame {
-      grid-template-columns: minmax(0, 1fr) 310px;
+      grid-template-columns: minmax(0, 1fr) var(--right-w, 310px);
     }
     body.sidebar-collapsed:not([data-tab="bill"]) .app-frame {
       grid-template-columns: minmax(0, 1fr);
@@ -511,33 +523,194 @@
       cursor: pointer;
       flex-shrink: 0;
       box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
-      transition: all .15s ease;
+      transition: background-color .15s ease, border-color .15s ease;
     }
     .sidebar-toggle:hover {
       background: #f8fafc;
       border-color: #cbd5e1;
     }
 
+    /* Laptop widths: slimmer rails so the billing table keeps its room */
+    @media (max-width: 1320px) {
+      .app-frame { --side-w: 200px; --right-w: 280px; }
+    }
+
+    /* Tablet / phone: single column. !important is needed because the tab and
+       sidebar-collapsed rules above are more specific and used to leak a
+       230px sidebar column (or a 310px right column) into the mobile layout. */
     @media (max-width: 1080px) {
       body { padding: 0; height: auto; min-height: 100dvh; overflow-y: auto; }
       .app-frame {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-rows: auto;
         height: auto;
         min-height: 100dvh;
         border-radius: 0;
         padding: 10px;
         overflow: visible;
       }
+      .center-pane, .right-pane { overflow: visible; }
       .sidebar {
         flex-direction: row;
         align-items: center;
         overflow-x: auto;
         padding: 4px;
+        gap: 8px;
       }
+      .sidebar > div { display: flex; align-items: center; gap: 8px; }
+      .brand-row { padding: 4px 6px; }
+      .brand-title { white-space: nowrap; }
       .nav-group { flex-direction: row; }
+      .nav-btn { width: auto; white-space: nowrap; padding: 8px 12px; }
       .nav-divider-label, .side-profile { display: none; }
       .split-boxes { grid-template-columns: 1fr; }
     }
+    @media (max-width: 640px) {
+      .center-pane { padding: 14px 12px; }
+      .hero-title { font-size: 18px; }
+      .command-pills { width: 100%; }
+      .command-pills .btn-pill { flex: 1 1 0; }
+    }
+
+    /* ---------- Sign-in page ---------- */
+    #authGate {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      /* Warm paper with a faint dot grain, like invoice stock */
+      background:
+        radial-gradient(rgba(17, 24, 39, .045) 1px, transparent 1.2px) 0 0 / 18px 18px,
+        radial-gradient(ellipse at 50% 0%, #fffdf8 0%, transparent 70%),
+        #f4efe6;
+      overflow: auto;
+      transition: opacity .3s ease, visibility .3s;
+    }
+    #authGate.off { opacity: 0; visibility: hidden; pointer-events: none; }
+    body.gated .app-frame { visibility: hidden; }
+
+    .gate-card {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+      animation: cardIn .6s cubic-bezier(.2, .8, .2, 1) both;
+    }
+    /* Same oval RR mark as the printed invoice header */
+    .gate-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 38px;
+      border: 1.5px solid var(--tx);
+      border-radius: 999px;
+      font: 700 19px/1 var(--serif);
+      letter-spacing: .04em;
+      color: var(--tx);
+      margin-bottom: 22px;
+    }
+    .gate-co {
+      font: 700 clamp(42px, 9vw, 68px)/0.95 var(--serif);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--tx);
+      margin: 0;
+    }
+    /* Ledger-style double rule */
+    .gate-rule {
+      width: 120px;
+      height: 5px;
+      margin: 22px auto 22px;
+      border-top: 1.5px solid var(--tx);
+      border-bottom: 1px solid var(--tx);
+    }
+    .gate-card h2 {
+      font: 600 11.5px/1 var(--sans);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin: 0 0 26px;
+      color: #6b6257;
+    }
+    .g-btn {
+      width: 100%;
+      max-width: 320px;
+      min-height: 50px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--tx);
+      color: #fff;
+      border: 1px solid var(--tx);
+      border-radius: 999px;
+      font: 600 14px var(--sans);
+      cursor: pointer;
+      box-shadow: 0 10px 24px -12px rgba(17, 24, 39, .55);
+      transition: transform .15s, box-shadow .15s, background-color .15s;
+    }
+    .g-btn:hover { background: #27272a; transform: translateY(-1px); box-shadow: 0 14px 28px -12px rgba(17, 24, 39, .6); }
+    .g-btn:disabled { cursor: progress; opacity: .8; transform: none; }
+    /* Google "G" sits on a white disc so its colours stay correct on the dark button */
+    .g-btn svg {
+      width: 26px; height: 26px; flex-shrink: 0;
+      background: #fff; border-radius: 999px; padding: 4px;
+    }
+    .g-spin {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255, 255, 255, .35);
+      border-top-color: #fff;
+      border-radius: 999px;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    .g-btn.busy .g-spin { display: block; }
+    .g-btn.busy svg { display: none; }
+    .gate-note { margin-top: 16px; font-size: 12px; color: #8a8175; }
+    .gate-err {
+      display: none;
+      max-width: 320px;
+      margin: 16px auto 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      font-size: 12.5px;
+      text-align: left;
+    }
+    .gate-err.on { display: block; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .gate-card { animation: none; } .g-btn:hover { transform: none; } }
+
+    /* Signed-in chip in the header */
+    .user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 4px 3px 3px;
+      background: #fff;
+      border: 1px solid var(--bd);
+      border-radius: 999px;
+      font-size: 12px;
+      max-width: 240px;
+    }
+    .user-chip img, .user-chip .ua {
+      width: 26px; height: 26px; border-radius: 999px; flex-shrink: 0;
+      background: var(--dark); color: #fff; display: inline-flex; align-items: center; justify-content: center;
+      font: 700 11px/1 var(--sans); object-fit: cover;
+    }
+    .user-chip .un { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+    .user-chip button {
+      border: 0; background: #f3f4f6; color: var(--tx); border-radius: 999px;
+      padding: 5px 10px; font: 600 11px var(--sans); cursor: pointer; white-space: nowrap;
+    }
+    .user-chip button:hover { background: #e5e7eb; }
 
     /* Modal & Print Dialog */
     #modal {
@@ -598,7 +771,9 @@
       border: 1px solid #cbd5e1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     .a4-top-title { text-align: center; margin-bottom: 6px; }
     .a4-top-title span {
@@ -660,26 +835,38 @@
       display: flex;
       flex-direction: column;
     }
-    .a4-table-box table { width: 100%; border-collapse: collapse; flex: 1 1 auto; }
-    .a4-table-box th {
-      background: #f3f4f6;
-      color: #111827;
-      border-bottom: 1.5px solid #111827;
-      border-right: 1px solid #9ca3af;
-      padding: 7px 8px;
-      font-size: 10.5px;
-      font-weight: 700;
+    /* Item grid: header, items and the filler share one column template so the
+       vertical rules line up exactly and the filler stretches to the footer. */
+    .a4-row {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) 85px 100px 120px;
     }
-    .a4-table-box th:last-child { border-right: 0; }
-    .a4-table-box td {
+    .a4-row > div {
+      padding: 7px 8px;
       border-right: 1px solid #d1d5db;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 7px 8px;
       font-size: 11.5px;
-      vertical-align: top;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
-    .a4-table-box td:last-child { border-right: 0; }
-    .a4-table-box tr.filler-row td { height: 100%; border-bottom: 0; }
+    .a4-row > div:last-child { border-right: 0; }
+    .a4-row .c { text-align: center; }
+    .a4-row .r { text-align: right; }
+    .a4-head {
+      background: #f3f4f6;
+      border-bottom: 1.5px solid #111827;
+    }
+    .a4-head > div {
+      border-right-color: #9ca3af;
+      font: 700 10.5px/1.3 var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      display: flex;
+      align-items: flex-end;
+    }
+    .a4-head > div.c { justify-content: center; }
+    .a4-head > div.r { justify-content: flex-end; }
+    .a4-item { border-bottom: 1px solid #e5e7eb; }
+    .a4-filler { flex: 1 1 auto; min-height: 18mm; }
     .a4-tax-footer {
       border-top: 1.5px solid #111827;
       display: grid;
@@ -697,14 +884,34 @@
     #printArea { display: none; }
     @media print {
       @page { size: A4 portrait; margin: 8mm; }
-      html, body { background: #fff !important; width: 210mm; height: 297mm; margin: 0 !important; padding: 0 !important; display: block !important; }
+      html, body { background: #fff !important; width: 210mm; height: auto !important; min-height: 0 !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; display: block !important; }
       body > *:not(#printArea) { display: none !important; }
       #printArea { display: block !important; width: 194mm; margin: 0 auto; }
-      .inv-sheet { width: 100% !important; min-height: 279mm !important; border: 0 !important; padding: 0 !important; }
+      /* 297mm page minus 2 x 8mm margins = 281mm; leave a little slack so it never spills onto a 2nd page */
+      .inv-sheet { width: 100% !important; min-height: 277mm !important; border: 0 !important; padding: 0 !important; }
     }
   </style>
 </head>
-<body data-tab="bill">
+<body data-tab="bill" class="gated">
+
+  <!-- SIGN-IN PAGE (shown at start until a Google sign-in is active; remembered 24h) -->
+  <div id="authGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="gate-card">
+      <div class="gate-mark">RR</div>
+      <h1 class="gate-co">R.R. Industries</h1>
+      <div class="gate-rule" aria-hidden="true"></div>
+      <h2 id="gateTitle">Sign in to continue</h2>
+
+      <button type="button" class="g-btn" id="btnSignIn">
+        <span class="g-spin" aria-hidden="true"></span>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+        <span id="btnSignInLabel">Sign in with Google</span>
+      </button>
+
+      <div class="gate-note">You stay signed in for 24 hours.</div>
+      <div class="gate-err" id="gateErr" role="alert"></div>
+    </div>
+  </div>
 
   <div class="app-frame">
     <!-- LEFT SIDEBAR -->
@@ -782,9 +989,14 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <div class="hero-pills" id="hdrPills"></div>
+          <div class="user-chip" id="userChip" hidden>
+            <span class="ua" id="userAvatar">R</span>
+            <span class="un" id="userName"></span>
+            <button type="button" id="btnSignOut" title="Sign out of this device">Sign out</button>
+          </div>
           <button type="button" class="btn-pill soft sm" id="btnSyncSheet" title="Sync with Google Sheet">
             <span id="syncDot" style="width:7px;height:7px;border-radius:999px;background:#94a3b8;display:inline-block"></span>
-            <span id="syncLabel">Local</span>
+            <span id="syncLabel">Signed out</span>
           </button>
         </div>
       </div>
@@ -990,20 +1202,16 @@
           <div class="card-hdr">
             <h3 class="card-title">Google Sheet Database Connection</h3>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <a href="https://docs.google.com/spreadsheets/d/1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU/edit" target="_blank" rel="noopener" class="btn-pill soft sm" style="text-decoration:none">Open RR DATA Sheet</a>
-              <button type="button" class="btn-pill soft sm" id="btnShowGas">View Apps Script (Code.gs)</button>
+              <a href="https://docs.google.com/spreadsheets/d/1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU/edit" target="_blank" rel="noopener" class="btn-pill soft sm" style="text-decoration:none" id="lnkSheet">Open RR DATA Sheet</a>
+              <button type="button" class="btn-pill soft sm" id="btnShowSetup">Google Cloud Checklist</button>
             </div>
           </div>
           <div class="mu" style="margin-bottom:10px">
-            Linked Spreadsheet: <strong class="mono">1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU</strong>. Paste your deployed Google Apps Script Web App URL below to read and save Dealers, Product Information, Bills, and Settings directly to this Google Sheet.
-          </div>
-          <div style="margin-bottom:10px">
-            <label for="setGasUrl">Google Apps Script Web App URL</label>
-            <input id="setGasUrl" class="mono" placeholder="https://script.google.com/macros/s/.../exec" />
+            All data is stored only in the RR DATA Google Sheet (Dealers, Products, Bills and Settings tabs). Nothing is kept in this browser. Only Google accounts with edit access to the sheet can sign in.
           </div>
           <div class="row" style="margin-bottom:0">
-            <button type="button" class="btn-pill" id="btnSaveGas" style="flex:0 0 auto">Connect &amp; Sync Sheet</button>
-            <button type="button" class="btn-pill soft" id="btnPullGas" style="flex:0 0 auto">Pull from Sheet</button>
+            <button type="button" class="btn-pill" id="btnConnectG" style="flex:0 0 auto">Sign in with Google</button>
+            <button type="button" class="btn-pill soft" id="btnPullG" style="flex:0 0 auto">Reload from Sheet</button>
           </div>
         </div>
       </section>
@@ -1049,7 +1257,9 @@
 
   <script>
     (function () {
-      const STORE_KEY = 'rr_industries_pos_v5';
+      // Older versions kept a copy of all data in the browser; it is uploaded once, then deleted
+      const LEGACY_KEYS = ['rr_industries_pos_v5', 'rr_industries_pos_v4'];
+      const GOOGLE_CLIENT_ID = '872666100779-9rjjcatf7hlhdv7tnpdt8q5bj3r5s82l.apps.googleusercontent.com';
 
       const DEFAULT_STATE = {
         cfg: {
@@ -1065,89 +1275,12 @@
         bills: []
       };
 
-      const GAS_SCRIPT = `// Paste this into Extensions > Apps Script in your Google Sheet, then Deploy > New deployment > Web app (Access: Anyone)
-const TABS = {
-  Dealers: ['ID', 'Name', 'GSTIN', 'Mobile', 'Address'],
-  Products: ['PartNo', 'Color', 'Rate', 'HSN', 'Company'],
-  Bills: ['InvoiceNo', 'Date', 'DCNo', 'DCDate', 'DealerID', 'DealerName', 'DealerGST', 'WeightKG', 'BasicAmt', 'CGST', 'SGST', 'GrandTotal', 'Note', 'ItemsJSON'],
-  Settings: ['Key', 'Value']
-};
-
-function ensureTabs() {
-  const ss = SpreadsheetApp.openById('1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU');
-  Object.keys(TABS).forEach(name => {
-    let sh = ss.getSheetByName(name);
-    if (!sh) {
-      sh = ss.insertSheet(name);
-      sh.appendRow(TABS[name]);
-    } else if (sh.getLastRow() === 0) {
-      sh.appendRow(TABS[name]);
-    }
-  });
-  return ss;
-}
-
-function doGet(e) {
-  const ss = ensureTabs();
-  const dealers = ss.getSheetByName('Dealers').getDataRange().getValues().slice(1)
-    .filter(r => r[1]).map(r => ({ id: String(r[0]), name: String(r[1]), gst: String(r[2]), mobile: String(r[3]), addr: String(r[4]) }));
-  const prodRows = ss.getSheetByName('Products').getDataRange().getValues().slice(1).filter(r => r[0]);
-  const pMap = {};
-  prodRows.forEach(r => {
-    const pNo = String(r[0]).trim(), comp = String(r[4] || '').trim();
-    const key = pNo + '||' + comp;
-    if (!pMap[key]) pMap[key] = { partNo: pNo, company: comp, hsn: String(r[3] || '3902'), colors: [] };
-    pMap[key].colors.push({ color: String(r[1]), rate: Number(r[2]) || 0 });
-  });
-  const bills = ss.getSheetByName('Bills').getDataRange().getValues().slice(1).filter(r => r[0]).map(r => {
-    let items = [];
-    try { items = JSON.parse(r[13] || '[]'); } catch (err) {}
-    return {
-      invNo: String(r[0]), date: String(r[1]), dcNo: String(r[2]), dcDate: String(r[3]),
-      client: { id: String(r[4]), name: String(r[5]), gst: String(r[6]), mobile: '', addr: '' },
-      totals: { weight: Number(r[7]) || 0, basic: Number(r[8]) || 0, cgst: Number(r[9]) || 0, sgst: Number(r[10]) || 0, gst: (Number(r[9]) || 0) + (Number(r[10]) || 0), grand: Number(r[11]) || 0 },
-      note: String(r[12] || ''), items
-    };
-  }).reverse();
-  const cfg = {};
-  ss.getSheetByName('Settings').getDataRange().getValues().slice(1).forEach(r => { if (r[0]) cfg[String(r[0])] = String(r[1] || ''); });
-  return ContentService.createTextOutput(JSON.stringify({ ok: true, dealers, products: Object.values(pMap), bills, cfg })).setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  const ss = ensureTabs();
-  const body = JSON.parse(e.postData.contents || '{}');
-  if (body.action === 'saveBill' && body.bill) {
-    const b = body.bill, sh = ss.getSheetByName('Bills');
-    const row = [b.invNo, b.date, b.dcNo || '', b.dcDate || '', b.client.id, b.client.name, b.client.gst, b.totals.weight, b.totals.basic, b.totals.cgst, b.totals.sgst, b.totals.grand, b.note || '', JSON.stringify(b.items)];
-    const vals = sh.getDataRange().getValues();
-    const idx = vals.findIndex((r, i) => i > 0 && String(r[0]) === String(b.invNo));
-    if (idx > 0) sh.getRange(idx + 1, 1, 1, row.length).setValues([row]);
-    else sh.appendRow(row);
-  } else if (body.action === 'syncDealers' && Array.isArray(body.dealers)) {
-    const sh = ss.getSheetByName('Dealers');
-    sh.clearContents();
-    sh.appendRow(TABS.Dealers);
-    if (body.dealers.length) sh.getRange(2, 1, body.dealers.length, 5).setValues(body.dealers.map(d => [d.id, d.name, d.gst, "'" + d.mobile, d.addr]));
-  } else if (body.action === 'syncProducts' && Array.isArray(body.products)) {
-    const sh = ss.getSheetByName('Products');
-    sh.clearContents();
-    sh.appendRow(TABS.Products);
-    const rows = [];
-    body.products.forEach(p => p.colors.forEach(c => rows.push([p.partNo, c.color, c.rate, p.hsn || '3902', p.company || ''])));
-    if (rows.length) sh.getRange(2, 1, rows.length, 5).setValues(rows);
-  } else if (body.action === 'saveSettings' && body.cfg) {
-    const sh = ss.getSheetByName('Settings');
-    sh.clearContents();
-    sh.appendRow(TABS.Settings);
-    const rows = Object.keys(body.cfg).map(k => [k, String(body.cfg[k] || '')]);
-    if (rows.length) sh.getRange(2, 1, rows.length, 2).setValues(rows);
-  }
-  return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-}`;
+      const DEFAULT_SHEET_ID = '1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU';
 
       const S = {
-        gasUrl: '',
+        gClientId: GOOGLE_CLIENT_ID,
+        sheetId: DEFAULT_SHEET_ID,
+        pendingSync: false,
         cfg: { ...DEFAULT_STATE.cfg },
         clients: JSON.parse(JSON.stringify(DEFAULT_STATE.clients)),
         parts: JSON.parse(JSON.stringify(DEFAULT_STATE.parts)),
@@ -1174,30 +1307,20 @@ function doPost(e) {
         toastTimer = setTimeout(() => el.classList.remove('on'), 2600);
       }
 
-      function loadStore() {
-        try {
-          localStorage.removeItem('rr_industries_pos_v4');
-          const raw = localStorage.getItem(STORE_KEY);
-          if (!raw) return;
-          const d = JSON.parse(raw);
-          if (typeof d.gasUrl === 'string') S.gasUrl = d.gasUrl;
-          if (d.cfg) S.cfg = { ...S.cfg, ...d.cfg };
-          if (Array.isArray(d.clients) && d.clients.length) S.clients = d.clients;
-          if (Array.isArray(d.parts) && d.parts.length) S.parts = d.parts;
-          if (Array.isArray(d.bills)) S.bills = d.bills;
-        } catch (e) {}
-      }
 
-      function saveStore() {
-        try {
-          localStorage.setItem(STORE_KEY, JSON.stringify({
-            gasUrl: S.gasUrl,
-            cfg: S.cfg,
-            clients: S.clients,
-            parts: S.parts,
-            bills: S.bills
-          }));
-        } catch (e) {}
+      /* Invoice numbers: next = highest number used so far + 1, so a reload can never reuse a saved number */
+      function bumpNo(no) {
+        const m = String(no).match(/^(.*?)(\d+)$/);
+        return m ? m[1] + String(parseInt(m[2], 10) + 1).padStart(m[2].length, '0') : String(no);
+      }
+      function tailNum(no) {
+        const m = String(no).match(/(\d+)$/);
+        return m ? parseInt(m[1], 10) : -1;
+      }
+      function nextInvNo(current) {
+        let top = current;
+        S.bills.forEach(b => { if (tailNum(b.invNo) > tailNum(top)) top = b.invNo; });
+        return tailNum(top) > tailNum(current) || S.bills.some(b => String(b.invNo) === String(current)) ? bumpNo(top) : current;
       }
 
       function setSyncStatus(status, label) {
@@ -1207,46 +1330,326 @@ function doPost(e) {
         lbl.textContent = label;
       }
 
-      async function pushSheet(payload) {
-        if (!S.gasUrl) return;
-        setSyncStatus('busy', 'Saving...');
-        try {
-          await fetch(S.gasUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
+      /* ---------- Google Sheets API (direct, via Google Cloud OAuth) ---------- */
+      const SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets openid email profile';
+      const TABS = {
+        Dealers: ['ID', 'Name', 'GSTIN', 'Mobile', 'Address'],
+        Products: ['PartNo', 'Color', 'Rate', 'HSN', 'Company'],
+        Bills: ['InvoiceNo', 'Date', 'DCNo', 'DCDate', 'DealerID', 'DealerName', 'DealerGST', 'WeightKG', 'BasicAmt', 'CGST', 'SGST', 'GrandTotal', 'Note', 'ItemsJSON'],
+        Settings: ['Key', 'Value']
+      };
+      /* Login session: one Google sign-in is remembered for 24 hours on this device.
+         Only who is signed in is kept here — no billing data. Google's access token
+         itself expires after ~1 hour and is renewed silently within the session. */
+      const SESSION_KEY = 'rr_login_session';
+      const SESSION_MS = 24 * 60 * 60 * 1000;
+      sessionStorage.removeItem('rr_g_token');
+      let session = null;
+      try { session = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) {}
+      if (session && !(session.until > Date.now())) { session = null; localStorage.removeItem(SESSION_KEY); }
+      let gToken = session && session.token ? session.token : null;
+      let tabsChecked = false;
+
+      function saveSession() {
+        if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        else localStorage.removeItem(SESSION_KEY);
+      }
+      const sessionActive = () => !!(session && session.until > Date.now());
+
+      const sheetsReady = () => !!(S.gClientId && S.sheetId);
+      const tokenValid = () => !!(gToken && gToken.exp - 60000 > Date.now());
+      const enc = encodeURIComponent;
+
+      // Google sign-in only works from a real web address registered in Google Cloud
+      const HOSTED_URL = 'https://rrndustries.github.io/RR-INDUSTRIES/';
+      const onWebAddress = /^https?:$/.test(location.protocol);
+
+      function waitForGis() {
+        return new Promise((resolve, reject) => {
+          if (!onWebAddress) {
+            return reject(new Error('Sign-in only works from the hosted app. Open ' + HOSTED_URL));
+          }
+          const t0 = Date.now();
+          (function check() {
+            if (window.google && google.accounts && google.accounts.oauth2) return resolve();
+            if (Date.now() - t0 > 10000) {
+              return reject(new Error(navigator.onLine
+                ? 'Google sign-in was blocked from loading. Turn off ad or tracker blocking for this site, then reload.'
+                : 'No internet connection. Connect and try again.'));
+            }
+            setTimeout(check, 100);
+          })();
+        });
+      }
+
+      /* prompt 'select_account' = full sign-in from the sign-in page.
+         prompt 'none' = silent renewal inside an active 24h session (no Google screen). */
+      async function getToken(prompt) {
+        if (tokenValid()) return gToken.access;
+        await waitForGis();
+        const silent = sessionActive();
+        const p = prompt !== undefined ? prompt : (silent ? 'none' : '');
+        return new Promise((resolve, reject) => {
+          const client = google.accounts.oauth2.initTokenClient({
+            client_id: S.gClientId,
+            scope: SHEETS_SCOPE,
+            login_hint: session && session.email ? session.email : undefined,
+            callback: r => {
+              if (r.error) return reject(new Error(r.error === 'interaction_required' || r.error === 'login_required' ? 'Please sign in again' : (r.error_description || r.error)));
+              gToken = { access: r.access_token, exp: Date.now() + (Number(r.expires_in) || 3600) * 1000 };
+              if (!sessionActive()) session = { until: Date.now() + SESSION_MS };
+              session.token = gToken;
+              saveSession();
+              resolve(gToken.access);
+            },
+            error_callback: err => reject(new Error(err && err.type === 'popup_closed' ? 'Google sign-in was closed' : 'Google sign-in was blocked. Allow popups for this site and try again.'))
           });
-          setSyncStatus('ok', 'Sheet Synced');
-        } catch (e) {
-          setSyncStatus('err', 'Sync Error');
-          toast('Sheet save failed — saved locally');
+          client.requestAccessToken({ prompt: p });
+        });
+      }
+
+      // Name, email and photo for the signed-in chip
+      async function loadProfile() {
+        if (session && session.email) return;
+        try {
+          const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + gToken.access } });
+          if (!res.ok) return;
+          const u = await res.json();
+          session.email = u.email || '';
+          session.name = u.name || u.email || '';
+          session.picture = u.picture || '';
+          saveSession();
+        } catch (e) {}
+      }
+
+      function signOut() {
+        try { if (gToken && window.google) google.accounts.oauth2.revoke(gToken.access, () => {}); } catch (e) {}
+        session = null;
+        gToken = null;
+        saveSession();
+        location.reload();
+      }
+
+      async function sheetsApi(path, opts = {}, retried) {
+        const token = await getToken();
+        const res = await fetch('https://sheets.googleapis.com/v4/spreadsheets/' + enc(S.sheetId) + path, {
+          ...opts,
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }
+        });
+        if (res.status === 401 && !retried) {
+          gToken = null;
+          return sheetsApi(path, opts, true);
+        }
+        if (!res.ok) {
+          let msg = res.status + '';
+          try { msg = (await res.json()).error.message; } catch (e) {}
+          throw new Error(msg);
+        }
+        return res.json();
+      }
+
+      // Create any missing tab with its header row (first run on a new sheet)
+      async function ensureTabs() {
+        if (tabsChecked) return;
+        const meta = await sheetsApi('?fields=sheets.properties.title');
+        const have = new Set((meta.sheets || []).map(s => s.properties.title));
+        const missing = Object.keys(TABS).filter(t => !have.has(t));
+        if (missing.length) {
+          await sheetsApi(':batchUpdate', { method: 'POST', body: JSON.stringify({ requests: missing.map(title => ({ addSheet: { properties: { title } } })) }) });
+          await sheetsApi('/values:batchUpdate', {
+            method: 'POST',
+            body: JSON.stringify({ valueInputOption: 'RAW', data: missing.map(t => ({ range: t + '!A1', values: [TABS[t]] })) })
+          });
+        }
+        tabsChecked = true;
+      }
+
+      const dealerRows = () => S.clients.map(d => [d.id, d.name, d.gst, d.mobile, d.addr]);
+      const productRows = () => S.parts.flatMap(p => p.colors.map(c => [p.partNo, c.color, c.rate, p.hsn || '3902', p.company || '']));
+      const settingsRows = () => Object.keys(S.cfg).map(k => [k, String(S.cfg[k] || '')]);
+      const billRow = b => [String(b.invNo), b.date, b.dcNo || '', b.dcDate || '', b.client.id, b.client.name, b.client.gst,
+        b.totals.weight, b.totals.basic, b.totals.cgst, b.totals.sgst, b.totals.grand, b.note || '', JSON.stringify(b.items)];
+
+      // Replace everything below the header in the given tabs (2 requests total)
+      async function writeTabs(map) {
+        const names = Object.keys(map);
+        await sheetsApi('/values:batchClear', { method: 'POST', body: JSON.stringify({ ranges: names.map(n => n + '!A2:Z') }) });
+        const data = names.filter(n => map[n].length).map(n => ({ range: n + '!A2', values: map[n] }));
+        if (data.length) await sheetsApi('/values:batchUpdate', { method: 'POST', body: JSON.stringify({ valueInputOption: 'RAW', data }) });
+      }
+
+      async function saveBillRow(b) {
+        const col = await sheetsApi('/values/' + enc('Bills!A2:A'));
+        const idx = (col.values || []).findIndex(r => String(r[0]) === String(b.invNo));
+        if (idx >= 0) {
+          await sheetsApi('/values/' + enc('Bills!A' + (idx + 2)) + '?valueInputOption=RAW', { method: 'PUT', body: JSON.stringify({ values: [billRow(b)] }) });
+        } else {
+          await sheetsApi('/values/' + enc('Bills!A1') + ':append?valueInputOption=RAW&insertDataOption=INSERT_ROWS', { method: 'POST', body: JSON.stringify({ values: [billRow(b)] }) });
         }
       }
 
-      async function pullSheet(silent) {
-        if (!S.gasUrl) {
-          setSyncStatus('idle', 'Local');
-          if (!silent) toast('Add your Google Apps Script URL in Settings first');
-          return;
+      async function pushSheet(payload) {
+        if (!sheetsReady()) return;
+        if (!signedIn) { S.pendingSync = true; toast('Data not loaded yet · click Sync first'); return; }
+        setSyncStatus('busy', 'Saving...');
+        try {
+          await ensureTabs();
+          if (payload.action === 'saveBill') await saveBillRow(payload.bill);
+          else if (payload.action === 'syncDealers') await writeTabs({ Dealers: dealerRows() });
+          else if (payload.action === 'syncProducts') await writeTabs({ Products: productRows() });
+          else if (payload.action === 'saveSettings') await writeTabs({ Settings: settingsRows() });
+          setSyncStatus('ok', 'Sheet Synced');
+        } catch (e) {
+          // Keep it in memory; the next successful sync in this tab pushes everything
+          S.pendingSync = true;
+          setSyncStatus('err', 'Not synced');
+          toast('NOT saved to Sheet: ' + e.message + ' · click Sync before closing');
+          if (!tokenValid() && !sessionActive()) showGate('Your sign-in ended. Sign in again to save.');
         }
+      }
+
+      async function pushAll(silent) {
+        setSyncStatus('busy', 'Uploading...');
+        try {
+          await ensureTabs();
+          await writeTabs({ Dealers: dealerRows(), Products: productRows(), Settings: settingsRows(), Bills: S.bills.map(billRow) });
+          S.pendingSync = false;
+          setSyncStatus('ok', 'Sheet Synced');
+          if (!silent) toast('Uploaded ' + S.bills.length + ' bills, ' + S.clients.length + ' dealers to the Sheet');
+        } catch (e) {
+          S.pendingSync = true;
+          setSyncStatus('err', 'Not synced');
+          if (!silent) toast('Upload failed: ' + e.message);
+        }
+      }
+
+      // Warn before closing the tab while a change has not reached the sheet
+      window.addEventListener('beforeunload', e => {
+        if (S.pendingSync) { e.preventDefault(); e.returnValue = ''; }
+      });
+
+      /* The sheet stores only dealer id/name/GSTIN per bill, so keep the richer local
+         copy when both exist, keep bills that never reached the sheet, and fill in
+         missing dealer address/mobile from the Dealers list. */
+      function mergeBills(remote, local) {
+        const byNo = new Map();
+        remote.forEach(b => {
+          b.invNo = String(b.invNo);
+          byNo.set(b.invNo, b);
+        });
+        local.forEach(b => byNo.set(String(b.invNo), b));
+        const merged = [...byNo.values()];
+        merged.forEach(b => {
+          const c = S.clients.find(x => x.id === b.client.id);
+          if (c) b.client = { ...c, ...Object.fromEntries(Object.entries(b.client).filter(([, v]) => v)) };
+        });
+        return merged.sort((a, b) => String(b.date).localeCompare(String(a.date)) || tailNum(b.invNo) - tailNum(a.invNo));
+      }
+
+      // Dates written by the old Apps Script came back as date cells (serial numbers)
+      function cellDate(v) {
+        if (typeof v === 'number' && v > 20000 && v < 80000) {
+          return new Date(Date.UTC(1899, 11, 30) + Math.round(v) * 86400000).toISOString().slice(0, 10);
+        }
+        return String(v ?? '');
+      }
+
+      // One request reads all four tabs
+      async function readSheet() {
+        await ensureTabs();
+        const ranges = ['Dealers!A2:E', 'Products!A2:E', 'Bills!A2:N', 'Settings!A2:B'];
+        const res = await sheetsApi('/values:batchGet?valueRenderOption=UNFORMATTED_VALUE&' + ranges.map(r => 'ranges=' + enc(r)).join('&'));
+        const [dRows, pRows, bRows, sRows] = (res.valueRanges || []).map(v => v.values || []);
+        const dealers = (dRows || []).filter(r => r[1]).map(r => ({
+          id: String(r[0] ?? ''), name: String(r[1]), gst: String(r[2] ?? ''), mobile: String(r[3] ?? ''), addr: String(r[4] ?? '')
+        }));
+        const pMap = {};
+        (pRows || []).filter(r => r[0]).forEach(r => {
+          const partNo = String(r[0]).trim(), company = String(r[4] ?? '').trim();
+          const key = partNo + '||' + company;
+          if (!pMap[key]) pMap[key] = { partNo, company, hsn: String(r[3] || '3902'), colors: [] };
+          pMap[key].colors.push({ color: String(r[1] ?? ''), rate: Number(r[2]) || 0 });
+        });
+        const bills = (bRows || []).filter(r => r[0] !== undefined && r[0] !== '').map(r => {
+          let items = [];
+          try { items = JSON.parse(r[13] || '[]'); } catch (e) {}
+          const cgst = Number(r[9]) || 0, sgst = Number(r[10]) || 0;
+          return {
+            invNo: String(r[0]), date: cellDate(r[1]), dcNo: String(r[2] ?? ''), dcDate: cellDate(r[3]),
+            client: { id: String(r[4] ?? ''), name: String(r[5] ?? ''), gst: String(r[6] ?? ''), mobile: '', addr: '' },
+            totals: { weight: Number(r[7]) || 0, basic: Number(r[8]) || 0, cgst, sgst, gst: cgst + sgst, grand: Number(r[11]) || 0 },
+            note: String(r[12] ?? ''), items
+          };
+        });
+        const cfg = {};
+        (sRows || []).forEach(r => { if (r[0]) cfg[String(r[0])] = String(r[1] ?? ''); });
+        return { dealers, products: Object.values(pMap), bills, cfg };
+      }
+
+      // Read whatever an older version left in this browser (null when nothing)
+      function readLegacy() {
+        for (const k of LEGACY_KEYS) {
+          try {
+            const d = JSON.parse(localStorage.getItem(k) || 'null');
+            if (d && (Array.isArray(d.bills) || Array.isArray(d.clients))) return d;
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      let signedIn = false;
+      let firstLoad = true;
+      let lastSyncError = '';
+
+      async function pullSheet(silent) {
         setSyncStatus('busy', 'Syncing...');
         try {
-          const res = await fetch(S.gasUrl);
-          const data = await res.json();
-          if (Array.isArray(data.dealers) && data.dealers.length) S.clients = data.dealers;
-          if (Array.isArray(data.products) && data.products.length) S.parts = data.products;
-          if (Array.isArray(data.bills)) S.bills = data.bills;
+          const data = await readSheet();
+          signedIn = true;
+          lastSyncError = '';
+          const legacy = firstLoad ? readLegacy() : null;
+          let migrated = false;
+          if (data.dealers.length) S.clients = data.dealers;
+          else if (legacy && legacy.clients && legacy.clients.length) { S.clients = legacy.clients; migrated = true; }
+          if (data.products.length) S.parts = data.products;
+          else if (legacy && legacy.parts && legacy.parts.length) { S.parts = legacy.parts; migrated = true; }
+          S.bills = mergeBills(data.bills, S.bills);
+          if (legacy && Array.isArray(legacy.bills)) {
+            const onSheet = new Set(S.bills.map(b => String(b.invNo)));
+            const extra = legacy.bills.filter(b => !onSheet.has(String(b.invNo)));
+            if (extra.length) { S.bills = mergeBills(S.bills, extra); migrated = true; }
+          }
           if (data.cfg && data.cfg.name) S.cfg = { ...S.cfg, ...data.cfg };
-          saveStore();
+          if (firstLoad) {
+            // Continue numbering after the highest invoice already in the sheet
+            $('invNo').value = nextInvNo($('invNo').value.trim() || S.invNo);
+            $('invNote').value = S.cfg.note;
+            firstLoad = false;
+          }
           renderHeader();
           renderClientSelect();
           renderBillingTable();
           renderRightHistory();
           setSyncStatus('ok', 'Sheet Synced');
-          if (!silent) toast('Synced from Google Sheet');
+          if (!silent) toast('Loaded ' + S.bills.length + ' bills from Google Sheet');
+          if (migrated) {
+            // Upload the old browser copy, then delete it so the sheet is the only copy
+            await pushAll(true);
+            if (!S.pendingSync) {
+              LEGACY_KEYS.forEach(k => localStorage.removeItem(k));
+              toast('Moved data saved in this browser into the Google Sheet');
+            }
+          } else {
+            if (legacy) LEGACY_KEYS.forEach(k => localStorage.removeItem(k));
+            // A save failed earlier in this session: send the merged copy back up
+            if (S.pendingSync) pushAll(true);
+          }
         } catch (e) {
-          setSyncStatus('err', 'Offline');
-          if (!silent) toast('Could not reach Google Sheet — using local data');
+          lastSyncError = e.message;
+          setSyncStatus('err', signedIn ? 'Not synced' : 'Signed out');
+          if (!silent) toast('Google Sheet: ' + e.message);
+          // Silent renewal refused (e.g. Google session ended): back to the sign-in page
+          if (!tokenValid() && document.body.classList.contains('gated') === false) showGate(e.message);
         }
       }
 
@@ -1317,7 +1720,7 @@ function doPost(e) {
           const cr = Math.floor(n / 10000000); n %= 10000000;
           const lk = Math.floor(n / 100000); n %= 100000;
           const th = Math.floor(n / 1000); n %= 1000;
-          if (cr) r += two(cr) + ' Crore ';
+          if (cr) r += conv(cr) + ' Crore ';
           if (lk) r += two(lk) + ' Lakh ';
           if (th) r += two(th) + ' Thousand ';
           if (n) r += three(n);
@@ -1533,13 +1936,15 @@ function doPost(e) {
 
       function startNewBill() {
         S.rows = [{ id: S.nextRowId++, partNo: '', color: '', hsn: '3902', rate: 0, weight: '' }];
-        const m = $('invNo').value.match(/^(.*?)(\d+)$/);
-        if (m) $('invNo').value = m[1] + String(parseInt(m[2], 10) + 1).padStart(m[2].length, '0');
+        const cur = $('invNo').value.trim() || S.invNo;
+        const saved = S.bills.some(b => String(b.invNo) === cur);
+        $('invNo').value = saved ? nextInvNo(bumpNo(cur)) : nextInvNo(cur);
         $('invDcNo').value = '';
         $('invDcDate').value = '';
+        $('invNote').value = S.cfg.note;
         switchTab('bill');
         renderBillingTable();
-        toast('Fresh invoice ready');
+        toast('Fresh invoice ready · #' + $('invNo').value);
       }
       $('sideNewBill').addEventListener('click', startNewBill);
       $('btnResetBill').addEventListener('click', e => {
@@ -1580,8 +1985,8 @@ function doPost(e) {
         const q = ($('histSearch').value || '').trim().toLowerCase();
         const filtered = S.bills.filter(b =>
           !q ||
-          b.invNo.toLowerCase().includes(q) ||
-          b.client.name.toLowerCase().includes(q)
+          String(b.invNo).toLowerCase().includes(q) ||
+          String(b.client.name).toLowerCase().includes(q)
         );
         $('histList').innerHTML = filtered.slice(0, 12).map((b, i) => `
           <div class="hist-item" data-hist-idx="${S.bills.indexOf(b)}">
@@ -1591,7 +1996,7 @@ function doPost(e) {
             </div>
             <div class="hist-sub">
               <span>${esc(b.date)}</span>
-              <span>${b.totals.weight.toFixed(2)} kg</span>
+              <span>${(Number(b.totals.weight) || 0).toFixed(2)} kg</span>
             </div>
           </div>`).join('') || '<div class="mu" style="text-align:center;padding:18px 8px">No saved bills yet. Click Save or Print A4 to store an invoice.</div>';
       }
@@ -1610,22 +2015,21 @@ function doPost(e) {
         const idx = S.bills.findIndex(b => b.invNo === rec.invNo);
         if (idx >= 0) S.bills[idx] = rec;
         else S.bills.unshift(rec);
-        saveStore();
         renderRightHistory();
         pushSheet({ action: 'saveBill', bill: rec });
-        toast('Saved invoice #' + rec.invNo);
+        toast((idx >= 0 ? 'Updated invoice #' : 'Saved invoice #') + rec.invNo);
       });
 
       /* Standardized A4 Print Dialog Box */
       function invoiceSheetHtml(rec) {
         const rowsHtml = rec.items.map((it, i) => `
-          <tr>
-            <td style="text-align:center" class="mono">${i + 1}</td>
-            <td><strong>${esc(it.partNo)}</strong> &mdash; ${esc(it.color || '-')}</td>
-            <td style="text-align:right" class="mono">${Number(it.weight).toFixed(2)}</td>
-            <td style="text-align:right" class="mono">${Number(it.rate).toFixed(2)}</td>
-            <td style="text-align:right;font-weight:600" class="mono">${fm(it.amt)}</td>
-          </tr>`).join('');
+          <div class="a4-row a4-item">
+            <div class="c mono">${i + 1}</div>
+            <div><strong>${esc(it.partNo)}</strong> &mdash; ${esc(it.color || '-')}</div>
+            <div class="r mono">${(Number(it.weight) || 0).toFixed(2)}</div>
+            <div class="r mono">${(Number(it.rate) || 0).toFixed(2)}</div>
+            <div class="r mono" style="font-weight:600">${fm(it.amt)}</div>
+          </div>`).join('');
 
         return `
           <div class="inv-sheet">
@@ -1666,21 +2070,15 @@ function doPost(e) {
             </div>
 
             <div class="a4-table-box">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width:46px;text-align:center">Sl.No.</th>
-                    <th>Description (Part No. &amp; Color)</th>
-                    <th style="width:85px;text-align:right">KG.</th>
-                    <th style="width:100px;text-align:right">Rate/kg (&#8377;)</th>
-                    <th style="width:120px;text-align:right">Basic Amt (&#8377;)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${rowsHtml}
-                  <tr class="filler-row"><td></td><td></td><td></td><td></td><td></td></tr>
-                </tbody>
-              </table>
+              <div class="a4-row a4-head">
+                <div class="c">Sl.No.</div>
+                <div>Description (Part No. &amp; Color)</div>
+                <div class="r">KG.</div>
+                <div class="r">Rate/kg (&#8377;)</div>
+                <div class="r">Basic Amt (&#8377;)</div>
+              </div>
+              ${rowsHtml}
+              <div class="a4-row a4-filler"><div></div><div></div><div></div><div></div><div></div></div>
               <div class="a4-tax-footer">
                 <div style="padding:10px 12px;border-right:1px solid #d1d5db;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
                   <div>
@@ -1690,7 +2088,7 @@ function doPost(e) {
                   <div style="font-size:10.5px;color:#4b5563"><strong>Note:</strong> ${esc(rec.note)}</div>
                 </div>
                 <div style="font-size:11.5px">
-                  <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>Total Weight</span><span class="mono">${rec.totals.weight.toFixed(2)} kg</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>Total Weight</span><span class="mono">${(Number(rec.totals.weight) || 0).toFixed(2)} kg</span></div>
                   <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>Basic Amount</span><span class="mono" style="font-weight:600">${fm(rec.totals.basic)}</span></div>
                   <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>CGST @ 9%</span><span class="mono">${fm(rec.totals.cgst)}</span></div>
                   <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>SGST @ 9%</span><span class="mono">${fm(rec.totals.sgst)}</span></div>
@@ -1729,7 +2127,7 @@ function doPost(e) {
         };
         $('mDlHtml').onclick = () => {
           const styles = document.querySelector('style').innerHTML;
-          const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice-${esc(rec.invNo)}</title><style>${styles} body{background:#fff;display:block;padding:0;margin:0}.inv-sheet{border:0;width:194mm;min-height:279mm;padding:0;margin:8mm auto}</style></head><body>${sheet}<script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>`;
+          const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice-${esc(rec.invNo)}</title><style>${styles} body{background:#fff;display:block;padding:0;margin:0;height:auto;overflow:visible}.inv-sheet{border:0;width:194mm;min-height:279mm;padding:0;margin:8mm auto}</style></head><body>${sheet}<script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>`;
           const u = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
           const a = document.createElement('a');
           a.href = u;
@@ -1747,7 +2145,6 @@ function doPost(e) {
         const idx = S.bills.findIndex(b => b.invNo === rec.invNo);
         if (idx >= 0) S.bills[idx] = rec;
         else S.bills.unshift(rec);
-        saveStore();
         renderRightHistory();
         pushSheet({ action: 'saveBill', bill: rec });
         openPrintDialog(rec);
@@ -1783,7 +2180,6 @@ function doPost(e) {
           const c = { id: 'c' + Date.now(), name, gst, mobile, addr };
           S.clients.push(c);
           S.selectedClientId = c.id;
-          saveStore();
           renderClientSelect();
           pushSheet({ action: 'syncDealers', dealers: S.clients });
           $('modal').classList.remove('on');
@@ -1842,7 +2238,6 @@ function doPost(e) {
         } else {
           S.parts.push({ partNo, company, hsn, colors: [{ color, rate }] });
         }
-        saveStore();
         renderPartMaster();
         renderBillingTable();
         pushSheet({ action: 'syncProducts', products: S.parts });
@@ -1862,7 +2257,6 @@ function doPost(e) {
           p.colors = p.colors.filter(c => c.color !== col);
           if (!p.colors.length) S.parts = S.parts.filter(x => !(x.partNo === pNo && (x.company || '') === comp));
         }
-        saveStore();
         renderPartMaster();
         renderBillingTable();
         pushSheet({ action: 'syncProducts', products: S.parts });
@@ -1890,7 +2284,6 @@ function doPost(e) {
         const c = { id: 'c' + Date.now(), name, gst, mobile, addr };
         S.clients.push(c);
         S.selectedClientId = c.id;
-        saveStore();
         renderClientMaster();
         renderClientSelect();
         pushSheet({ action: 'syncDealers', dealers: S.clients });
@@ -1904,7 +2297,6 @@ function doPost(e) {
         const id = btn.getAttribute('data-del-cli');
         S.clients = S.clients.filter(c => c.id !== id);
         if (S.selectedClientId === id) S.selectedClientId = S.clients[0] ? S.clients[0].id : '';
-        saveStore();
         renderClientMaster();
         renderClientSelect();
         pushSheet({ action: 'syncDealers', dealers: S.clients });
@@ -1918,7 +2310,7 @@ function doPost(e) {
             <td class="mono"><strong>#${esc(b.invNo)}</strong></td>
             <td class="mono">${esc(b.date)}</td>
             <td>${esc(b.client.name)}</td>
-            <td class="mono">${b.totals.weight.toFixed(2)} kg</td>
+            <td class="mono">${(Number(b.totals.weight) || 0).toFixed(2)} kg</td>
             <td class="mono">${fm(b.totals.basic)}</td>
             <td class="mono">${fm(b.totals.gst)}</td>
             <td class="mono"><strong>${fm(b.totals.grand)}</strong></td>
@@ -1941,7 +2333,6 @@ function doPost(e) {
         $('setEmail').value = S.cfg.email;
         $('setAddr').value = S.cfg.addr;
         $('setNote').value = S.cfg.note;
-        $('setGasUrl').value = S.gasUrl || '';
       }
 
       $('setSave').addEventListener('click', () => {
@@ -1953,53 +2344,107 @@ function doPost(e) {
           addr: $('setAddr').value.trim(),
           note: $('setNote').value.trim()
         };
-        saveStore();
         renderHeader();
         pushSheet({ action: 'saveSettings', cfg: S.cfg });
         toast('Settings saved');
       });
 
-      $('btnSyncSheet').addEventListener('click', () => {
-        if (!S.gasUrl) { switchTab('set'); toast('Paste your Google Apps Script URL in Settings'); }
-        else pullSheet(false);
-      });
+      $('btnSyncSheet').addEventListener('click', () => pullSheet(false));
+      $('btnConnectG').addEventListener('click', () => pullSheet(false));
+      $('btnPullG').addEventListener('click', () => pullSheet(false));
 
-      $('btnSaveGas').addEventListener('click', () => {
-        const url = $('setGasUrl').value.trim();
-        S.gasUrl = url;
-        saveStore();
-        if (!url) { setSyncStatus('idle', 'Local'); return toast('Cleared Google Sheet URL'); }
-        pullSheet(false);
-      });
-
-      $('btnPullGas').addEventListener('click', () => pullSheet(false));
-
-      $('btnShowGas').addEventListener('click', () => {
+      $('btnShowSetup').addEventListener('click', () => {
+        const origin = /^https?:/.test(location.protocol) ? location.origin : 'https://your-app-address (host the app first)';
         const box = $('mbox');
         box.classList.remove('narrow');
         box.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px">
-            <h2 class="modal-title">Google Apps Script (Code.gs)</h2>
-            <div style="display:flex;gap:8px">
-              <button type="button" class="btn-pill sm" id="copyGasBtn">Copy Code</button>
-              <button type="button" class="btn-pill soft sm" id="closeGasBtn">Close</button>
-            </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
+            <h2 class="modal-title">Google Cloud Console checklist</h2>
+            <button type="button" class="btn-pill soft sm" id="closeSetupBtn">Close</button>
           </div>
-          <div class="mu" style="margin-bottom:8px">1. Open your Google Sheet &rarr; <strong>Extensions &rarr; Apps Script</strong>.<br>2. Paste this code, save, and click <strong>Deploy &rarr; New deployment &rarr; Web app</strong> (Who has access: <strong>Anyone</strong>).<br>3. Copy the Web App URL and paste it into <strong>Settings</strong>.</div>
-          <textarea id="gasCodeBox" rows="14" readonly class="mono" style="font-size:11.5px;line-height:1.4;white-space:pre;overflow:auto"></textarea>
+          <div class="mu" style="margin-bottom:8px">Client ID in use: <span class="mono">${esc(S.gClientId)}</span></div>
+          <ol style="margin:0;padding-left:20px;line-height:1.75;font-size:12.5px">
+            <li><strong>APIs &amp; Services &rarr; Library</strong>: <strong>Google Sheets API</strong> is enabled.</li>
+            <li><strong>Google Auth Platform &rarr; Audience</strong>: every Gmail account that uses the app is added under <strong>Test users</strong>.</li>
+            <li><strong>Clients &rarr;</strong> this Client ID &rarr; <strong>Authorized JavaScript origins</strong> includes:<br>
+              <code class="mono" style="background:#f3f4f6;padding:2px 6px;border-radius:6px">${esc(origin)}</code></li>
+            <li>Each account has <strong>edit access</strong> to the RR DATA sheet.</li>
+          </ol>
         `;
-        $('gasCodeBox').value = GAS_SCRIPT;
         $('modal').classList.add('on');
-        $('closeGasBtn').onclick = () => $('modal').classList.remove('on');
-        $('copyGasBtn').onclick = () => {
-          $('gasCodeBox').select();
-          try { navigator.clipboard.writeText(GAS_SCRIPT); } catch (e) { document.execCommand('copy'); }
-          toast('Copied Code.gs to clipboard');
-        };
+        $('closeSetupBtn').onclick = () => $('modal').classList.remove('on');
+      });
+
+      /* ---------- Sign-in page ---------- */
+      function setGateBusy(label) {
+        const btn = $('btnSignIn');
+        btn.disabled = !!label;
+        btn.classList.toggle('busy', !!label);
+        $('btnSignInLabel').textContent = label || (session && session.email ? 'Continue as ' + session.email : 'Sign in with Google');
+      }
+
+      function showGate(msg) {
+        document.body.classList.add('gated');
+        $('authGate').classList.remove('off');
+        const back = session && session.name;
+        $('gateTitle').textContent = back ? 'Welcome back, ' + session.name.split(' ')[0] : 'Sign in to continue';
+        $('gateErr').textContent = msg || '';
+        $('gateErr').classList.toggle('on', !!msg);
+        setGateBusy('');
+        setSyncStatus('idle', 'Signed out');
+      }
+
+      function hideGate() {
+        document.body.classList.remove('gated');
+        $('authGate').classList.add('off');
+      }
+
+      function renderUser() {
+        const chip = $('userChip');
+        const who = session && (session.name || session.email);
+        chip.hidden = !who;
+        if (!who) return;
+        $('userName').textContent = session.name || session.email;
+        chip.title = (session.email || '') + ' · signed in until ' + new Date(session.until).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        const av = $('userAvatar');
+        if (session.picture) {
+          av.outerHTML = `<img id="userAvatar" src="${esc(session.picture)}" alt="" referrerpolicy="no-referrer" />`;
+        } else {
+          av.textContent = (session.name || session.email).charAt(0).toUpperCase();
+        }
+      }
+
+      $('btnSignIn').addEventListener('click', async () => {
+        $('gateErr').classList.remove('on');
+        setGateBusy('Signing in...');
+        try {
+          await getToken(session && session.email ? '' : 'select_account');
+        } catch (e) {
+          setGateBusy('');
+          $('gateErr').textContent = e.message;
+          $('gateErr').classList.add('on');
+          return;
+        }
+        setGateBusy('Loading your sheet...');
+        await loadProfile();
+        await pullSheet(true);
+        if (signedIn) {
+          hideGate();
+          renderUser();
+          toast('Signed in · stays active for 24 hours');
+        } else {
+          setGateBusy('');
+          $('gateErr').textContent = lastSyncError || 'Could not open the RR DATA sheet. Check that this account has edit access.';
+          $('gateErr').classList.add('on');
+        }
+      });
+
+      $('btnSignOut').addEventListener('click', () => {
+        if (S.pendingSync && !confirm('Some changes have not reached the Google Sheet yet. Sign out anyway?')) return;
+        signOut();
       });
 
       /* Init */
-      loadStore();
       $('invNo').value = S.invNo;
       $('invDate').value = S.invDate;
       $('invNote').value = S.cfg.note;
@@ -2008,8 +2453,30 @@ function doPost(e) {
       renderBillingTable();
       renderRightHistory();
       switchTab('bill');
-      if (S.gasUrl) pullSheet(true);
-      else setSyncStatus('idle', 'Local');
+      $('lnkSheet').href = 'https://docs.google.com/spreadsheets/d/' + S.sheetId + '/edit';
+
+      if (sessionActive() && tokenValid()) {
+        // Signed in within the last 24h and Google's token is still fresh: straight in
+        hideGate();
+        renderUser();
+        pullSheet(true);
+      } else if (sessionActive()) {
+        // Signed in today, but Google's 1-hour token lapsed. Renewing needs one click
+        // (browsers block Google's window otherwise); no password or account screen.
+        hideGate();
+        renderUser();
+        setSyncStatus('busy', 'Click anywhere to load');
+        toast('Welcome back · click anywhere to load your data');
+        const resume = () => {
+          document.removeEventListener('pointerdown', resume, true);
+          document.removeEventListener('keydown', resume, true);
+          pullSheet(true);
+        };
+        document.addEventListener('pointerdown', resume, true);
+        document.addEventListener('keydown', resume, true);
+      } else {
+        showGate();
+      }
     })();
   </script>
 </body>
