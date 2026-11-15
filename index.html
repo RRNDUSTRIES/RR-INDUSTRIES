@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>R.R. Industries · Billing</title>
+  <title>R.R. Industries · Billing &amp; A4 Tax Invoice</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -899,6 +899,7 @@
         <div class="card">
           <div class="card-hdr"><h3 class="card-title">Add Product Information</h3></div>
           <div class="row">
+            <div><label for="pmCompany">Company / Dealer</label><select id="pmCompany"><option value="">All Companies</option></select></div>
             <div><label for="pmPart">Part Number</label><input id="pmPart" placeholder="e.g. RR-PP-101" /></div>
             <div><label for="pmColor">Color Option</label><input id="pmColor" placeholder="e.g. Natural White" /></div>
             <div><label for="pmRate">Default Rate / kg (&#8377;)</label><input id="pmRate" type="number" min="0" step="0.01" placeholder="145.00" /></div>
@@ -911,7 +912,7 @@
           <div class="wrap">
             <table>
               <thead>
-                <tr><th>Part Number</th><th>Color Option</th><th>HSN</th><th style="text-align:right">Default Rate/kg</th><th style="text-align:right">Action</th></tr>
+                <tr><th>Part Number</th><th>Company / Dealer</th><th>Color Option</th><th>HSN</th><th style="text-align:right">Default Rate/kg</th><th style="text-align:right">Action</th></tr>
               </thead>
               <tbody id="pmTbody"></tbody>
             </table>
@@ -1067,7 +1068,7 @@
       const GAS_SCRIPT = `// Paste this into Extensions > Apps Script in your Google Sheet, then Deploy > New deployment > Web app (Access: Anyone)
 const TABS = {
   Dealers: ['ID', 'Name', 'GSTIN', 'Mobile', 'Address'],
-  Products: ['PartNo', 'Color', 'Rate', 'HSN'],
+  Products: ['PartNo', 'Color', 'Rate', 'HSN', 'Company'],
   Bills: ['InvoiceNo', 'Date', 'DCNo', 'DCDate', 'DealerID', 'DealerName', 'DealerGST', 'WeightKG', 'BasicAmt', 'CGST', 'SGST', 'GrandTotal', 'Note', 'ItemsJSON'],
   Settings: ['Key', 'Value']
 };
@@ -1093,9 +1094,10 @@ function doGet(e) {
   const prodRows = ss.getSheetByName('Products').getDataRange().getValues().slice(1).filter(r => r[0]);
   const pMap = {};
   prodRows.forEach(r => {
-    const pNo = String(r[0]).trim();
-    if (!pMap[pNo]) pMap[pNo] = { partNo: pNo, hsn: String(r[3] || '3902'), colors: [] };
-    pMap[pNo].colors.push({ color: String(r[1]), rate: Number(r[2]) || 0 });
+    const pNo = String(r[0]).trim(), comp = String(r[4] || '').trim();
+    const key = pNo + '||' + comp;
+    if (!pMap[key]) pMap[key] = { partNo: pNo, company: comp, hsn: String(r[3] || '3902'), colors: [] };
+    pMap[key].colors.push({ color: String(r[1]), rate: Number(r[2]) || 0 });
   });
   const bills = ss.getSheetByName('Bills').getDataRange().getValues().slice(1).filter(r => r[0]).map(r => {
     let items = [];
@@ -1132,8 +1134,8 @@ function doPost(e) {
     sh.clearContents();
     sh.appendRow(TABS.Products);
     const rows = [];
-    body.products.forEach(p => p.colors.forEach(c => rows.push([p.partNo, c.color, c.rate, p.hsn || '3902'])));
-    if (rows.length) sh.getRange(2, 1, rows.length, 4).setValues(rows);
+    body.products.forEach(p => p.colors.forEach(c => rows.push([p.partNo, c.color, c.rate, p.hsn || '3902', p.company || ''])));
+    if (rows.length) sh.getRange(2, 1, rows.length, 5).setValues(rows);
   } else if (body.action === 'saveSettings' && body.cfg) {
     const sh = ss.getSheetByName('Settings');
     sh.clearContents();
@@ -1295,6 +1297,8 @@ function doPost(e) {
       $('clientSel').addEventListener('change', e => {
         S.selectedClientId = e.target.value;
         populateClientFields();
+        renderPartsDatalist();
+        renderBillingTable();
       });
 
       /* Amount in Indian Words */
@@ -1323,16 +1327,30 @@ function doPost(e) {
       }
 
       /* Dynamic Billing Table */
+      function getSelectedDealerName() {
+        const c = S.clients.find(x => x.id === S.selectedClientId);
+        return c ? c.name.trim().toLowerCase() : '';
+      }
+
+      function getFilteredParts() {
+        const dName = getSelectedDealerName();
+        if (!dName) return S.parts;
+        return S.parts.filter(p => !p.company || p.company.trim().toLowerCase() === dName);
+      }
+
       function getPart(partNo) {
         const key = String(partNo || '').trim().toLowerCase();
         if (!key) return null;
-        return S.parts.find(p => p.partNo.toLowerCase() === key) || null;
+        const pool = getFilteredParts();
+        return pool.find(p => p.partNo.toLowerCase() === key) || S.parts.find(p => p.partNo.toLowerCase() === key) || null;
       }
 
       function renderPartsDatalist() {
         const dl = $('partsDatalist');
         if (!dl) return;
-        dl.innerHTML = S.parts.map(p => `<option value="${esc(p.partNo)}"></option>`).join('');
+        const pool = getFilteredParts();
+        const unique = [...new Set(pool.map(p => p.partNo))];
+        dl.innerHTML = unique.map(no => `<option value="${esc(no)}"></option>`).join('');
       }
 
       function computeTotals() {
@@ -1780,37 +1798,49 @@ function doPost(e) {
       });
 
       /* Part Master Tab */
+      function renderPartCompanySelect() {
+        const sel = $('pmCompany');
+        if (!sel) return;
+        const prev = sel.value;
+        sel.innerHTML = '<option value="">All Companies</option>' +
+          S.clients.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+        sel.value = prev;
+      }
+
       function renderPartMaster() {
+        renderPartCompanySelect();
         const rows = [];
         S.parts.forEach(p => {
           p.colors.forEach(c => {
             rows.push(`
               <tr>
                 <td><strong>${esc(p.partNo)}</strong></td>
+                <td>${esc(p.company || 'All Companies')}</td>
                 <td>${esc(c.color)}</td>
                 <td class="mono">${esc(p.hsn || '3902')}</td>
                 <td class="mono" style="text-align:right">${fm(c.rate)}</td>
-                <td style="text-align:right"><button type="button" class="btn-pill soft sm" data-del-p="${esc(p.partNo)}" data-del-c="${esc(c.color)}">Remove</button></td>
+                <td style="text-align:right"><button type="button" class="btn-pill soft sm" data-del-p="${esc(p.partNo)}" data-del-comp="${esc(p.company || '')}" data-del-c="${esc(c.color)}">Remove</button></td>
               </tr>`);
           });
         });
-        $('pmTbody').innerHTML = rows.join('') || '<tr><td colspan="5" class="mu">No parts yet.</td></tr>';
+        $('pmTbody').innerHTML = rows.join('') || '<tr><td colspan="6" class="mu">No parts yet.</td></tr>';
       }
 
       $('pmSave').addEventListener('click', () => {
+        const company = $('pmCompany').value.trim();
         const partNo = $('pmPart').value.trim().toUpperCase();
         const color = $('pmColor').value.trim();
         const rate = parseFloat($('pmRate').value) || 0;
         const hsn = $('pmHsn').value.trim() || '3902';
         if (!partNo || !color || rate <= 0) return toast('Enter part number, color, and rate');
-        let p = S.parts.find(x => x.partNo === partNo);
+        let p = S.parts.find(x => x.partNo === partNo && (x.company || '') === company);
         if (p) {
           p.hsn = hsn;
           const c = p.colors.find(x => x.color.toLowerCase() === color.toLowerCase());
           if (c) c.rate = rate;
           else p.colors.push({ color, rate });
         } else {
-          S.parts.push({ partNo, hsn, colors: [{ color, rate }] });
+          S.parts.push({ partNo, company, hsn, colors: [{ color, rate }] });
         }
         saveStore();
         renderPartMaster();
@@ -1825,11 +1855,12 @@ function doPost(e) {
         const btn = e.target.closest('[data-del-p]');
         if (!btn) return;
         const pNo = btn.getAttribute('data-del-p');
+        const comp = btn.getAttribute('data-del-comp') || '';
         const col = btn.getAttribute('data-del-c');
-        const p = S.parts.find(x => x.partNo === pNo);
+        const p = S.parts.find(x => x.partNo === pNo && (x.company || '') === comp);
         if (p) {
           p.colors = p.colors.filter(c => c.color !== col);
-          if (!p.colors.length) S.parts = S.parts.filter(x => x.partNo !== pNo);
+          if (!p.colors.length) S.parts = S.parts.filter(x => !(x.partNo === pNo && (x.company || '') === comp));
         }
         saveStore();
         renderPartMaster();
