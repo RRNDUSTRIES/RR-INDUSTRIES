@@ -1146,6 +1146,34 @@
     @media (prefers-reduced-motion: reduce) { #authGate .gate-card { animation: none; } #authGate .g-btn, #authGate .g-btn::after { transition: none; } }
     @media (max-width: 480px) { #authGate .gate-logo { margin-bottom: 26px; } #authGate .g-btn { min-height: 60px; } }
   </style>
+  <style id="ui-billing2">
+    /* Header removed; sync + sign-out live in the taskbar; Add Dealer removed from taskbar */
+    .app-frame .hero-bar, .app-frame #sideQuickClient { display: none !important; }
+    .app-frame { --right-w: 360px; }
+    .app-frame .nav-status { order: 2; margin-left: auto; display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+    .app-frame .nav-status #btnSyncSheet { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; box-shadow: none; font-size: 13px; font-weight: 500; }
+    .app-frame .nav-status #btnSyncSheet:hover { background: rgba(255,255,255,.2); }
+    .app-frame .nav-status .user-chip { background: rgba(255,255,255,.12); border: 0; color: #fff; padding: 3px 4px 3px 3px; max-width: none; }
+    .app-frame .nav-status .user-chip[hidden] { display: none !important; }
+    .app-frame .nav-status .user-chip .un { display: none; }
+    .app-frame .nav-status .user-chip button { background: rgba(255,255,255,.16); color: #fff; padding: 7px 13px; font-size: 12.5px; }
+    .app-frame .nav-status .user-chip button:hover { background: rgba(255,255,255,.28); }
+    .app-frame #sideNewBill { margin-left: 4px; }
+
+    /* Added-products list (left) + Add product panel (right) */
+    .app-frame .count-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 8px; margin-left: 8px; border-radius: 999px; background: #ebe7e0; color: #111; font: 700 12px/1 var(--sans); }
+    .app-frame #p-bill .wrap { min-height: 300px; }
+    .app-frame .qa-card { background: #faf8f4; border: 1px solid var(--line2); border-radius: 16px; padding: 16px; display: grid; gap: 14px; }
+    .app-frame .qa-key { font: 600 11.5px/1 var(--sans); color: var(--mu); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+    .app-frame .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .app-frame .qa-grid .span2 { grid-column: 1 / -1; }
+    .app-frame #qaWeight { font-size: 22px; font-weight: 700; min-height: 54px; text-align: right; }
+    .app-frame .qa-foot { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--mu); }
+    .app-frame .qa-foot strong { font-size: 20px; color: #111; }
+    .app-frame .qa-msg { min-height: 16px; margin-top: -6px; font-size: 12.5px; color: #b91c1c; }
+    .app-frame .qa-msg:empty { display: none; }
+    .app-frame .nav-btn { padding: 10px 14px; }
+  </style>
 </head>
 <body data-tab="bill" class="gated">
 
@@ -1234,6 +1262,17 @@
       </div>
 
 
+      <div class="nav-status">
+          <div class="user-chip" id="userChip" hidden>
+            <span class="ua" id="userAvatar">R</span>
+            <span class="un" id="userName"></span>
+            <button type="button" id="btnSignOut" title="Sign out of this device">Sign out</button>
+          </div>
+          <button type="button" class="btn-pill soft sm" id="btnSyncSheet" title="Sync with Google Sheet">
+            <span id="syncDot" style="width:7px;height:7px;border-radius:999px;background:#94a3b8;display:inline-block"></span>
+            <span id="syncLabel">Signed out</span>
+          </button>
+      </div>
     </aside>
 
     <!-- CENTER WORKSPACE -->
@@ -1251,15 +1290,7 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <div class="hero-pills" id="hdrPills"></div>
-          <div class="user-chip" id="userChip" hidden>
-            <span class="ua" id="userAvatar">R</span>
-            <span class="un" id="userName"></span>
-            <button type="button" id="btnSignOut" title="Sign out of this device">Sign out</button>
-          </div>
-          <button type="button" class="btn-pill soft sm" id="btnSyncSheet" title="Sync with Google Sheet">
-            <span id="syncDot" style="width:7px;height:7px;border-radius:999px;background:#94a3b8;display:inline-block"></span>
-            <span id="syncLabel">Signed out</span>
-          </button>
+          
         </div>
       </div>
 
@@ -1329,10 +1360,10 @@
         <div class="card">
           <div class="card-hdr">
             <div>
-              <h3 class="card-title"><span class="step">3</span>Items</h3>
-              <div class="mu">Pick a part number to load its colours and default rate, then enter the weight in kg.</div>
+              <h3 class="card-title"><span class="step">3</span>Added products <span class="count-pill" id="itemCount">0</span></h3>
+              <div class="mu">Products appear here. Use <strong>Add product</strong> on the right: enter the weight and press Enter.</div>
             </div>
-            <button type="button" class="btn-pill sm" id="btnAddRow">+ Add Row</button>
+            <button type="button" class="btn-pill soft sm" id="btnAddRow">+ Blank row</button>
           </div>
           <div class="wrap">
             <table id="billing-table">
@@ -1487,6 +1518,18 @@
 
     <!-- RIGHT FLOATING PANEL (Tax Summary + Recent Bills History, matching reference right panel) -->
     <aside class="right-pane">
+      <div class="qa-card">
+        <div class="right-hdr"><h2>Add product</h2><span class="qa-key">Enter &crarr; to add</span></div>
+        <div class="qa-grid">
+          <div class="span2"><label for="qaPart">Part number</label><input id="qaPart" list="partsDatalist" placeholder="Search part no..." autocomplete="off" /></div>
+          <div><label for="qaColor">Colour</label><select id="qaColor" disabled><option value="">Select part first</option></select></div>
+          <div><label for="qaRate">Rate / kg</label><input id="qaRate" type="number" step="0.01" min="0" class="mono" placeholder="0.00" /></div>
+          <div class="span2"><label for="qaWeight">Weight (KG)</label><input id="qaWeight" type="number" step="0.01" min="0" inputmode="decimal" class="mono weight-inp" placeholder="0.00" /></div>
+        </div>
+        <div class="qa-foot"><span>Line amount</span><strong id="qaAmt" class="mono">&#8377;0.00</strong></div>
+        <button type="button" class="btn-pill" id="btnQaAdd" style="width:100%">Add to invoice</button>
+        <div class="qa-msg" id="qaMsg" role="status"></div>
+      </div>
       <div class="right-hdr">
         <h2>Invoice Summary</h2>
         <span class="mu mono" style="font-size:11px">18% GST</span>
@@ -2055,7 +2098,7 @@
         tbody.innerHTML = '';
 
         if (S.rows.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" class="mu" style="text-align:center;padding:20px">No items added. Click "+ Add Row" to begin.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="mu" style="text-align:center;padding:20px">No products yet. Add one from the panel on the right: weight, then Enter.</td></tr>';
           updateTotalsUI();
           return;
         }
@@ -2711,6 +2754,52 @@
         if (S.pendingSync && !confirm('Some changes have not reached the Google Sheet yet. Sign out anyway?')) return;
         signOut();
       });
+
+      /* Quick add: pick part, enter weight, press Enter -> the product lands in the left list */
+      const qa = { part: $('qaPart'), color: $('qaColor'), rate: $('qaRate'), w: $('qaWeight'), amt: $('qaAmt'), msg: $('qaMsg'), cur: '' };
+      const qaRate = () => { const p = getPart(qa.part.value); const c = p && p.colors.find(x => x.color === qa.color.value); if (c) qa.rate.value = Number(c.rate).toFixed(2); };
+      const qaAmt = () => { qa.amt.textContent = fm((parseFloat(qa.rate.value) || 0) * (parseFloat(qa.w.value) || 0)); };
+      function qaFill() {
+        const p = getPart(qa.part.value);
+        if (p && p.colors.length) {
+          if (p.partNo !== qa.cur) {
+            qa.cur = p.partNo;
+            qa.color.innerHTML = p.colors.map(c => `<option value="${esc(c.color)}">${esc(c.color)}</option>`).join('');
+            qa.color.disabled = false;
+            qaRate();
+          }
+        } else {
+          qa.cur = '';
+          qa.color.disabled = true;
+          qa.color.innerHTML = '<option value="">Select part first</option>';
+          qa.rate.value = '';
+        }
+        qaAmt();
+      }
+      function qaAdd() {
+        const p = getPart(qa.part.value), w = parseFloat(qa.w.value) || 0, rate = parseFloat(qa.rate.value) || 0;
+        const fail = (m, el) => { qa.msg.textContent = m; el.focus(); };
+        if (!p) return fail('Choose a valid part number', qa.part);
+        if (!qa.color.value) return fail('Choose a colour', qa.color);
+        if (w <= 0) return fail('Enter the weight in kg', qa.w);
+        S.rows = S.rows.filter(r => r.partNo || Number(r.weight) > 0);
+        S.rows.push({ id: S.nextRowId++, partNo: p.partNo, color: qa.color.value, hsn: p.hsn || '3902', rate, weight: w });
+        renderBillingTable();
+        qa.msg.textContent = '';
+        toast(p.partNo + ' added · ' + w.toFixed(2) + ' kg');
+        qa.part.value = ''; qa.w.value = ''; qaFill();
+        const wrap = $('billTbody').closest('.wrap'); if (wrap) wrap.scrollTop = wrap.scrollHeight;
+        qa.part.focus();
+      }
+      qa.part.addEventListener('input', qaFill);
+      qa.part.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (getPart(qa.part.value)) qa.w.focus(); else qaAdd(); } });
+      qa.color.addEventListener('change', () => { qaRate(); qaAmt(); });
+      qa.rate.addEventListener('input', qaAmt);
+      qa.rate.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); qa.w.focus(); } });
+      qa.w.addEventListener('input', qaAmt);
+      qa.w.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); qaAdd(); } });
+      $('btnQaAdd').addEventListener('click', qaAdd);
+      new MutationObserver(() => { $('itemCount').textContent = S.rows.filter(r => r.partNo).length; }).observe($('billTbody'), { childList: true });
 
       /* Init */
       $('invNo').value = S.invNo;
