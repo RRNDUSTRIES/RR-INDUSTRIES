@@ -1254,7 +1254,19 @@
     .app-frame .nav-group .nav-btn .nav-btn-left { gap: 8px; }
     .app-frame .nav-group .nav-btn svg { display: block; width: 17px; height: 17px; opacity: .9; }
     .app-frame .nav-group .nav-btn:hover { background: rgba(17, 17, 17, .06); color: #111; }
-    .app-frame .nav-group .nav-btn.on { background: #111; color: #fff; box-shadow: 0 8px 16px -10px rgba(0, 0, 0, .7); }
+    .app-frame .nav-group { background: linear-gradient(180deg, rgba(243, 240, 234, .95), rgba(234, 230, 222, .95)); box-shadow: inset 0 1px 3px rgba(0, 0, 0, .07); }
+    .app-frame .nav-group .nav-btn { border: 1px solid transparent; }
+    /* Active link: red glass (translucent red, light edge, top shine) */
+    .app-frame .nav-group .nav-btn.on {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(240, 62, 68, .94) 0%, rgba(215, 25, 32, .82) 55%, rgba(176, 16, 22, .88) 100%);
+      border-color: rgba(255, 255, 255, .5);
+      -webkit-backdrop-filter: blur(10px) saturate(160%);
+      backdrop-filter: blur(10px) saturate(160%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), inset 0 -10px 16px -8px rgba(120, 6, 10, .35), 0 10px 22px -10px rgba(215, 25, 32, .75);
+      text-shadow: 0 1px 1px rgba(110, 5, 10, .25);
+    }
+    .app-frame .nav-group .nav-btn.on .nav-badge { background: #fff; color: #d71920; }
     .app-frame .nav-group .nav-badge { background: #d71920; color: #fff; margin-left: 8px; min-width: 20px; height: 20px; }
 
     /* Fix: keep the tray on one horizontal row (the base style stacked the links in a column) */
