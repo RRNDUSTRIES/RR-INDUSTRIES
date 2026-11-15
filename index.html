@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>R.R. Industries · Billing &amp; A4 Tax Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --tx: #111827;
+      --mu: #6b7280;
+      --bd: #eceef2;
+      --bd-input: #e2e6ee;
+      --surface: #ffffff;
+      --canvas: #f9fafc;
+      --dark: #111318;
+      --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; max-width: 100%; }
+    body {
+      font: 13.5px/1.5 var(--sans);
+      color: var(--tx);
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(circle at 12% 85%, rgba(244, 198, 179, 0.55), transparent 42%),
+        radial-gradient(circle at 88% 15%, rgba(199, 214, 244, 0.65), transparent 45%),
+        radial-gradient(circle at 82% 85%, rgba(235, 200, 190, 0.55), transparent 40%),
+        #eceef3;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      justify-content: stretch;
+      align-items: stretch;
+    }
+
+    /* Full-Screen Edge-to-Edge App Frame */
+    .app-frame {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(18px);
+      border: 0;
+      border-radius: 0;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr) 310px;
+      gap: 12px;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 6px 6px;
+      gap: 16px;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 10px 10px;
+    }
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--dark);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 700 12px/1 var(--sans);
+      letter-spacing: .04em;
+      flex-shrink: 0;
+    }
+    .brand-title {
+      font: 700 15px/1.1 var(--sans);
+      letter-spacing: .04em;
+      color: var(--tx);
+    }
+
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--mu);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font: 500 13px var(--sans);
+      cursor: pointer;
+      transition: all .15s ease;
+      text-align: left;
+    }
+    .nav-btn-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .75; }
+    .nav-btn:hover { background: rgba(255, 255, 255, 0.7); color: var(--tx); }
+    .nav-btn.on {
+      background: #ffffff;
+      color: var(--tx);
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    }
+    .nav-btn.on svg { opacity: 1; }
+    .nav-badge {
+      background: var(--dark);
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 600;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-divider-label {
+      padding: 12px 14px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--tx);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Bottom Frosted Company Card in Sidebar (matching Allison profile card) */
+    .side-profile {
+      background: linear-gradient(145deg, #9aa4b2 0%, #8792a2 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
+    }
+    .side-prof-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .side-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #1e293b;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 700 12px/1 var(--sans);
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, .45);
+    }
+    .side-prof-name { font-weight: 600; font-size: 12.5px; line-height: 1.2; }
+    .side-prof-sub { font-size: 10.5px; opacity: .85; font-family: var(--mono); }
+    .side-pill-btn {
+      width: 100%;
+      border: 0;
+      background: rgba(255, 255, 255, 0.24);
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font: 600 12px var(--sans);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background .15s;
+    }
+    .side-pill-btn:hover { background: rgba(255, 255, 255, 0.34); }
+
+    /* Center Workspace */
+    .center-pane {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(235, 214, 224, 0.35), transparent 52%),
+        var(--canvas);
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.7);
+      padding: 18px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .pg { display: none; flex-direction: column; gap: 14px; }
+    .pg.on { display: flex; }
+
+    /* Center Top Company Banner */
+    .hero-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--bd);
+    }
+    .hero-title {
+      font: 700 22px/1.15 var(--sans);
+      letter-spacing: -.02em;
+      margin: 0;
+      color: var(--tx);
+    }
+    .hero-sub {
+      font-size: 12px;
+      color: var(--mu);
+      margin-top: 2px;
+    }
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .soft-pill {
+      background: #ffffff;
+      border: 1px solid var(--bd);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      color: var(--mu);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+    }
+    .soft-pill strong { color: var(--tx); font-weight: 600; }
+
+    /* Cards & Inputs (matching reference soft white rounded cards) */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--bd);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    }
+    .card-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font: 600 13px/1.2 var(--sans);
+      color: var(--tx);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .split-boxes {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 14px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mu);
+      margin-bottom: 4px;
+    }
+    input, select, textarea {
+      width: 100%;
+      min-width: 0;
+      font: inherit;
+      color: var(--tx);
+      background: #ffffff;
+      border: 1px solid var(--bd-input);
+      border-radius: 11px;
+      padding: 8px 12px;
+      min-height: 38px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input[readonly], textarea[readonly] {
+      background: #f8fafc;
+      color: #475569;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #94a3b8;
+      box-shadow: 0 0 0 3px rgba(148, 163, 184, .18);
+    }
+    .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+    .mu { color: var(--mu); font-size: 12px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .row > div { flex: 1 1 130px; min-width: 0; }
+
+    /* Pill Buttons matching reference */
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--dark);
+      background: var(--dark);
+      color: #ffffff;
+      padding: 9px 18px;
+      min-height: 38px;
+      border-radius: 999px;
+      font: 600 12px var(--sans);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .btn-pill:hover { background: #27272a; border-color: #27272a; }
+    .btn-pill.soft {
+      background: #ffffff;
+      color: var(--tx);
+      border: 1px solid var(--bd-input);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+    }
+    .btn-pill.soft:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-pill.sm { min-height: 32px; padding: 5px 12px; font-size: 11.5px; }
+    .btn-del {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 0;
+      background: transparent;
+      color: #9ca3af;
+      font-size: 17px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-del:hover { background: #fef2f2; color: #ef4444; }
+
+    /* Tables */
+    .wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      text-align: left;
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--bd);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    th {
+      color: var(--mu);
+      font: 600 11px var(--sans);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    #billing-table input, #billing-table select {
+      min-height: 35px;
+      padding: 5px 9px;
+      border-radius: 9px;
+      font-size: 12.5px;
+    }
+    .weight-inp {
+      background: #fefce8 !important;
+      border-color: #fde047 !important;
+      font-weight: 600;
+    }
+    .weight-inp:focus { background: #ffffff !important; border-color: #94a3b8 !important; }
+
+    /* Bottom Prompt-Style Command Bar (matching reference bottom input bar) */
+    .command-bar {
+      background: #ffffff;
+      border: 1px solid var(--bd);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: auto;
+    }
+    .command-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .command-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .command-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Right Panel (matching Chat history floating white card) */
+    .right-pane {
+      background: #ffffff;
+      border: 1px solid var(--bd);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+      overflow-y: auto;
+    }
+    .right-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .right-hdr h2 { margin: 0; font: 600 16px/1.2 var(--sans); color: var(--tx); }
+    .summary-box {
+      background: #f9fafc;
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .tot { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mu); }
+    .tot strong { color: var(--tx); }
+    .tot.gt {
+      font: 700 18px/1.2 var(--sans);
+      color: var(--tx);
+      border-top: 1px solid var(--bd);
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+    .search-pill {
+      position: relative;
+    }
+    .search-pill input {
+      border-radius: 999px;
+      padding-left: 34px;
+      background: #f9fafc;
+      min-height: 36px;
+      font-size: 12.5px;
+    }
+    .search-pill svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      color: var(--mu);
+    }
+    .history-list {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      min-height: 120px;
+    }
+    .hist-item {
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all .15s;
+      background: #ffffff;
+    }
+    .hist-item:hover { border-color: #cbd5e1; background: #f9fafc; }
+    .hist-top { display: flex; justify-content: space-between; font-weight: 600; font-size: 12.5px; }
+    .hist-sub { font-size: 11.5px; color: var(--mu); margin-top: 2px; display: flex; justify-content: space-between; }
+
+    /* Responsive Mobile/Tablet */
+    body:not([data-tab="bill"]) .app-frame {
+      grid-template-columns: 230px minmax(0, 1fr);
+    }
+    body:not([data-tab="bill"]) .right-pane {
+      display: none;
+    }
+    body.sidebar-collapsed .sidebar {
+      display: none;
+    }
+    body.sidebar-collapsed .app-frame {
+      grid-template-columns: minmax(0, 1fr) 310px;
+    }
+    body.sidebar-collapsed:not([data-tab="bill"]) .app-frame {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .sidebar-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--bd);
+      background: #ffffff;
+      color: var(--tx);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+      transition: all .15s ease;
+    }
+    .sidebar-toggle:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    @media (max-width: 1080px) {
+      body { padding: 0; height: auto; min-height: 100dvh; overflow-y: auto; }
+      .app-frame {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: 100dvh;
+        border-radius: 0;
+        padding: 10px;
+        overflow: visible;
+      }
+      .sidebar {
+        flex-direction: row;
+        align-items: center;
+        overflow-x: auto;
+        padding: 4px;
+      }
+      .nav-group { flex-direction: row; }
+      .nav-divider-label, .side-profile { display: none; }
+      .split-boxes { grid-template-columns: 1fr; }
+    }
+
+    /* Modal & Print Dialog */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 19, 24, .55);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px 12px;
+      overflow: auto;
+      z-index: 30;
+    }
+    #modal.on { display: flex; }
+    #mbox {
+      background: #ffffff;
+      border: 1px solid var(--bd);
+      border-radius: 20px;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, .25);
+      padding: 20px;
+      width: 100%;
+      max-width: 860px;
+    }
+    #mbox.narrow { max-width: 440px; }
+    #mbox h2.modal-title { font: 700 17px/1.2 var(--sans); margin: 0; }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, .25);
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s;
+      z-index: 40;
+    }
+    #toast.on { opacity: 1; }
+
+    /* Standardized A4 Print Sheet (210mm x 297mm) matching physical form layout */
+    .inv-sheet {
+      width: 210mm;
+      min-height: 277mm;
+      margin: 0 auto;
+      background: #ffffff;
+      color: #111827;
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 8mm;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .a4-top-title { text-align: center; margin-bottom: 6px; }
+    .a4-top-title span {
+      display: inline-block;
+      border: 1.5px solid #111827;
+      color: #111827;
+      padding: 2px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      border-radius: 3px;
+    }
+    .a4-hdr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr 0.85fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .a4-hdr-left { font-size: 11px; line-height: 1.6; }
+    .a4-hdr-center { text-align: center; }
+    .a4-hdr-center .co-name {
+      font: 700 22px/1.1 var(--serif);
+      color: #111827;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .a4-hdr-center .co-addr { font-size: 11px; color: #4b5563; margin-top: 3px; }
+    .a4-hdr-right { display: flex; justify-content: flex-end; }
+    .a4-badge-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 10px;
+      text-align: right;
+      background: #f9fafb;
+      font-size: 10.5px;
+      line-height: 1.5;
+    }
+    .a4-client-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .a4-rounded-box {
+      border: 1.5px solid #111827;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 11.5px;
+      line-height: 1.55;
+    }
+    .a4-table-box {
+      border: 1.5px solid #111827;
+      border-radius: 8px;
+      overflow: hidden;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .a4-table-box table { width: 100%; border-collapse: collapse; flex: 1 1 auto; }
+    .a4-table-box th {
+      background: #f3f4f6;
+      color: #111827;
+      border-bottom: 1.5px solid #111827;
+      border-right: 1px solid #9ca3af;
+      padding: 7px 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .a4-table-box th:last-child { border-right: 0; }
+    .a4-table-box td {
+      border-right: 1px solid #d1d5db;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 7px 8px;
+      font-size: 11.5px;
+      vertical-align: top;
+    }
+    .a4-table-box td:last-child { border-right: 0; }
+    .a4-table-box tr.filler-row td { height: 100%; border-bottom: 0; }
+    .a4-tax-footer {
+      border-top: 1.5px solid #111827;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      background: #ffffff;
+    }
+    .a4-sign-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 26px;
+      font-size: 11.5px;
+    }
+
+    #printArea { display: none; }
+    @media print {
+      @page { size: A4 portrait; margin: 8mm; }
+      html, body { background: #fff !important; width: 210mm; height: 297mm; margin: 0 !important; padding: 0 !important; display: block !important; }
+      body > *:not(#printArea) { display: none !important; }
+      #printArea { display: block !important; width: 194mm; margin: 0 auto; }
+      .inv-sheet { width: 100% !important; min-height: 279mm !important; border: 0 !important; padding: 0 !important; }
+    }
+  </style>
+</head>
+<body data-tab="bill">
+
+  <div class="app-frame">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-row">
+          <div class="brand-icon">RR</div>
+          <div class="brand-title">R.R. IND</div>
+        </div>
+
+        <div class="nav-group" id="navGroup">
+          <button type="button" class="nav-btn on" data-t="bill">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/></svg>
+              Billing
+            </span>
+          </button>
+          <button type="button" class="nav-btn" data-t="parts">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              Product Information
+            </span>
+          </button>
+          <button type="button" class="nav-btn" data-t="clients">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-4-4h-1m-4 6H2v-2a4 4 0 014-4h7a4 4 0 014 4v2zm-5-10a4 4 0 110-8 4 4 0 010 8zm7 0a3 3 0 110-6 3 3 0 010 6z"/></svg>
+              Dealers
+            </span>
+          </button>
+          <button type="button" class="nav-btn" data-t="sales">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Saved Bills
+            </span>
+            <span class="nav-badge" id="billCountBadge">0</span>
+          </button>
+          <button type="button" class="nav-btn" data-t="set">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+              Settings
+            </span>
+          </button>
+
+          <div class="nav-divider-label">Quick tools</div>
+          <button type="button" class="nav-btn" id="sideNewBill">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              New Invoice
+            </span>
+          </button>
+          <button type="button" class="nav-btn" id="sideQuickClient">
+            <span class="nav-btn-left">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+              Add Dealer
+            </span>
+          </button>
+        </div>
+      </div>
+
+
+    </aside>
+
+    <!-- CENTER WORKSPACE -->
+    <main class="center-pane">
+      <!-- Company Header Strip -->
+      <div class="hero-bar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button type="button" class="sidebar-toggle" id="btnToggleSidebar" title="Hide / Open Sidebar" aria-label="Hide or open sidebar">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div>
+            <h1 class="hero-title" id="hdrName">R.R. INDUSTRIES</h1>
+            <div class="hero-sub" id="hdrAddr">No.96/6, Mangaliamman Koil Street, St. Thomas Mount, Chennai - 600 016.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="hero-pills" id="hdrPills"></div>
+          <button type="button" class="btn-pill soft sm" id="btnSyncSheet" title="Sync with Google Sheet">
+            <span id="syncDot" style="width:7px;height:7px;border-radius:999px;background:#94a3b8;display:inline-block"></span>
+            <span id="syncLabel">Local</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. BILLING VIEW -->
+      <section class="pg on" id="p-bill">
+        <!-- Invoice No & Date -->
+        <div class="card" style="padding:12px 16px">
+          <div class="row" style="margin-bottom:0;align-items:flex-end">
+            <div style="flex:1 1 130px">
+              <label for="invNo">Invoice No.</label>
+              <input id="invNo" class="mono" style="font-weight:700" />
+            </div>
+            <div style="flex:1 1 150px">
+              <label for="invDate">Invoice Date</label>
+              <input id="invDate" type="date" class="mono" />
+            </div>
+            <div style="flex:1 1 130px">
+              <label for="invDcNo">Customer DC No.</label>
+              <input id="invDcNo" placeholder="Optional" />
+            </div>
+            <div style="flex:1 1 150px">
+              <label for="invDcDate">Customer DC Date</label>
+              <input id="invDcDate" type="date" class="mono" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Twin Client Master Boxes -->
+        <div class="split-boxes">
+          <div class="card">
+            <div class="card-hdr">
+              <h3 class="card-title">To. M/S (Dealers)</h3>
+              <button type="button" class="btn-pill soft sm" id="btnQuickClient">+ Add Dealer</button>
+            </div>
+            <div style="margin-bottom:10px">
+              <label for="clientSel">Select Dealer</label>
+              <select id="clientSel"></select>
+            </div>
+            <div>
+              <label for="cAddr">Billing Address</label>
+              <textarea id="cAddr" rows="2" readonly style="min-height:52px;resize:none"></textarea>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <h3 class="card-title">Dealer Tax &amp; Contact</h3>
+            </div>
+            <div style="margin-bottom:10px">
+              <label for="cGst">Customer GSTIN</label>
+              <input id="cGst" class="mono" readonly />
+            </div>
+            <div>
+              <label for="cMobile">Mobile Number</label>
+              <input id="cMobile" class="mono" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Billing Table -->
+        <div class="card">
+          <div class="card-hdr">
+            <div>
+              <h3 class="card-title">Dynamic Billing Table</h3>
+              <div class="mu">Select Part Number &rarr; loads Color options &amp; default &#8377;/kg rate &rarr; enter Weight (KG.).</div>
+            </div>
+            <button type="button" class="btn-pill sm" id="btnAddRow">+ Add Row</button>
+          </div>
+          <div class="wrap">
+            <table id="billing-table">
+              <thead>
+                <tr>
+                  <th style="width:42px;text-align:center">Sl.</th>
+                  <th style="min-width:140px">Part Number</th>
+                  <th style="min-width:130px">Color</th>
+                  <th style="width:105px;text-align:right">Rate/kg</th>
+                  <th style="width:105px;text-align:right">KG.</th>
+                  <th style="width:120px;text-align:right">Basic Amt</th>
+                  <th style="width:40px;text-align:center"></th>
+                </tr>
+              </thead>
+              <tbody id="billTbody"></tbody>
+            </table>
+            <datalist id="partsDatalist"></datalist>
+          </div>
+        </div>
+
+        <!-- Bottom Prompt-Style Command Bar -->
+        <div class="command-bar">
+          <div class="command-top">
+            <div style="flex:1 1 260px">
+              <span class="mu" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em">Amount in words:</span>
+              <strong id="sumWords" style="font-size:12.5px;margin-left:6px">Zero Rupees Only</strong>
+            </div>
+          </div>
+          <div class="command-actions">
+            <div style="flex:1 1 220px">
+              <input id="invNote" placeholder="Remarks / delivery notes..." style="min-height:36px;border-radius:999px;font-size:12.5px" />
+            </div>
+            <div class="command-pills">
+              <button type="button" class="btn-pill soft sm" id="btnSaveBill">Save</button>
+              <button type="button" class="btn-pill soft sm" id="btnResetBill" data-label="Reset">Reset</button>
+              <button type="button" class="btn-pill sm" id="btnPrintDlg">Print A4</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PART MASTER -->
+      <section class="pg" id="p-parts">
+        <div class="card">
+          <div class="card-hdr"><h3 class="card-title">Add Product Information</h3></div>
+          <div class="row">
+            <div><label for="pmPart">Part Number</label><input id="pmPart" placeholder="e.g. RR-PP-101" /></div>
+            <div><label for="pmColor">Color Option</label><input id="pmColor" placeholder="e.g. Natural White" /></div>
+            <div><label for="pmRate">Default Rate / kg (&#8377;)</label><input id="pmRate" type="number" min="0" step="0.01" placeholder="145.00" /></div>
+            <div><label for="pmHsn">HSN</label><input id="pmHsn" value="3902" /></div>
+          </div>
+          <button type="button" class="btn-pill" id="pmSave">Save Part Variant</button>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3 class="card-title">Product Information Directory</h3></div>
+          <div class="wrap">
+            <table>
+              <thead>
+                <tr><th>Part Number</th><th>Color Option</th><th>HSN</th><th style="text-align:right">Default Rate/kg</th><th style="text-align:right">Action</th></tr>
+              </thead>
+              <tbody id="pmTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CLIENT MASTER -->
+      <section class="pg" id="p-clients">
+        <div class="card">
+          <div class="card-hdr"><h3 class="card-title">Add Dealer</h3></div>
+          <div class="row">
+            <div><label for="cmName">Dealer / Company Name</label><input id="cmName" placeholder="Company name" /></div>
+            <div><label for="cmGst">GSTIN</label><input id="cmGst" placeholder="33AAACK8192D1Z4" /></div>
+            <div><label for="cmMobile">Mobile Number</label><input id="cmMobile" placeholder="+91 98412 77340" /></div>
+          </div>
+          <div style="margin-bottom:10px">
+            <label for="cmAddr">Billing Address</label>
+            <input id="cmAddr" placeholder="Full street, industrial estate, city, PIN" />
+          </div>
+          <button type="button" class="btn-pill" id="cmSave">Save Dealer</button>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3 class="card-title">Dealers Directory</h3></div>
+          <div class="wrap">
+            <table>
+              <thead>
+                <tr><th>Client Name</th><th>GSTIN</th><th>Mobile</th><th>Billing Address</th><th style="text-align:right">Action</th></tr>
+              </thead>
+              <tbody id="cmTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. SAVED BILLS -->
+      <section class="pg" id="p-sales">
+        <div class="card">
+          <div class="card-hdr"><h3 class="card-title">Saved Invoices</h3></div>
+          <div class="wrap">
+            <table>
+              <thead>
+                <tr><th>No.</th><th>Date</th><th>Client</th><th>KG.</th><th>Basic</th><th>GST (18%)</th><th>Grand Total</th><th style="text-align:right">Action</th></tr>
+              </thead>
+              <tbody id="salesTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. SETTINGS -->
+      <section class="pg" id="p-set">
+        <div class="card">
+          <div class="card-hdr"><h3 class="card-title">Company Header &amp; Invoice Settings</h3></div>
+          <div class="row">
+            <div><label for="setName">Company Name</label><input id="setName" /></div>
+            <div><label for="setGst">Company GSTIN</label><input id="setGst" class="mono" /></div>
+          </div>
+          <div class="row">
+            <div><label for="setPhone">Mobile / Phone</label><input id="setPhone" class="mono" /></div>
+            <div><label for="setEmail">Email</label><input id="setEmail" type="email" /></div>
+          </div>
+          <div style="margin-bottom:10px">
+            <label for="setAddr">Registered Address</label>
+            <input id="setAddr" />
+          </div>
+          <div style="margin-bottom:12px">
+            <label for="setNote">Default Remarks / Footer Note</label>
+            <input id="setNote" />
+          </div>
+          <button type="button" class="btn-pill" id="setSave">Save Settings</button>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3 class="card-title">Google Sheet Database Connection</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <a href="https://docs.google.com/spreadsheets/d/1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU/edit" target="_blank" rel="noopener" class="btn-pill soft sm" style="text-decoration:none">Open RR INDUSTRIES Sheet</a>
+              <button type="button" class="btn-pill soft sm" id="btnShowGas">View Apps Script (Code.gs)</button>
+            </div>
+          </div>
+          <div class="mu" style="margin-bottom:10px">
+            Linked Spreadsheet: <strong class="mono">1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU</strong>. Paste your deployed Google Apps Script Web App URL below to read and save Dealers, Product Information, Bills, and Settings directly to this Google Sheet.
+          </div>
+          <div style="margin-bottom:10px">
+            <label for="setGasUrl">Google Apps Script Web App URL</label>
+            <input id="setGasUrl" class="mono" placeholder="https://script.google.com/macros/s/.../exec" />
+          </div>
+          <div class="row" style="margin-bottom:0">
+            <button type="button" class="btn-pill" id="btnSaveGas" style="flex:0 0 auto">Connect &amp; Sync Sheet</button>
+            <button type="button" class="btn-pill soft" id="btnPullGas" style="flex:0 0 auto">Pull from Sheet</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT FLOATING PANEL (Tax Summary + Recent Bills History, matching reference right panel) -->
+    <aside class="right-pane">
+      <div class="right-hdr">
+        <h2>Invoice Summary</h2>
+        <span class="mu mono" style="font-size:11px">18% GST</span>
+      </div>
+
+      <div class="summary-box">
+        <div class="tot"><span>Total Weight</span><strong id="sumWeight" class="mono">0.00 kg</strong></div>
+        <div class="tot"><span>Basic Amount</span><strong id="sumBasic" class="mono">&#8377;0.00</strong></div>
+        <div class="tot"><span>CGST @ 9%</span><span id="sumCgst" class="mono">&#8377;0.00</span></div>
+        <div class="tot"><span>SGST @ 9%</span><span id="sumSgst" class="mono">&#8377;0.00</span></div>
+        <div class="tot gt"><span>Grand Total</span><span id="sumGrand" class="mono">&#8377;0.00</span></div>
+      </div>
+
+      <div class="right-hdr" style="margin-top:4px">
+        <h2>Bill history</h2>
+      </div>
+      <div class="search-pill">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+        <input id="histSearch" placeholder="Search bills..." />
+      </div>
+
+      <div class="history-list" id="histList"></div>
+
+      <button type="button" class="btn-pill" id="btnRightPrint" style="width:100%;padding:12px 18px">
+        Print A4 Invoice
+      </button>
+    </aside>
+  </div>
+
+  <!-- Modal & Standardized A4 Print Dialog -->
+  <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog">
+    <div id="mbox"></div>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="printArea"></div>
+
+  <script>
+    (function () {
+      const STORE_KEY = 'rr_industries_pos_v5';
+
+      const DEFAULT_STATE = {
+        cfg: {
+          name: 'R.R. INDUSTRIES',
+          gst: '33BQRPS5268L1ZY',
+          phone: '97104 48972 / 73',
+          email: 'billing@rrindustries.in',
+          addr: 'No.96/6, Mangaliamman Koil Street, St. Thomas Mount, Chennai - 600 016.',
+          note: 'Goods once sold will not be taken back. Subject to Chennai jurisdiction.'
+        },
+        clients: [],
+        parts: [],
+        bills: []
+      };
+
+      const GAS_SCRIPT = `// Paste this into Extensions > Apps Script in your Google Sheet, then Deploy > New deployment > Web app (Access: Anyone)
+const TABS = {
+  Dealers: ['ID', 'Name', 'GSTIN', 'Mobile', 'Address'],
+  Products: ['PartNo', 'Color', 'Rate', 'HSN'],
+  Bills: ['InvoiceNo', 'Date', 'DCNo', 'DCDate', 'DealerID', 'DealerName', 'DealerGST', 'WeightKG', 'BasicAmt', 'CGST', 'SGST', 'GrandTotal', 'Note', 'ItemsJSON'],
+  Settings: ['Key', 'Value']
+};
+
+function ensureTabs() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  Object.keys(TABS).forEach(name => {
+    let sh = ss.getSheetByName(name);
+    if (!sh) {
+      sh = ss.insertSheet(name);
+      sh.appendRow(TABS[name]);
+    } else if (sh.getLastRow() === 0) {
+      sh.appendRow(TABS[name]);
+    }
+  });
+  return ss;
+}
+
+function doGet(e) {
+  const ss = ensureTabs();
+  const dealers = ss.getSheetByName('Dealers').getDataRange().getValues().slice(1)
+    .filter(r => r[1]).map(r => ({ id: String(r[0]), name: String(r[1]), gst: String(r[2]), mobile: String(r[3]), addr: String(r[4]) }));
+  const prodRows = ss.getSheetByName('Products').getDataRange().getValues().slice(1).filter(r => r[0]);
+  const pMap = {};
+  prodRows.forEach(r => {
+    const pNo = String(r[0]).trim();
+    if (!pMap[pNo]) pMap[pNo] = { partNo: pNo, hsn: String(r[3] || '3902'), colors: [] };
+    pMap[pNo].colors.push({ color: String(r[1]), rate: Number(r[2]) || 0 });
+  });
+  const bills = ss.getSheetByName('Bills').getDataRange().getValues().slice(1).filter(r => r[0]).map(r => {
+    let items = [];
+    try { items = JSON.parse(r[13] || '[]'); } catch (err) {}
+    return {
+      invNo: String(r[0]), date: String(r[1]), dcNo: String(r[2]), dcDate: String(r[3]),
+      client: { id: String(r[4]), name: String(r[5]), gst: String(r[6]), mobile: '', addr: '' },
+      totals: { weight: Number(r[7]) || 0, basic: Number(r[8]) || 0, cgst: Number(r[9]) || 0, sgst: Number(r[10]) || 0, gst: (Number(r[9]) || 0) + (Number(r[10]) || 0), grand: Number(r[11]) || 0 },
+      note: String(r[12] || ''), items
+    };
+  }).reverse();
+  const cfg = {};
+  ss.getSheetByName('Settings').getDataRange().getValues().slice(1).forEach(r => { if (r[0]) cfg[String(r[0])] = String(r[1] || ''); });
+  return ContentService.createTextOutput(JSON.stringify({ ok: true, dealers, products: Object.values(pMap), bills, cfg })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  const ss = ensureTabs();
+  const body = JSON.parse(e.postData.contents || '{}');
+  if (body.action === 'saveBill' && body.bill) {
+    const b = body.bill, sh = ss.getSheetByName('Bills');
+    const row = [b.invNo, b.date, b.dcNo || '', b.dcDate || '', b.client.id, b.client.name, b.client.gst, b.totals.weight, b.totals.basic, b.totals.cgst, b.totals.sgst, b.totals.grand, b.note || '', JSON.stringify(b.items)];
+    const vals = sh.getDataRange().getValues();
+    const idx = vals.findIndex((r, i) => i > 0 && String(r[0]) === String(b.invNo));
+    if (idx > 0) sh.getRange(idx + 1, 1, 1, row.length).setValues([row]);
+    else sh.appendRow(row);
+  } else if (body.action === 'syncDealers' && Array.isArray(body.dealers)) {
+    const sh = ss.getSheetByName('Dealers');
+    sh.clearContents();
+    sh.appendRow(TABS.Dealers);
+    if (body.dealers.length) sh.getRange(2, 1, body.dealers.length, 5).setValues(body.dealers.map(d => [d.id, d.name, d.gst, "'" + d.mobile, d.addr]));
+  } else if (body.action === 'syncProducts' && Array.isArray(body.products)) {
+    const sh = ss.getSheetByName('Products');
+    sh.clearContents();
+    sh.appendRow(TABS.Products);
+    const rows = [];
+    body.products.forEach(p => p.colors.forEach(c => rows.push([p.partNo, c.color, c.rate, p.hsn || '3902'])));
+    if (rows.length) sh.getRange(2, 1, rows.length, 4).setValues(rows);
+  } else if (body.action === 'saveSettings' && body.cfg) {
+    const sh = ss.getSheetByName('Settings');
+    sh.clearContents();
+    sh.appendRow(TABS.Settings);
+    const rows = Object.keys(body.cfg).map(k => [k, String(body.cfg[k] || '')]);
+    if (rows.length) sh.getRange(2, 1, rows.length, 2).setValues(rows);
+  }
+  return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
+}`;
+
+      const S = {
+        gasUrl: '',
+        cfg: { ...DEFAULT_STATE.cfg },
+        clients: JSON.parse(JSON.stringify(DEFAULT_STATE.clients)),
+        parts: JSON.parse(JSON.stringify(DEFAULT_STATE.parts)),
+        bills: [],
+        selectedClientId: '',
+        invNo: '5901',
+        invDate: new Date().toISOString().slice(0, 10),
+        rows: [
+          { id: 1, partNo: '', color: '', hsn: '3902', rate: 0, weight: '' }
+        ],
+        nextRowId: 2
+      };
+
+      const $ = id => document.getElementById(id);
+      const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const fm = n => '\u20B9' + (Number(n) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      let toastTimer = null;
+      function toast(msg) {
+        const el = $('toast');
+        el.textContent = msg;
+        el.classList.add('on');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('on'), 2600);
+      }
+
+      function loadStore() {
+        try {
+          localStorage.removeItem('rr_industries_pos_v4');
+          const raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return;
+          const d = JSON.parse(raw);
+          if (typeof d.gasUrl === 'string') S.gasUrl = d.gasUrl;
+          if (d.cfg) S.cfg = { ...S.cfg, ...d.cfg };
+          if (Array.isArray(d.clients) && d.clients.length) S.clients = d.clients;
+          if (Array.isArray(d.parts) && d.parts.length) S.parts = d.parts;
+          if (Array.isArray(d.bills)) S.bills = d.bills;
+        } catch (e) {}
+      }
+
+      function saveStore() {
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify({
+            gasUrl: S.gasUrl,
+            cfg: S.cfg,
+            clients: S.clients,
+            parts: S.parts,
+            bills: S.bills
+          }));
+        } catch (e) {}
+      }
+
+      function setSyncStatus(status, label) {
+        const dot = $('syncDot'), lbl = $('syncLabel');
+        if (!dot || !lbl) return;
+        dot.style.background = status === 'ok' ? '#16a34a' : (status === 'busy' ? '#f59e0b' : (status === 'err' ? '#dc2626' : '#94a3b8'));
+        lbl.textContent = label;
+      }
+
+      async function pushSheet(payload) {
+        if (!S.gasUrl) return;
+        setSyncStatus('busy', 'Saving...');
+        try {
+          await fetch(S.gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+          setSyncStatus('ok', 'Sheet Synced');
+        } catch (e) {
+          setSyncStatus('err', 'Sync Error');
+          toast('Sheet save failed — saved locally');
+        }
+      }
+
+      async function pullSheet(silent) {
+        if (!S.gasUrl) {
+          setSyncStatus('idle', 'Local');
+          if (!silent) toast('Add your Google Apps Script URL in Settings first');
+          return;
+        }
+        setSyncStatus('busy', 'Syncing...');
+        try {
+          const res = await fetch(S.gasUrl);
+          const data = await res.json();
+          if (Array.isArray(data.dealers) && data.dealers.length) S.clients = data.dealers;
+          if (Array.isArray(data.products) && data.products.length) S.parts = data.products;
+          if (Array.isArray(data.bills)) S.bills = data.bills;
+          if (data.cfg && data.cfg.name) S.cfg = { ...S.cfg, ...data.cfg };
+          saveStore();
+          renderHeader();
+          renderClientSelect();
+          renderBillingTable();
+          renderRightHistory();
+          setSyncStatus('ok', 'Sheet Synced');
+          if (!silent) toast('Synced from Google Sheet');
+        } catch (e) {
+          setSyncStatus('err', 'Offline');
+          if (!silent) toast('Could not reach Google Sheet — using local data');
+        }
+      }
+
+      /* Navigation */
+      function switchTab(t) {
+        document.body.dataset.tab = t;
+        document.querySelectorAll('.pg').forEach(p => p.classList.toggle('on', p.id === 'p-' + t));
+        document.querySelectorAll('#navGroup .nav-btn[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+        if (t === 'parts') renderPartMaster();
+        if (t === 'clients') renderClientMaster();
+        if (t === 'sales') renderSales();
+        if (t === 'set') fillSettings();
+      }
+      $('btnToggleSidebar').addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-collapsed');
+      });
+      $('navGroup').addEventListener('click', e => {
+        const btn = e.target.closest('.nav-btn[data-t]');
+        if (btn) switchTab(btn.dataset.t);
+      });
+
+      /* Header & Sidebar Company Info */
+      function renderHeader() {
+        $('hdrName').textContent = S.cfg.name;
+        $('hdrAddr').textContent = S.cfg.addr;
+        $('hdrPills').innerHTML = `
+          <span class="soft-pill"><strong>GSTIN:</strong> <span class="mono">${esc(S.cfg.gst)}</span></span>
+          <span class="soft-pill"><strong>Mobile:</strong> <span class="mono">${esc(S.cfg.phone)}</span></span>
+        `;
+      }
+
+      /* Client Master Selector */
+      function renderClientSelect() {
+        const sel = $('clientSel');
+        sel.innerHTML = '<option value="">-- Choose Dealer --</option>' +
+          S.clients.map(c => `<option value="${esc(c.id)}">${esc(c.name)} (${esc(c.gst)})</option>`).join('');
+        sel.value = S.selectedClientId || '';
+        populateClientFields();
+      }
+
+      function populateClientFields() {
+        const c = S.clients.find(x => x.id === S.selectedClientId);
+        $('cGst').value = c ? c.gst : '';
+        $('cMobile').value = c ? c.mobile : '';
+        $('cAddr').value = c ? c.addr : '';
+      }
+
+      $('clientSel').addEventListener('change', e => {
+        S.selectedClientId = e.target.value;
+        populateClientFields();
+      });
+
+      /* Amount in Indian Words */
+      function numberToIndianWords(amount) {
+        const num = Math.round((Number(amount) || 0) * 100) / 100;
+        const rupees = Math.floor(num);
+        const paise = Math.round((num - rupees) * 100);
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+          'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        const two = n => n === 0 ? '' : (n < 20 ? ones[n] : tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : ''));
+        const three = n => n === 0 ? '' : ((Math.floor(n / 100) ? ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' ' : '') : '') + two(n % 100));
+        function conv(n) {
+          if (n === 0) return 'Zero';
+          let r = '';
+          const cr = Math.floor(n / 10000000); n %= 10000000;
+          const lk = Math.floor(n / 100000); n %= 100000;
+          const th = Math.floor(n / 1000); n %= 1000;
+          if (cr) r += two(cr) + ' Crore ';
+          if (lk) r += two(lk) + ' Lakh ';
+          if (th) r += two(th) + ' Thousand ';
+          if (n) r += three(n);
+          return r.trim();
+        }
+        return conv(rupees) + ' Rupees' + (paise > 0 ? ' and ' + two(paise) + ' Paise' : '') + ' Only';
+      }
+
+      /* Dynamic Billing Table */
+      function getPart(partNo) {
+        const key = String(partNo || '').trim().toLowerCase();
+        if (!key) return null;
+        return S.parts.find(p => p.partNo.toLowerCase() === key) || null;
+      }
+
+      function renderPartsDatalist() {
+        const dl = $('partsDatalist');
+        if (!dl) return;
+        dl.innerHTML = S.parts.map(p => `<option value="${esc(p.partNo)}"></option>`).join('');
+      }
+
+      function computeTotals() {
+        let weight = 0, basic = 0;
+        S.rows.forEach(r => {
+          const w = Number(r.weight) || 0;
+          const rate = Number(r.rate) || 0;
+          weight += w;
+          basic += w * rate;
+        });
+        const cgst = basic * 0.09;
+        const sgst = basic * 0.09;
+        const gst = cgst + sgst;
+        const grand = basic + gst;
+        return { weight, basic, cgst, sgst, gst, grand };
+      }
+
+      function updateTotalsUI() {
+        const t = computeTotals();
+        $('sumWeight').textContent = `${t.weight.toFixed(2)} kg`;
+        $('sumBasic').textContent = fm(t.basic);
+        $('sumCgst').textContent = fm(t.cgst);
+        $('sumSgst').textContent = fm(t.sgst);
+        $('sumGrand').textContent = fm(t.grand);
+        $('sumWords').textContent = numberToIndianWords(t.grand);
+      }
+
+      function renderBillingTable() {
+        renderPartsDatalist();
+        const tbody = $('billTbody');
+        tbody.innerHTML = '';
+
+        if (S.rows.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="mu" style="text-align:center;padding:20px">No items added. Click "+ Add Row" to begin.</td></tr>';
+          updateTotalsUI();
+          return;
+        }
+
+        S.rows.forEach((row, idx) => {
+          const partObj = getPart(row.partNo);
+          const amt = (Number(row.rate) || 0) * (Number(row.weight) || 0);
+          const tr = document.createElement('tr');
+
+          const td0 = document.createElement('td');
+          td0.style.textAlign = 'center';
+          td0.className = 'mono mu';
+          td0.textContent = idx + 1;
+          tr.appendChild(td0);
+
+          const td1 = document.createElement('td');
+          const pInp = document.createElement('input');
+          pInp.type = 'text';
+          pInp.setAttribute('list', 'partsDatalist');
+          pInp.placeholder = 'Search part no...';
+          pInp.autocomplete = 'off';
+          pInp.value = row.partNo || '';
+          pInp.addEventListener('input', e => {
+            const val = e.target.value;
+            row.partNo = val;
+            const p = getPart(val);
+            if (p && p.colors.length) {
+              row.partNo = p.partNo;
+              row.color = p.colors[0].color;
+              row.rate = p.colors[0].rate;
+              row.hsn = p.hsn || '3902';
+              cSel.disabled = false;
+              cSel.innerHTML = '<option value="">-- Color --</option>' +
+                p.colors.map(c => `<option value="${esc(c.color)}">${esc(c.color)}</option>`).join('');
+              cSel.value = row.color;
+              rInp.value = Number(row.rate).toFixed(2);
+            } else {
+              row.color = '';
+              row.rate = 0;
+              row.hsn = '';
+              cSel.disabled = true;
+              cSel.innerHTML = '<option value="">Select part first</option>';
+              rInp.value = '';
+            }
+            const cell = document.getElementById('amt-' + row.id);
+            if (cell) cell.textContent = fm((Number(row.rate) || 0) * (Number(row.weight) || 0));
+            updateTotalsUI();
+          });
+          pInp.addEventListener('change', () => {
+            const p = getPart(pInp.value);
+            if (p) pInp.value = p.partNo;
+          });
+          td1.appendChild(pInp);
+          tr.appendChild(td1);
+
+          const td2 = document.createElement('td');
+          const cSel = document.createElement('select');
+          cSel.disabled = !partObj;
+          if (!partObj) {
+            cSel.innerHTML = '<option value="">Select part first</option>';
+          } else {
+            cSel.innerHTML = '<option value="">-- Color --</option>' +
+              partObj.colors.map(c => `<option value="${esc(c.color)}">${esc(c.color)}</option>`).join('');
+            cSel.value = row.color || '';
+          }
+          cSel.addEventListener('change', e => {
+            row.color = e.target.value;
+            const currentPart = getPart(row.partNo);
+            if (currentPart) {
+              const found = currentPart.colors.find(c => c.color === row.color);
+              if (found) row.rate = found.rate;
+            }
+            renderBillingTable();
+          });
+          td2.appendChild(cSel);
+          tr.appendChild(td2);
+
+          const td3 = document.createElement('td');
+          const rInp = document.createElement('input');
+          rInp.type = 'number';
+          rInp.step = '0.01';
+          rInp.min = '0';
+          rInp.className = 'mono';
+          rInp.style.textAlign = 'right';
+          rInp.value = row.rate ? Number(row.rate).toFixed(2) : '';
+          rInp.placeholder = '0.00';
+          rInp.addEventListener('input', e => {
+            row.rate = parseFloat(e.target.value) || 0;
+            const cell = document.getElementById('amt-' + row.id);
+            if (cell) cell.textContent = fm(row.rate * (Number(row.weight) || 0));
+            updateTotalsUI();
+          });
+          td3.appendChild(rInp);
+          tr.appendChild(td3);
+
+          const td4 = document.createElement('td');
+          const wInp = document.createElement('input');
+          wInp.type = 'number';
+          wInp.step = '0.01';
+          wInp.min = '0';
+          wInp.className = 'mono weight-inp';
+          wInp.style.textAlign = 'right';
+          wInp.value = row.weight !== '' && row.weight !== null ? row.weight : '';
+          wInp.placeholder = '0.00';
+          wInp.addEventListener('input', e => {
+            row.weight = parseFloat(e.target.value) || 0;
+            const cell = document.getElementById('amt-' + row.id);
+            if (cell) cell.textContent = fm((Number(row.rate) || 0) * row.weight);
+            updateTotalsUI();
+          });
+          td4.appendChild(wInp);
+          tr.appendChild(td4);
+
+          const td5 = document.createElement('td');
+          td5.id = 'amt-' + row.id;
+          td5.className = 'mono';
+          td5.style.textAlign = 'right';
+          td5.style.fontWeight = '600';
+          td5.textContent = fm(amt);
+          tr.appendChild(td5);
+
+          const td6 = document.createElement('td');
+          td6.style.textAlign = 'center';
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'btn-del';
+          del.textContent = '×';
+          del.title = 'Remove row';
+          del.addEventListener('click', () => {
+            S.rows = S.rows.filter(x => x.id !== row.id);
+            renderBillingTable();
+          });
+          td6.appendChild(del);
+          tr.appendChild(td6);
+
+          tbody.appendChild(tr);
+        });
+
+        updateTotalsUI();
+      }
+
+      $('btnAddRow').addEventListener('click', () => {
+        S.rows.push({ id: S.nextRowId++, partNo: '', color: '', hsn: '3902', rate: 0, weight: '' });
+        renderBillingTable();
+      });
+
+      function startNewBill() {
+        S.rows = [{ id: S.nextRowId++, partNo: '', color: '', hsn: '3902', rate: 0, weight: '' }];
+        const m = $('invNo').value.match(/^(.*?)(\d+)$/);
+        if (m) $('invNo').value = m[1] + String(parseInt(m[2], 10) + 1).padStart(m[2].length, '0');
+        $('invDcNo').value = '';
+        $('invDcDate').value = '';
+        switchTab('bill');
+        renderBillingTable();
+        toast('Fresh invoice ready');
+      }
+      $('sideNewBill').addEventListener('click', startNewBill);
+      $('btnResetBill').addEventListener('click', e => {
+        const btn = e.currentTarget;
+        if (S.rows.some(r => r.partNo || Number(r.weight) > 0) && btn.dataset.s !== '1') {
+          btn.dataset.s = '1';
+          btn.textContent = 'Sure?';
+          clearTimeout(btn._t);
+          btn._t = setTimeout(() => { btn.dataset.s = ''; btn.textContent = btn.dataset.label; }, 2800);
+          return;
+        }
+        clearTimeout(btn._t);
+        btn.dataset.s = '';
+        btn.textContent = btn.dataset.label;
+        startNewBill();
+      });
+
+      function buildCurrentBillRecord() {
+        const client = S.clients.find(c => c.id === S.selectedClientId);
+        if (!client) { toast('Select a dealer from Dealers'); return null; }
+        const items = S.rows.filter(r => r.partNo && Number(r.weight) > 0);
+        if (!items.length) { toast('Add at least one part with weight > 0'); return null; }
+        const t = computeTotals();
+        return {
+          invNo: $('invNo').value.trim() || '5901',
+          date: $('invDate').value || new Date().toISOString().slice(0, 10),
+          dcNo: $('invDcNo').value.trim(),
+          dcDate: $('invDcDate').value || '',
+          note: $('invNote').value.trim() || S.cfg.note,
+          client: { ...client },
+          items: items.map(i => ({ ...i, amt: (Number(i.rate) || 0) * (Number(i.weight) || 0) })),
+          totals: t
+        };
+      }
+
+      function renderRightHistory() {
+        $('billCountBadge').textContent = S.bills.length;
+        const q = ($('histSearch').value || '').trim().toLowerCase();
+        const filtered = S.bills.filter(b =>
+          !q ||
+          b.invNo.toLowerCase().includes(q) ||
+          b.client.name.toLowerCase().includes(q)
+        );
+        $('histList').innerHTML = filtered.slice(0, 12).map((b, i) => `
+          <div class="hist-item" data-hist-idx="${S.bills.indexOf(b)}">
+            <div class="hist-top">
+              <span>#${esc(b.invNo)} · ${esc(b.client.name)}</span>
+              <span class="mono">${fm(b.totals.grand)}</span>
+            </div>
+            <div class="hist-sub">
+              <span>${esc(b.date)}</span>
+              <span>${b.totals.weight.toFixed(2)} kg</span>
+            </div>
+          </div>`).join('') || '<div class="mu" style="text-align:center;padding:18px 8px">No saved bills yet. Click Save or Print A4 to store an invoice.</div>';
+      }
+
+      $('histSearch').addEventListener('input', renderRightHistory);
+      $('histList').addEventListener('click', e => {
+        const card = e.target.closest('[data-hist-idx]');
+        if (!card) return;
+        const rec = S.bills[+card.getAttribute('data-hist-idx')];
+        if (rec) openPrintDialog(rec);
+      });
+
+      $('btnSaveBill').addEventListener('click', () => {
+        const rec = buildCurrentBillRecord();
+        if (!rec) return;
+        const idx = S.bills.findIndex(b => b.invNo === rec.invNo);
+        if (idx >= 0) S.bills[idx] = rec;
+        else S.bills.unshift(rec);
+        saveStore();
+        renderRightHistory();
+        pushSheet({ action: 'saveBill', bill: rec });
+        toast('Saved invoice #' + rec.invNo);
+      });
+
+      /* Standardized A4 Print Dialog Box */
+      function invoiceSheetHtml(rec) {
+        const rowsHtml = rec.items.map((it, i) => `
+          <tr>
+            <td style="text-align:center" class="mono">${i + 1}</td>
+            <td><strong>${esc(it.partNo)}</strong> &mdash; ${esc(it.color || '-')}</td>
+            <td style="text-align:right" class="mono">${Number(it.weight).toFixed(2)}</td>
+            <td style="text-align:right" class="mono">${Number(it.rate).toFixed(2)}</td>
+            <td style="text-align:right;font-weight:600" class="mono">${fm(it.amt)}</td>
+          </tr>`).join('');
+
+        return `
+          <div class="inv-sheet">
+            <div>
+              <div class="a4-top-title"><span>Tax Invoice</span></div>
+              <div class="a4-hdr-grid">
+                <div class="a4-hdr-left">
+                  <div><strong>GSTIN :</strong> <span class="mono">${esc(S.cfg.gst)}</span></div>
+                  <div><strong>Mobile :</strong> <span class="mono">${esc(S.cfg.phone)}</span></div>
+                  <div style="margin-top:4px"><strong>Date :</strong> <span class="mono">${esc(rec.date)}</span></div>
+                  <div><strong>No. :</strong> <span class="mono" style="font-size:14px;font-weight:700">${esc(rec.invNo)}</span></div>
+                </div>
+                <div class="a4-hdr-center">
+                  <div style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:24px;border:1.5px solid #111827;border-radius:999px;font:700 13px/1 var(--serif)">RR</div>
+                  <div class="co-name">${esc(S.cfg.name)}</div>
+                  <div class="co-addr">${esc(S.cfg.addr)}</div>
+                </div>
+                <div class="a4-hdr-right">
+                  <div class="a4-badge-box">
+                    <div style="font-weight:700">ISO 9001:2015</div>
+                    <div>Quality Certified</div>
+                    <div style="color:#6b7280;font-size:9.5px;margin-top:2px">Standard A4</div>
+                  </div>
+                </div>
+              </div>
+              <div class="a4-client-grid">
+                <div class="a4-rounded-box">
+                  <div style="font-weight:700">To. M/S <span style="font-size:13px;margin-left:4px">${esc(rec.client.name)}</span></div>
+                  <div style="color:#374151;margin-top:4px">${esc(rec.client.addr)}</div>
+                  <div style="margin-top:4px"><strong>Mobile :</strong> <span class="mono">${esc(rec.client.mobile)}</span></div>
+                </div>
+                <div class="a4-rounded-box" style="display:flex;flex-direction:column;justify-content:center;gap:4px">
+                  <div><strong>CUSTOMER GSTIN :</strong> <span class="mono">${esc(rec.client.gst)}</span></div>
+                  <div><strong>CUSTOMER DC No. :</strong> <span class="mono">${esc(rec.dcNo || '—')}</span></div>
+                  <div><strong>CUSTOMER DC Date :</strong> <span class="mono">${esc(rec.dcDate || '—')}</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="a4-table-box">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:46px;text-align:center">Sl.No.</th>
+                    <th>Description (Part No. &amp; Color)</th>
+                    <th style="width:85px;text-align:right">KG.</th>
+                    <th style="width:100px;text-align:right">Rate/kg (&#8377;)</th>
+                    <th style="width:120px;text-align:right">Basic Amt (&#8377;)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                  <tr class="filler-row"><td></td><td></td><td></td><td></td><td></td></tr>
+                </tbody>
+              </table>
+              <div class="a4-tax-footer">
+                <div style="padding:10px 12px;border-right:1px solid #d1d5db;display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+                  <div>
+                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#4b5563">Amount in Words</div>
+                    <div style="font-weight:600;font-size:11.5px;margin-top:2px">${esc(numberToIndianWords(rec.totals.grand))}</div>
+                  </div>
+                  <div style="font-size:10.5px;color:#4b5563"><strong>Note:</strong> ${esc(rec.note)}</div>
+                </div>
+                <div style="font-size:11.5px">
+                  <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>Total Weight</span><span class="mono">${rec.totals.weight.toFixed(2)} kg</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>Basic Amount</span><span class="mono" style="font-weight:600">${fm(rec.totals.basic)}</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>CGST @ 9%</span><span class="mono">${fm(rec.totals.cgst)}</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb"><span>SGST @ 9%</span><span class="mono">${fm(rec.totals.sgst)}</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:7px 12px;background:#f3f4f6;font-weight:700;font-size:13.5px"><span>Grand Total</span><span class="mono">${fm(rec.totals.grand)}</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="a4-sign-row">
+              <div style="color:#4b5563">Receiver's Signature</div>
+              <div style="font-weight:700">For ${esc(S.cfg.name)}</div>
+            </div>
+          </div>`;
+      }
+
+      function openPrintDialog(rec) {
+        const sheet = invoiceSheetHtml(rec);
+        const box = $('mbox');
+        box.classList.remove('narrow');
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+            <h2 class="modal-title">Standardized A4 Print Preview · #${esc(rec.invNo)}</h2>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="btn-pill sm" id="mPrintNow">Print (A4)</button>
+              <button type="button" class="btn-pill soft sm" id="mDlHtml">Download HTML</button>
+              <button type="button" class="btn-pill soft sm" id="mClose">Close</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">${sheet}</div>
+        `;
+        $('modal').classList.add('on');
+        $('mClose').onclick = () => $('modal').classList.remove('on');
+        $('mPrintNow').onclick = () => {
+          $('printArea').innerHTML = sheet;
+          try { window.print(); } catch (e) { toast('Use Download HTML to print'); }
+        };
+        $('mDlHtml').onclick = () => {
+          const styles = document.querySelector('style').innerHTML;
+          const doc = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice-${esc(rec.invNo)}</title><style>${styles} body{background:#fff;display:block;padding:0;margin:0}.inv-sheet{border:0;width:194mm;min-height:279mm;padding:0;margin:8mm auto}</style></head><body>${sheet}<script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>`;
+          const u = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
+          const a = document.createElement('a');
+          a.href = u;
+          a.download = 'Invoice-' + rec.invNo + '.html';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => { URL.revokeObjectURL(u); a.remove(); }, 1500);
+          toast('Downloaded Invoice-' + rec.invNo + '.html');
+        };
+      }
+
+      function triggerPrint() {
+        const rec = buildCurrentBillRecord();
+        if (!rec) return;
+        const idx = S.bills.findIndex(b => b.invNo === rec.invNo);
+        if (idx >= 0) S.bills[idx] = rec;
+        else S.bills.unshift(rec);
+        saveStore();
+        renderRightHistory();
+        pushSheet({ action: 'saveBill', bill: rec });
+        openPrintDialog(rec);
+      }
+      $('btnPrintDlg').addEventListener('click', triggerPrint);
+      $('btnRightPrint').addEventListener('click', triggerPrint);
+
+      /* Quick Add Client Modal */
+      function openQuickClientModal() {
+        const box = $('mbox');
+        box.classList.add('narrow');
+        box.innerHTML = `
+          <h2 class="modal-title" style="margin-bottom:14px">Add New Dealer</h2>
+          <div style="margin-bottom:10px"><label>Dealer / Company Name</label><input id="qcName" placeholder="Company name" /></div>
+          <div class="row">
+            <div><label>GSTIN</label><input id="qcGst" class="mono" placeholder="33AAACK8192D1Z4" /></div>
+            <div><label>Mobile</label><input id="qcMobile" class="mono" placeholder="+91 98400 11223" /></div>
+          </div>
+          <div style="margin-bottom:14px"><label>Billing Address</label><input id="qcAddr" placeholder="Full billing address" /></div>
+          <div class="row" style="margin-bottom:0">
+            <button type="button" class="btn-pill" id="qcSave" style="flex:1">Save Dealer</button>
+            <button type="button" class="btn-pill soft" id="qcCancel" style="flex:1">Cancel</button>
+          </div>
+        `;
+        $('modal').classList.add('on');
+        $('qcCancel').onclick = () => $('modal').classList.remove('on');
+        $('qcSave').onclick = () => {
+          const name = $('qcName').value.trim();
+          const gst = $('qcGst').value.trim().toUpperCase();
+          const mobile = $('qcMobile').value.trim();
+          const addr = $('qcAddr').value.trim();
+          if (!name || !gst || !mobile || !addr) return toast('All dealer fields are required');
+          const c = { id: 'c' + Date.now(), name, gst, mobile, addr };
+          S.clients.push(c);
+          S.selectedClientId = c.id;
+          saveStore();
+          renderClientSelect();
+          pushSheet({ action: 'syncDealers', dealers: S.clients });
+          $('modal').classList.remove('on');
+          toast('Dealer added');
+        };
+      }
+      $('btnQuickClient').addEventListener('click', openQuickClientModal);
+      $('sideQuickClient').addEventListener('click', openQuickClientModal);
+
+      $('modal').addEventListener('click', e => {
+        if (e.target.id === 'modal') $('modal').classList.remove('on');
+      });
+
+      /* Part Master Tab */
+      function renderPartMaster() {
+        const rows = [];
+        S.parts.forEach(p => {
+          p.colors.forEach(c => {
+            rows.push(`
+              <tr>
+                <td><strong>${esc(p.partNo)}</strong></td>
+                <td>${esc(c.color)}</td>
+                <td class="mono">${esc(p.hsn || '3902')}</td>
+                <td class="mono" style="text-align:right">${fm(c.rate)}</td>
+                <td style="text-align:right"><button type="button" class="btn-pill soft sm" data-del-p="${esc(p.partNo)}" data-del-c="${esc(c.color)}">Remove</button></td>
+              </tr>`);
+          });
+        });
+        $('pmTbody').innerHTML = rows.join('') || '<tr><td colspan="5" class="mu">No parts yet.</td></tr>';
+      }
+
+      $('pmSave').addEventListener('click', () => {
+        const partNo = $('pmPart').value.trim().toUpperCase();
+        const color = $('pmColor').value.trim();
+        const rate = parseFloat($('pmRate').value) || 0;
+        const hsn = $('pmHsn').value.trim() || '3902';
+        if (!partNo || !color || rate <= 0) return toast('Enter part number, color, and rate');
+        let p = S.parts.find(x => x.partNo === partNo);
+        if (p) {
+          p.hsn = hsn;
+          const c = p.colors.find(x => x.color.toLowerCase() === color.toLowerCase());
+          if (c) c.rate = rate;
+          else p.colors.push({ color, rate });
+        } else {
+          S.parts.push({ partNo, hsn, colors: [{ color, rate }] });
+        }
+        saveStore();
+        renderPartMaster();
+        renderBillingTable();
+        pushSheet({ action: 'syncProducts', products: S.parts });
+        $('pmColor').value = '';
+        $('pmRate').value = '';
+        toast('Saved ' + partNo + ' · ' + color);
+      });
+
+      $('pmTbody').addEventListener('click', e => {
+        const btn = e.target.closest('[data-del-p]');
+        if (!btn) return;
+        const pNo = btn.getAttribute('data-del-p');
+        const col = btn.getAttribute('data-del-c');
+        const p = S.parts.find(x => x.partNo === pNo);
+        if (p) {
+          p.colors = p.colors.filter(c => c.color !== col);
+          if (!p.colors.length) S.parts = S.parts.filter(x => x.partNo !== pNo);
+        }
+        saveStore();
+        renderPartMaster();
+        renderBillingTable();
+        pushSheet({ action: 'syncProducts', products: S.parts });
+        toast('Removed');
+      });
+
+      /* Client Master Tab */
+      function renderClientMaster() {
+        $('cmTbody').innerHTML = S.clients.map(c => `
+          <tr>
+            <td><strong>${esc(c.name)}</strong></td>
+            <td class="mono">${esc(c.gst)}</td>
+            <td class="mono">${esc(c.mobile)}</td>
+            <td>${esc(c.addr)}</td>
+            <td style="text-align:right"><button type="button" class="btn-pill soft sm" data-del-cli="${esc(c.id)}">Remove</button></td>
+          </tr>`).join('') || '<tr><td colspan="5" class="mu">No dealers yet.</td></tr>';
+      }
+
+      $('cmSave').addEventListener('click', () => {
+        const name = $('cmName').value.trim();
+        const gst = $('cmGst').value.trim().toUpperCase();
+        const mobile = $('cmMobile').value.trim();
+        const addr = $('cmAddr').value.trim();
+        if (!name || !gst || !mobile || !addr) return toast('All dealer fields are required');
+        const c = { id: 'c' + Date.now(), name, gst, mobile, addr };
+        S.clients.push(c);
+        S.selectedClientId = c.id;
+        saveStore();
+        renderClientMaster();
+        renderClientSelect();
+        pushSheet({ action: 'syncDealers', dealers: S.clients });
+        $('cmName').value = ''; $('cmGst').value = ''; $('cmMobile').value = ''; $('cmAddr').value = '';
+        toast('Dealer saved');
+      });
+
+      $('cmTbody').addEventListener('click', e => {
+        const btn = e.target.closest('[data-del-cli]');
+        if (!btn) return;
+        const id = btn.getAttribute('data-del-cli');
+        S.clients = S.clients.filter(c => c.id !== id);
+        if (S.selectedClientId === id) S.selectedClientId = S.clients[0] ? S.clients[0].id : '';
+        saveStore();
+        renderClientMaster();
+        renderClientSelect();
+        pushSheet({ action: 'syncDealers', dealers: S.clients });
+        toast('Dealer removed');
+      });
+
+      /* Saved Bills Tab */
+      function renderSales() {
+        $('salesTbody').innerHTML = S.bills.map((b, i) => `
+          <tr>
+            <td class="mono"><strong>#${esc(b.invNo)}</strong></td>
+            <td class="mono">${esc(b.date)}</td>
+            <td>${esc(b.client.name)}</td>
+            <td class="mono">${b.totals.weight.toFixed(2)} kg</td>
+            <td class="mono">${fm(b.totals.basic)}</td>
+            <td class="mono">${fm(b.totals.gst)}</td>
+            <td class="mono"><strong>${fm(b.totals.grand)}</strong></td>
+            <td style="text-align:right"><button type="button" class="btn-pill soft sm" data-view-bill="${i}">Print A4</button></td>
+          </tr>`).join('') || '<tr><td colspan="8" class="mu">No saved invoices yet.</td></tr>';
+      }
+
+      $('salesTbody').addEventListener('click', e => {
+        const btn = e.target.closest('[data-view-bill]');
+        if (!btn) return;
+        const rec = S.bills[+btn.getAttribute('data-view-bill')];
+        if (rec) openPrintDialog(rec);
+      });
+
+      /* Settings Tab */
+      function fillSettings() {
+        $('setName').value = S.cfg.name;
+        $('setGst').value = S.cfg.gst;
+        $('setPhone').value = S.cfg.phone;
+        $('setEmail').value = S.cfg.email;
+        $('setAddr').value = S.cfg.addr;
+        $('setNote').value = S.cfg.note;
+        $('setGasUrl').value = S.gasUrl || '';
+      }
+
+      $('setSave').addEventListener('click', () => {
+        S.cfg = {
+          name: $('setName').value.trim() || 'R.R. INDUSTRIES',
+          gst: $('setGst').value.trim().toUpperCase(),
+          phone: $('setPhone').value.trim(),
+          email: $('setEmail').value.trim(),
+          addr: $('setAddr').value.trim(),
+          note: $('setNote').value.trim()
+        };
+        saveStore();
+        renderHeader();
+        pushSheet({ action: 'saveSettings', cfg: S.cfg });
+        toast('Settings saved');
+      });
+
+      $('btnSyncSheet').addEventListener('click', () => {
+        if (!S.gasUrl) { switchTab('set'); toast('Paste your Google Apps Script URL in Settings'); }
+        else pullSheet(false);
+      });
+
+      $('btnSaveGas').addEventListener('click', () => {
+        const url = $('setGasUrl').value.trim();
+        S.gasUrl = url;
+        saveStore();
+        if (!url) { setSyncStatus('idle', 'Local'); return toast('Cleared Google Sheet URL'); }
+        pullSheet(false);
+      });
+
+      $('btnPullGas').addEventListener('click', () => pullSheet(false));
+
+      $('btnShowGas').addEventListener('click', () => {
+        const box = $('mbox');
+        box.classList.remove('narrow');
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px">
+            <h2 class="modal-title">Google Apps Script (Code.gs)</h2>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn-pill sm" id="copyGasBtn">Copy Code</button>
+              <button type="button" class="btn-pill soft sm" id="closeGasBtn">Close</button>
+            </div>
+          </div>
+          <div class="mu" style="margin-bottom:8px">1. Open your Google Sheet &rarr; <strong>Extensions &rarr; Apps Script</strong>.<br>2. Paste this code, save, and click <strong>Deploy &rarr; New deployment &rarr; Web app</strong> (Who has access: <strong>Anyone</strong>).<br>3. Copy the Web App URL and paste it into <strong>Settings</strong>.</div>
+          <textarea id="gasCodeBox" rows="14" readonly class="mono" style="font-size:11.5px;line-height:1.4;white-space:pre;overflow:auto"></textarea>
+        `;
+        $('gasCodeBox').value = GAS_SCRIPT;
+        $('modal').classList.add('on');
+        $('closeGasBtn').onclick = () => $('modal').classList.remove('on');
+        $('copyGasBtn').onclick = () => {
+          $('gasCodeBox').select();
+          try { navigator.clipboard.writeText(GAS_SCRIPT); } catch (e) { document.execCommand('copy'); }
+          toast('Copied Code.gs to clipboard');
+        };
+      });
+
+      /* Init */
+      loadStore();
+      $('invNo').value = S.invNo;
+      $('invDate').value = S.invDate;
+      $('invNote').value = S.cfg.note;
+      renderHeader();
+      renderClientSelect();
+      renderBillingTable();
+      renderRightHistory();
+      switchTab('bill');
+      if (S.gasUrl) pullSheet(true);
+      else setSyncStatus('idle', 'Local');
+    })();
+  </script>
+</body>
+</html>
