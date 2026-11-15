@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://sheets.googleapis.com" crossorigin />
   <!-- Google sign-in (OAuth token) for direct Google Sheets API access -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <style>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
     :root {
       --tx: #111827;
       --mu: #6b7280;
@@ -26,553 +26,6 @@
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; max-width: 100%; }
-    body {
-      font: 13.5px/1.5 var(--sans);
-      color: var(--tx);
-      -webkit-font-smoothing: antialiased;
-      background:
-        radial-gradient(circle at 12% 85%, rgba(244, 198, 179, 0.55), transparent 42%),
-        radial-gradient(circle at 88% 15%, rgba(199, 214, 244, 0.65), transparent 45%),
-        radial-gradient(circle at 82% 85%, rgba(235, 200, 190, 0.55), transparent 40%),
-        #eceef3;
-      padding: 0;
-      margin: 0;
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      display: flex;
-      justify-content: stretch;
-      align-items: stretch;
-    }
-
-    /* Full-Screen Edge-to-Edge App Frame */
-    .app-frame {
-      width: 100%;
-      height: 100%;
-      /* Plain translucent fill: a full-screen backdrop blur over a static gradient looked the same but cost GPU on every repaint */
-      background: rgba(255, 255, 255, 0.86);
-      border: 0;
-      border-radius: 0;
-      display: grid;
-      grid-template-columns: var(--side-w, 230px) minmax(0, 1fr) var(--right-w, 310px);
-      grid-template-rows: minmax(0, 1fr);
-      gap: 12px;
-      padding: 12px;
-      overflow: hidden;
-    }
-    .app-frame > * { min-width: 0; min-height: 0; }
-
-    /* Left Sidebar */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 10px 6px 6px;
-      gap: 16px;
-    }
-    .brand-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 4px 10px 10px;
-    }
-    .brand-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: var(--dark);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font: 700 12px/1 var(--sans);
-      letter-spacing: .04em;
-      flex-shrink: 0;
-    }
-    .brand-title {
-      font: 700 15px/1.1 var(--sans);
-      letter-spacing: .04em;
-      color: var(--tx);
-    }
-
-    .nav-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .nav-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      border: 0;
-      background: transparent;
-      color: var(--mu);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font: 500 13px var(--sans);
-      cursor: pointer;
-      transition: background-color .15s ease, color .15s ease;
-      text-align: left;
-    }
-    .nav-btn-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .75; }
-    .nav-btn:hover { background: rgba(255, 255, 255, 0.7); color: var(--tx); }
-    .nav-btn.on {
-      background: #ffffff;
-      color: var(--tx);
-      font-weight: 600;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
-    }
-    .nav-btn.on svg { opacity: 1; }
-    .nav-badge {
-      background: var(--dark);
-      color: #fff;
-      font-size: 10.5px;
-      font-weight: 600;
-      min-width: 20px;
-      height: 20px;
-      padding: 0 6px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .nav-divider-label {
-      padding: 12px 14px 4px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--tx);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* Bottom Frosted Company Card in Sidebar (matching Allison profile card) */
-    .side-profile {
-      background: linear-gradient(145deg, #9aa4b2 0%, #8792a2 100%);
-      color: #ffffff;
-      border-radius: 18px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
-    }
-    .side-prof-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .side-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      background: #1e293b;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font: 700 12px/1 var(--sans);
-      flex-shrink: 0;
-      border: 2px solid rgba(255, 255, 255, .45);
-    }
-    .side-prof-name { font-weight: 600; font-size: 12.5px; line-height: 1.2; }
-    .side-prof-sub { font-size: 10.5px; opacity: .85; font-family: var(--mono); }
-    .side-pill-btn {
-      width: 100%;
-      border: 0;
-      background: rgba(255, 255, 255, 0.24);
-      color: #ffffff;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font: 600 12px var(--sans);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      transition: background .15s;
-    }
-    .side-pill-btn:hover { background: rgba(255, 255, 255, 0.34); }
-
-    /* Center Workspace */
-    .center-pane {
-      background:
-        radial-gradient(circle at 50% 0%, rgba(235, 214, 224, 0.35), transparent 52%),
-        var(--canvas);
-      border-radius: 20px;
-      border: 1px solid rgba(226, 232, 240, 0.7);
-      padding: 18px 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .pg { display: none; flex-direction: column; gap: 14px; }
-    /* Grow to fill the pane so the command bar's margin-top:auto pins it to the bottom */
-    .pg.on { display: flex; flex: 1 0 auto; }
-
-    /* Center Top Company Banner */
-    .hero-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--bd);
-    }
-    .hero-title {
-      font: 700 22px/1.15 var(--sans);
-      letter-spacing: -.02em;
-      margin: 0;
-      color: var(--tx);
-    }
-    .hero-sub {
-      font-size: 12px;
-      color: var(--mu);
-      margin-top: 2px;
-    }
-    .hero-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .soft-pill {
-      background: #ffffff;
-      border: 1px solid var(--bd);
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 11.5px;
-      color: var(--mu);
-      box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
-    }
-    .soft-pill strong { color: var(--tx); font-weight: 600; }
-
-    /* Cards & Inputs (matching reference soft white rounded cards) */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--bd);
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-    }
-    .card-hdr {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .card-title {
-      font: 600 13px/1.2 var(--sans);
-      color: var(--tx);
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .split-boxes {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 14px;
-    }
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--mu);
-      margin-bottom: 4px;
-    }
-    input, select, textarea {
-      width: 100%;
-      min-width: 0;
-      font: inherit;
-      color: var(--tx);
-      background: #ffffff;
-      border: 1px solid var(--bd-input);
-      border-radius: 11px;
-      padding: 8px 12px;
-      min-height: 38px;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    input[readonly], textarea[readonly] {
-      background: #f8fafc;
-      color: #475569;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #94a3b8;
-      box-shadow: 0 0 0 3px rgba(148, 163, 184, .18);
-    }
-    .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-    .mu { color: var(--mu); font-size: 12px; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-    .row > div { flex: 1 1 130px; min-width: 0; }
-
-    /* Pill Buttons matching reference */
-    .btn-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      border: 1px solid var(--dark);
-      background: var(--dark);
-      color: #ffffff;
-      padding: 9px 18px;
-      min-height: 38px;
-      border-radius: 999px;
-      font: 600 12px var(--sans);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background-color .15s ease, border-color .15s ease;
-    }
-    .btn-pill:hover { background: #27272a; border-color: #27272a; }
-    .btn-pill.soft {
-      background: #ffffff;
-      color: var(--tx);
-      border: 1px solid var(--bd-input);
-      box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
-    }
-    .btn-pill.soft:hover { background: #f8fafc; border-color: #cbd5e1; }
-    .btn-pill.sm { min-height: 32px; padding: 5px 12px; font-size: 11.5px; }
-    .btn-del {
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      border: 0;
-      background: transparent;
-      color: #9ca3af;
-      font-size: 17px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .btn-del:hover { background: #fef2f2; color: #ef4444; }
-
-    /* Tables */
-    .wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td {
-      text-align: left;
-      padding: 9px 8px;
-      border-bottom: 1px solid var(--bd);
-      font-size: 13px;
-      vertical-align: middle;
-    }
-    th {
-      color: var(--mu);
-      font: 600 11px var(--sans);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-    /* Scroll sideways instead of crushing the inputs when the center pane is narrow */
-    #billing-table { min-width: 680px; }
-    #billing-table td { padding: 6px 6px; }
-    #billing-table input, #billing-table select {
-      min-height: 35px;
-      padding: 5px 9px;
-      border-radius: 9px;
-      font-size: 12.5px;
-    }
-    .weight-inp {
-      background: #fefce8 !important;
-      border-color: #fde047 !important;
-      font-weight: 600;
-    }
-    .weight-inp:focus { background: #ffffff !important; border-color: #94a3b8 !important; }
-
-    /* Bottom Prompt-Style Command Bar (matching reference bottom input bar) */
-    .command-bar {
-      background: #ffffff;
-      border: 1px solid var(--bd);
-      border-radius: 18px;
-      padding: 12px 14px;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: auto;
-    }
-    .command-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .command-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .command-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* Right Panel (matching Chat history floating white card) */
-    .right-pane {
-      background: #ffffff;
-      border: 1px solid var(--bd);
-      border-radius: 20px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
-      overflow-y: auto;
-    }
-    .right-hdr {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .right-hdr h2 { margin: 0; font: 600 16px/1.2 var(--sans); color: var(--tx); }
-    .summary-box {
-      background: #f9fafc;
-      border: 1px solid var(--bd);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .tot { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mu); }
-    .tot strong { color: var(--tx); }
-    .tot.gt {
-      font: 700 18px/1.2 var(--sans);
-      color: var(--tx);
-      border-top: 1px solid var(--bd);
-      padding-top: 8px;
-      margin-top: 4px;
-    }
-    .search-pill {
-      position: relative;
-    }
-    .search-pill input {
-      border-radius: 999px;
-      padding-left: 34px;
-      background: #f9fafc;
-      min-height: 36px;
-      font-size: 12.5px;
-    }
-    .search-pill svg {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 14px;
-      height: 14px;
-      color: var(--mu);
-    }
-    .history-list {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      overflow-y: auto;
-      min-height: 120px;
-    }
-    .hist-item {
-      border: 1px solid var(--bd);
-      border-radius: 14px;
-      padding: 10px 12px;
-      cursor: pointer;
-      transition: background-color .15s, border-color .15s;
-      background: #ffffff;
-    }
-    .hist-item:hover { border-color: #cbd5e1; background: #f9fafc; }
-    .hist-top { display: flex; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 12.5px; }
-    .hist-top > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .hist-top > span:last-child { flex-shrink: 0; }
-    .hist-sub { font-size: 11.5px; color: var(--mu); margin-top: 2px; display: flex; justify-content: space-between; }
-
-    /* Responsive Mobile/Tablet */
-    body:not([data-tab="bill"]) .app-frame {
-      grid-template-columns: var(--side-w, 230px) minmax(0, 1fr);
-    }
-    body:not([data-tab="bill"]) .right-pane {
-      display: none;
-    }
-    body.sidebar-collapsed .sidebar {
-      display: none;
-    }
-    body.sidebar-collapsed .app-frame {
-      grid-template-columns: minmax(0, 1fr) var(--right-w, 310px);
-    }
-    body.sidebar-collapsed:not([data-tab="bill"]) .app-frame {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .sidebar-toggle {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      border: 1px solid var(--bd);
-      background: #ffffff;
-      color: var(--tx);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
-      transition: background-color .15s ease, border-color .15s ease;
-    }
-    .sidebar-toggle:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-
-    /* Laptop widths: slimmer rails so the billing table keeps its room */
-    @media (max-width: 1320px) {
-      .app-frame { --side-w: 200px; --right-w: 280px; }
-    }
-
-    /* Tablet / phone: single column. !important is needed because the tab and
-       sidebar-collapsed rules above are more specific and used to leak a
-       230px sidebar column (or a 310px right column) into the mobile layout. */
-    @media (max-width: 1080px) {
-      body { padding: 0; height: auto; min-height: 100dvh; overflow-y: auto; }
-      .app-frame {
-        grid-template-columns: minmax(0, 1fr) !important;
-        grid-template-rows: auto;
-        height: auto;
-        min-height: 100dvh;
-        border-radius: 0;
-        padding: 10px;
-        overflow: visible;
-      }
-      .center-pane, .right-pane { overflow: visible; }
-      .sidebar {
-        flex-direction: row;
-        align-items: center;
-        overflow-x: auto;
-        padding: 4px;
-        gap: 8px;
-      }
-      .sidebar > div { display: flex; align-items: center; gap: 8px; }
-      .brand-row { padding: 4px 6px; }
-      .brand-title { white-space: nowrap; }
-      .nav-group { flex-direction: row; }
-      .nav-btn { width: auto; white-space: nowrap; padding: 8px 12px; }
-      .nav-divider-label, .side-profile { display: none; }
-      .split-boxes { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px) {
-      .center-pane { padding: 14px 12px; }
-      .hero-title { font-size: 18px; }
-      .command-pills { width: 100%; }
-      .command-pills .btn-pill { flex: 1 1 0; }
-    }
-
     /* ---------- Sign-in page ---------- */
     #authGate {
       position: fixed;
@@ -688,30 +141,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
     @media (prefers-reduced-motion: reduce) { .gate-card { animation: none; } .g-btn:hover { transform: none; } }
-
-    /* Signed-in chip in the header */
-    .user-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 3px 4px 3px 3px;
-      background: #fff;
-      border: 1px solid var(--bd);
-      border-radius: 999px;
-      font-size: 12px;
-      max-width: 240px;
-    }
-    .user-chip img, .user-chip .ua {
-      width: 26px; height: 26px; border-radius: 999px; flex-shrink: 0;
-      background: var(--dark); color: #fff; display: inline-flex; align-items: center; justify-content: center;
-      font: 700 11px/1 var(--sans); object-fit: cover;
-    }
-    .user-chip .un { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
-    .user-chip button {
-      border: 0; background: #f3f4f6; color: var(--tx); border-radius: 999px;
-      padding: 5px 10px; font: 600 11px var(--sans); cursor: pointer; white-space: nowrap;
-    }
-    .user-chip button:hover { background: #e5e7eb; }
 
     /* Modal & Print Dialog */
     #modal {
@@ -892,223 +321,9 @@
       .inv-sheet { width: 100% !important; min-height: 277mm !important; border: 0 !important; padding: 0 !important; }
     }
   </style>
-  <style id="ui-redesign">
-    /* Redesign layer: scoped to the app shell; invoice sheet and print output are untouched */
-    :root {
-      --ink: #0f172a; --ink2: #334155; --mu: #5b6577;
-      --line: #e3e7ee; --line2: #cfd6e1;
-      --bg: #f5f6fa; --card: #ffffff;
-      --brand: #4f46e5; --brand-d: #4338ca; --brand-soft: #eef0ff;
-      --side: #0f172a; --side-2: #1e293b;
-      --bd: var(--line); --bd-input: var(--line2); --tx: var(--ink);
-      --radius: 14px;
-    }
-    body { background: var(--bg); font-size: 14px; color: var(--ink); }
-    .app-frame { background: var(--bg); padding: 0; gap: 0; --side-w: 244px; --right-w: 332px; }
-    body.sidebar-collapsed .app-frame { gap: 0; }
-
-    /* ---- Sidebar: dark, calm, clear active state ---- */
-    .app-frame .sidebar { background: var(--side); border: 0; border-radius: 0; padding: 20px 14px; gap: 18px; }
-    .app-frame .brand-row { padding: 2px 8px 18px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 14px; }
-    .app-frame .brand-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #4338ca); font-size: 13px; }
-    .app-frame .brand-title { color: #fff; font-size: 15px; letter-spacing: .06em; }
-    .app-frame .nav-group { gap: 3px; }
-    .app-frame .nav-btn { color: #aab4c5; font-size: 14px; font-weight: 500; padding: 11px 12px; border-radius: 10px; }
-    .app-frame .nav-btn svg { width: 18px; height: 18px; opacity: .85; }
-    .app-frame .nav-btn:hover { background: rgba(255,255,255,.07); color: #fff; }
-    .app-frame .nav-btn.on { background: var(--brand); color: #fff; font-weight: 600; box-shadow: 0 6px 16px -8px rgba(79,70,229,.8); }
-    .app-frame .nav-badge { background: rgba(255,255,255,.18); color: #fff; }
-    .app-frame .nav-divider-label { color: #6f7b90; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; padding: 20px 12px 6px; }
-    .app-frame .side-profile { background: var(--side-2); }
-
-    /* ---- Workspace ---- */
-    .app-frame .center-pane { background: var(--bg); border: 0; border-radius: 0; padding: 0 28px 0; gap: 0; }
-    .app-frame .hero-bar { position: sticky; top: 0; z-index: 6; background: rgba(245,246,250,.92); backdrop-filter: blur(8px); margin: 0 -28px 18px; padding: 16px 28px; border-bottom: 1px solid var(--line); }
-    .app-frame .hero-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
-    .app-frame .hero-sub { font-size: 13px; color: var(--mu); }
-    .app-frame .soft-pill { border-color: var(--line); color: var(--ink2); font-size: 12.5px; box-shadow: none; }
-    .app-frame .pg { gap: 18px; padding-bottom: 24px; }
-
-    /* Cards */
-    .app-frame .card { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.04); }
-    .app-frame .card-hdr { margin-bottom: 14px; }
-    .app-frame .card-title { font-size: 15px; font-weight: 700; }
-    .app-frame .split-boxes { gap: 18px; }
-
-    /* ---- Forms ---- */
-    .app-frame label { font-size: 12.5px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; }
-    .app-frame input, .app-frame select, .app-frame textarea { font-size: 14px; min-height: 42px; border: 1px solid var(--line2); border-radius: 10px; padding: 9px 12px; background: #fff; }
-    .app-frame input::placeholder, .app-frame textarea::placeholder { color: #8a94a6; }
-    .app-frame input[readonly], .app-frame textarea[readonly] { background: #f3f5f9; color: var(--ink2); border-color: var(--line); }
-    .app-frame input:focus, .app-frame select:focus, .app-frame textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 4px rgba(79,70,229,.15); }
-    .app-frame :is(button, a):focus-visible { outline: 3px solid rgba(79,70,229,.45); outline-offset: 2px; }
-
-    /* ---- Buttons ---- */
-    .app-frame .btn-pill { border-radius: 10px; min-height: 42px; padding: 9px 18px; font-size: 13.5px; font-weight: 600; background: var(--brand); border-color: var(--brand); color: #fff; }
-    .app-frame .btn-pill:hover { background: var(--brand-d); border-color: var(--brand-d); }
-    .app-frame .btn-pill.soft { background: #fff; color: var(--ink); border-color: var(--line2); box-shadow: 0 1px 2px rgba(15,23,42,.05); }
-    .app-frame .btn-pill.soft:hover { background: #f3f5f9; border-color: #aab4c5; }
-    .app-frame .btn-pill.sm { min-height: 36px; padding: 6px 14px; font-size: 13px; }
-    .app-frame .btn-del { width: 36px; height: 36px; border-radius: 8px; color: #6b7280; }
-    .app-frame .btn-del:hover { background: #fee2e2; color: #b91c1c; }
-    .app-frame .sidebar-toggle { width: 40px; height: 40px; border-radius: 10px; border-color: var(--line2); }
-
-    /* ---- Tables ---- */
-    .app-frame .wrap { border: 1px solid var(--line); border-radius: 12px; max-height: 58vh; overflow: auto; }
-    .app-frame table { border-collapse: separate; border-spacing: 0; }
-    .app-frame th { position: sticky; top: 0; z-index: 1; background: #f3f5f9; color: var(--ink2); font-size: 11.5px; padding: 12px 10px; border-bottom: 1px solid var(--line2); }
-    .app-frame td { font-size: 14px; padding: 12px 10px; border-bottom: 1px solid var(--line); }
-    .app-frame tbody tr:last-child td { border-bottom: 0; }
-    .app-frame tbody tr:hover { background: #fafbff; }
-    .app-frame #billing-table td { padding: 8px 6px; }
-    .app-frame #billing-table input, .app-frame #billing-table select { min-height: 40px; font-size: 13.5px; }
-    .app-frame .weight-inp { background: #fffbeb !important; border-color: #f59e0b !important; }
-    .app-frame .mu { color: var(--mu); font-size: 13px; }
-
-    /* ---- Summary panel ---- */
-    .app-frame .right-pane { background: #fff; border: 0; border-left: 1px solid var(--line); border-radius: 0; box-shadow: none; padding: 22px 20px; gap: 16px; }
-    .app-frame .right-hdr h2 { font-size: 16px; font-weight: 700; }
-    .app-frame .summary-box { background: var(--side); color: #cbd5e1; border: 0; border-radius: var(--radius); padding: 18px; gap: 10px; }
-    .app-frame .summary-box .tot { color: #aab4c5; font-size: 13.5px; }
-    .app-frame .summary-box .tot strong, .app-frame .summary-box .tot .mono { color: #fff; }
-    .app-frame .summary-box .tot.gt { color: #fff; font-size: 24px; border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; margin-top: 6px; }
-    .app-frame .search-pill input { border-radius: 10px; background: #f3f5f9; border-color: var(--line); min-height: 40px; font-size: 13.5px; }
-    .app-frame .hist-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-    .app-frame .hist-item:hover { border-color: var(--brand); background: var(--brand-soft); }
-    .app-frame .hist-top { font-size: 13.5px; }
-    .app-frame .hist-sub { font-size: 12.5px; color: var(--mu); }
-
-    /* ---- Sticky action bar ---- */
-    .app-frame .command-bar { position: sticky; bottom: 0; z-index: 5; margin: 0 -28px; border: 0; border-top: 1px solid var(--line2); border-radius: 0; padding: 14px 28px; background: rgba(255,255,255,.96); box-shadow: 0 -8px 24px -12px rgba(15,23,42,.18); }
-    .app-frame .command-bar strong { font-size: 13.5px; }
-    .app-frame .command-actions input { border-radius: 10px !important; min-height: 42px !important; font-size: 14px !important; }
-    .app-frame .command-bar .btn-pill.sm { min-height: 42px; }
-
-    /* Sign-in, chip, toast */
-    #authGate .gate-note { color: #6b6257; font-size: 13px; }
-    .app-frame .user-chip { border-color: var(--line2); font-size: 13px; }
-    #toast { background: var(--ink); font-size: 14px; padding: 12px 22px; border-radius: 12px; }
-
-    /* ---- Tablet / phone ---- */
-    @media (max-width: 1080px) {
-      .app-frame { padding: 0; }
-      .app-frame .sidebar { padding: 8px 10px; position: sticky; top: 0; z-index: 8; }
-      .app-frame .brand-row { border: 0; margin: 0; padding: 0 6px; }
-      .app-frame .nav-btn { padding: 9px 12px; }
-      .app-frame .center-pane { padding: 0 16px; }
-      .app-frame .hero-bar { position: static; margin: 0 -16px 14px; padding: 14px 16px; }
-      .app-frame .right-pane { border-left: 0; border-top: 1px solid var(--line); padding: 18px 16px 24px; }
-      .app-frame .command-bar { margin: 0 -16px; padding: 12px 16px; }
-      .app-frame .wrap { max-height: none; }
-    }
-    @media (max-width: 640px) {
-      .app-frame input, .app-frame select, .app-frame textarea { font-size: 16px; }
-      .app-frame .hero-title { font-size: 19px; }
-      .app-frame .card { padding: 16px; }
-    }
-    @media (prefers-reduced-motion: reduce) { .app-frame * { transition: none !important; } }
-  </style>
-  <style id="ui-nav">
-    /* Floating black pill navigation (brand left, links centre, actions right) on a warm background */
-    :root { --bg: #f2efeb; --brand: #111111; --brand-d: #000000; --brand-soft: #ebe7e0; --side: #0a0a0a; --line: #e4dfd7; --line2: #d3cdc2; }
-    body { background: var(--bg); }
-    .app-frame { background: var(--bg); padding: 16px 20px 20px; gap: 16px; grid-template-rows: auto minmax(0, 1fr); }
-    .app-frame .center-pane { background: transparent; padding: 0 4px 0 0; }
-    .app-frame .hero-bar { background: rgba(242, 239, 235, .94); margin: 0 0 16px; padding: 4px 0 14px; }
-    .app-frame .right-pane { border: 1px solid var(--line); border-radius: 20px; }
-    .app-frame .command-bar { margin: 0; border: 1px solid var(--line2); border-radius: 18px; padding: 14px 18px; }
-    .app-frame .card { border-color: var(--line); }
-    .app-frame .sidebar-toggle { display: none; }
-    body.sidebar-collapsed .app-frame .sidebar { display: flex; }
-
-    .app-frame .sidebar {
-      grid-column: 1 / -1; grid-row: 1;
-      flex-direction: row; align-items: center; justify-content: flex-start; gap: 6px;
-      background: #000; border-radius: 999px; padding: 10px 12px 10px 10px; min-height: 66px;
-      overflow-x: auto; scrollbar-width: none;
-    }
-    .app-frame .sidebar::-webkit-scrollbar { display: none; }
-    .app-frame .sidebar > div, .app-frame .nav-group { display: contents; }
-    .app-frame .brand-row { order: 0; margin: 0 auto 0 0; padding: 0 20px 0 0; border: 0; gap: 12px; }
-    .app-frame .brand-icon { width: 46px; height: 46px; border-radius: 999px; background: #fff; color: #000; font-size: 14px; }
-    .app-frame .brand-title { color: #fff; font: 500 20px/1 var(--sans); letter-spacing: 0; white-space: nowrap; }
-    .app-frame .nav-divider-label { display: none; }
-    .app-frame .nav-btn { width: auto; flex: 0 0 auto; order: 1; color: #fff; font-size: 15px; font-weight: 500; padding: 10px 18px; border-radius: 999px; white-space: nowrap; box-shadow: none; }
-    .app-frame .nav-btn svg { display: none; }
-    .app-frame .nav-btn:hover { background: rgba(255, 255, 255, .12); color: #fff; }
-    .app-frame .nav-btn.on { background: rgba(255, 255, 255, .18); color: #fff; font-weight: 600; box-shadow: none; }
-    .app-frame .nav-btn.on::before { display: none; }
-    .app-frame .nav-badge { background: #fff; color: #000; margin-left: 8px; }
-    .app-frame #sideQuickClient { order: 2; margin-left: auto; }
-    .app-frame #sideNewBill { order: 3; background: #fff; color: #000; font-weight: 600; padding: 12px 24px; margin-left: 4px; }
-    .app-frame #sideNewBill:hover { background: #ece8e1; }
-
-    /* Monochrome focus + summary to match */
-    .app-frame input:focus, .app-frame select:focus, .app-frame textarea:focus { border-color: #111; box-shadow: 0 0 0 4px rgba(17, 17, 17, .1); }
-    .app-frame :is(button, a):focus-visible { outline-color: rgba(17, 17, 17, .5); }
-    .app-frame .summary-box { background: #0a0a0a; }
-    .app-frame th { background: #f1eee8; }
-    .app-frame tbody tr:hover { background: #faf8f4; }
-
-    @media (min-width: 1081px) {
-      body[data-tab="bill"] .app-frame { grid-template-columns: minmax(0, 1fr) var(--right-w, 332px) !important; }
-      body:not([data-tab="bill"]) .app-frame { grid-template-columns: minmax(0, 1fr) !important; }
-    }
-    @media (max-width: 1080px) {
-      .app-frame { padding: 10px; gap: 12px; }
-      .app-frame .sidebar { position: static; border-radius: 28px; min-height: 0; padding: 8px; }
-      .app-frame .brand-row { padding-right: 10px; margin-right: 0; }
-      .app-frame .brand-title { display: none; }
-      .app-frame #sideQuickClient { margin-left: 0; }
-      .app-frame .center-pane { padding: 0; }
-      .app-frame .hero-bar { position: static; margin: 0 0 12px; padding: 4px 0 12px; }
-      .app-frame .right-pane { border-top: 1px solid var(--line); }
-      .app-frame .command-bar { margin: 0; }
-    }
-  </style>
-  <style id="ui-billing">
-    /* Billing screen layout */
-    .app-frame .bill-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
-    .app-frame .bill-h { margin: 0 0 2px; font: 700 20px/1.2 var(--sans); letter-spacing: -.01em; }
-    .app-frame .bill-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; align-items: stretch; }
-    .app-frame .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
-    .app-frame .fgrid .span2 { grid-column: 1 / -1; }
-    .app-frame .step { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 999px; background: #111; color: #fff; font: 700 11.5px/1 var(--sans); margin-right: 8px; flex-shrink: 0; }
-    .app-frame #p-bill .card-title { align-items: center; }
-
-    /* Items table: roomy, aligned, scannable */
-    .app-frame #p-bill .wrap { max-height: none; overflow-x: auto; }
-    .app-frame #billing-table { min-width: 640px; }
-    .app-frame #billing-table th { font-size: 11px; letter-spacing: .06em; }
-    .app-frame #billing-table td { padding: 8px 6px; }
-    .app-frame #billing-table td:nth-child(n+4):not(:last-child) input { text-align: right; font-family: var(--mono); }
-    .app-frame #billing-table td:nth-child(6) { font-family: var(--mono); font-weight: 700; text-align: right; white-space: nowrap; padding-right: 12px; }
-    .app-frame #billing-table td:first-child { color: var(--mu); }
-    .app-frame #billing-table input:hover, .app-frame #billing-table select:hover { border-color: #a39b8c; }
-    .app-frame #billing-table select:disabled { background: #f3f1ec; color: #8a857b; }
-    .app-frame #btnAddRow { background: #111; }
-
-    /* Action bar: totals in words left, clear primary action right */
-    .app-frame .command-top { display: block; }
-    .app-frame .command-actions { gap: 12px; align-items: center; flex-wrap: nowrap; }
-    .app-frame .command-actions > div:first-child { flex: 1 1 auto !important; }
-    .app-frame .command-pills { flex-wrap: nowrap; }
-    .app-frame #btnResetBill { background: transparent; border-color: transparent; box-shadow: none; color: var(--mu); }
-    .app-frame #btnResetBill:hover { background: #f1eee8; color: #111; }
-    .app-frame #btnSaveBill { padding: 9px 28px; }
-
-    @media (max-width: 640px) {
-      .app-frame .fgrid { grid-template-columns: 1fr; }
-      .app-frame .command-actions { flex-wrap: wrap; }
-      .app-frame .command-pills { width: 100%; }
-    }
-  </style>
   <style id="ui-logo">
     .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .gate-logo { display: block; width: min(440px, 82vw); height: auto; margin: 0 auto 4px; }
-    .app-frame .brand-icon { padding: 0; overflow: hidden; }
-    .app-frame .brand-icon img { width: 82%; height: auto; display: block; }
-    @media (max-width: 1080px) { .app-frame .brand-icon { width: 42px; height: 42px; } }
   </style>
   <style id="ui-gate">
     /* Sign-in: original red logo on warm paper, oversized oval watermarks, pill-shaped action */
@@ -1146,362 +361,345 @@
     @media (prefers-reduced-motion: reduce) { #authGate .gate-card { animation: none; } #authGate .g-btn, #authGate .g-btn::after { transition: none; } }
     @media (max-width: 480px) { #authGate .gate-logo { margin-bottom: 26px; } #authGate .g-btn { min-height: 60px; } }
   </style>
-  <style id="ui-billing2">
-    /* Header removed; sync + sign-out live in the taskbar; Add Dealer removed from taskbar */
-    .app-frame .hero-bar, .app-frame #sideQuickClient { display: none !important; }
-    .app-frame { --right-w: 360px; }
-    .app-frame .nav-status { order: 2; margin-left: auto; display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
-    .app-frame .nav-status #btnSyncSheet { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; box-shadow: none; font-size: 13px; font-weight: 500; }
-    .app-frame .nav-status #btnSyncSheet:hover { background: rgba(255,255,255,.2); }
-    .app-frame .nav-status .user-chip { background: rgba(255,255,255,.12); border: 0; color: #fff; padding: 3px 4px 3px 3px; max-width: none; }
-    .app-frame .nav-status .user-chip[hidden] { display: none !important; }
-    .app-frame .nav-status .user-chip .un { display: none; }
-    .app-frame .nav-status .user-chip button { background: rgba(255,255,255,.16); color: #fff; padding: 7px 13px; font-size: 12.5px; }
-    .app-frame .nav-status .user-chip button:hover { background: rgba(255,255,255,.28); }
-    .app-frame #sideNewBill { margin-left: 4px; }
+  <style id="ui-ref">
+  /* =====================================================================
+     R.R. Industries — Precision Billing Studio UI
+     Visual layer only: all element IDs and app logic are unchanged.
+     ===================================================================== */
+  :root {
+    --brand-50:#fff1f2; --brand-100:#ffe4e6; --brand-200:#fecdd3; --brand-500:#f43f5e;
+    --brand-600:#e11d48; --brand-700:#be123c; --brand-800:#9f1239; --brand-900:#881337;
+    --s50:#f8fafc; --s100:#f1f5f9; --s200:#e2e8f0; --s300:#cbd5e1; --s400:#94a3b8;
+    --s500:#64748b; --s600:#475569; --s700:#334155; --s800:#1e293b; --s900:#0f172a;
+    --ui-sans:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ui-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    --card-line:#e8ecf4;
+    --card-shadow:0 1px 3px 0 rgba(0,0,0,.04), 0 1px 2px -1px rgba(0,0,0,.03);
+    --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  }
+  [hidden] { display: none !important; }
+  ::selection { background: var(--brand-100); color: var(--brand-900); }
 
-    /* Added-products list (left) + Add product panel (right) */
-    .app-frame .count-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 8px; margin-left: 8px; border-radius: 999px; background: #ebe7e0; color: #111; font: 700 12px/1 var(--sans); }
-    .app-frame #p-bill .wrap { min-height: 300px; }
-    .app-frame .qa-card { background: #faf8f4; border: 1px solid var(--line2); border-radius: 16px; padding: 16px; display: grid; gap: 14px; }
-    .app-frame .qa-key { font: 600 11.5px/1 var(--sans); color: var(--mu); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; }
-    .app-frame .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .app-frame .qa-grid .span2 { grid-column: 1 / -1; }
-    .app-frame #qaWeight { font-size: 22px; font-weight: 700; min-height: 54px; text-align: right; }
-    .app-frame .qa-foot { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--mu); }
-    .app-frame .qa-foot strong { font-size: 20px; color: #111; }
-    .app-frame .qa-msg { min-height: 16px; margin-top: -6px; font-size: 12.5px; color: #b91c1c; }
-    .app-frame .qa-msg:empty { display: none; }
-    .app-frame .nav-btn { padding: 10px 14px; }
-  </style>
-  <style id="ui-single">
-    /* Single-page billing: 60% entry (left) / 40% invoice (right), no page scroll */
-    .app-frame .user-chip #userAvatar, .app-frame .user-chip .ua, .app-frame .user-chip img { display: none !important; }
-    .app-frame .nav-status .user-chip { padding: 3px; }
-    @media (min-width: 1081px) {
-      body[data-tab="bill"] .app-frame { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) !important; }
+  html { height: auto; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; width: 100%; max-width: 100%;
+    min-height: 100vh; min-height: 100dvh; height: auto;
+    display: block; overflow-x: hidden; overflow-y: auto;
+    background: #fff; color: var(--s800);
+    font: 14px/1.5 var(--ui-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+  .app-frame { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: #fff; }
+
+  /* ---------- Shared form + button language ---------- */
+  .mono { font-family: var(--ui-mono); font-variant-numeric: tabular-nums; }
+  .inv-sheet .mono { font-family: var(--mono); }
+  .mu { color: var(--s500); font-size: 12px; }
+  label { display: block; margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--s500); }
+  input, select, textarea {
+    width: 100%; min-width: 0; height: 40px; padding: 0 14px;
+    font: 500 14px var(--ui-sans); color: var(--s800);
+    background: rgba(248,250,252,.5); border: 1px solid var(--s200); border-radius: 12px;
+    transition: border-color .15s, box-shadow .15s, background-color .15s;
+  }
+  textarea { height: auto; padding: 12px 14px; line-height: 1.5; resize: none; display: block; }
+  input::placeholder, textarea::placeholder { color: var(--s400); font-weight: 400; }
+  input[readonly], textarea[readonly] { background: rgba(248,250,252,.6); color: var(--s700); }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--brand-600); background: #fff;
+    box-shadow: 0 0 0 3px rgba(225,29,72,.1);
+  }
+  select {
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    padding-right: 36px; color: var(--s700);
+    background-image: var(--chev); background-repeat: no-repeat;
+    background-position: right 12px center; background-size: 16px;
+  }
+  select:disabled { cursor: not-allowed; color: var(--s500); opacity: 1; }
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: .45; cursor: pointer; }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: .8; }
+  input[type="date"] { padding-right: 10px; }
+
+  .btn-pill {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 40px; padding: 0 20px; border-radius: 12px;
+    border: 1px solid var(--brand-600); background: var(--brand-600); color: #fff;
+    font: 700 13px/1 var(--ui-sans); white-space: nowrap; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(225,29,72,.2);
+    transition: background-color .15s, border-color .15s, transform .1s, box-shadow .15s;
+  }
+  .btn-pill:hover { background: var(--brand-700); border-color: var(--brand-700); }
+  .btn-pill:active { transform: scale(.99); }
+  .btn-pill:focus-visible, .hbtn:focus-visible, .nav-btn:focus-visible, .sync-pill:focus-visible {
+    outline: 3px solid rgba(225,29,72,.28); outline-offset: 2px;
+  }
+  .btn-pill.soft { background: #fff; color: var(--s700); border-color: var(--s200); box-shadow: var(--card-shadow); font-weight: 600; }
+  .btn-pill.soft:hover { background: var(--s50); border-color: var(--s300); }
+  .btn-pill.sm { min-height: 36px; padding: 0 14px; font-size: 12px; }
+  .btn-pill svg { width: 14px; height: 14px; flex: none; }
+  .btn-del {
+    width: 28px; height: 28px; border: 0; border-radius: 999px; background: transparent;
+    color: var(--s400); font-size: 18px; line-height: 1; cursor: pointer; transition: background-color .15s, color .15s;
+  }
+  .btn-del:hover { background: var(--brand-50); color: var(--brand-600); }
+
+  /* ---------- Top header ---------- */
+  .topbar { position: sticky; top: 0; z-index: 20; background: #fff; border-bottom: 1px solid rgba(226,232,240,.8); }
+  .tb-in {
+    max-width: 1580px; margin: 0 auto; padding: 0 24px; min-height: 68px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .tb-left { display: flex; align-items: center; gap: 32px; min-width: 0; }
+  .brand-row { display: flex; align-items: center; gap: 14px; flex: none; }
+  .brand-icon {
+    width: 40px; height: 40px; border-radius: 999px; flex: none;
+    display: grid; place-items: center; color: #fff;
+    background: linear-gradient(to top right, var(--brand-700), var(--brand-600));
+    box-shadow: 0 1px 2px rgba(225,29,72,.25);
+    font: italic 800 18px/1 var(--ui-sans); letter-spacing: -.06em;
+  }
+  .brand-title span { display: block; font-size: 17px; font-weight: 700; letter-spacing: -.025em; line-height: 1.2; color: var(--s900); }
+  .brand-title small { display: block; margin-top: 2px; font-size: 10px; font-weight: 600; letter-spacing: .05em; line-height: 1; text-transform: uppercase; color: var(--s400); }
+
+  .nav-group { display: flex; align-items: center; gap: 6px; padding-left: 16px; border-left: 1px solid var(--s200); }
+  .nav-btn {
+    display: inline-flex; align-items: center; gap: 8px; flex: none; white-space: nowrap;
+    padding: 8px 14px; border: 0; border-radius: 999px; background: transparent;
+    font: 500 12px/1.3 var(--ui-sans); color: var(--s600); cursor: pointer;
+    transition: background-color .15s, color .15s, box-shadow .15s;
+  }
+  .nav-btn:hover { background: rgba(241,245,249,.8); color: var(--s900); }
+  .nav-btn-left { display: inline-flex; align-items: center; gap: 8px; }
+  .nav-btn svg { width: 14px; height: 14px; flex: none; color: var(--s400); }
+  .nav-btn.on { background: var(--brand-600); color: #fff; font-weight: 600; padding: 8px 16px; box-shadow: 0 1px 2px rgba(225,29,72,.25); }
+  .nav-btn.on svg { color: #fff; }
+  .nav-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 6px; border-radius: 999px;
+    background: var(--brand-600); color: #fff; font-size: 10px; font-weight: 700; line-height: 1;
+  }
+  .nav-btn.on .nav-badge { background: #fff; color: var(--brand-600); }
+
+  .tb-right { display: flex; align-items: center; gap: 12px; flex: none; }
+  .sync-pill {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px;
+    border-radius: 999px; border: 1px solid var(--s200); background: var(--s50); color: var(--s600);
+    font: 500 12px/1 var(--ui-sans); white-space: nowrap; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s;
+  }
+  .sync-dot { width: 8px; height: 8px; border-radius: 999px; background: #94a3b8; flex: none; }
+  .sync-pill:has(.sync-dot[style*="22, 163, 74"]) { background: #ecfdf5; border-color: rgba(167,243,208,.9); color: #047857; }
+  .sync-pill:has(.sync-dot[style*="245, 158, 11"]) { background: #fffbeb; border-color: #fde68a; color: #b45309; }
+  .sync-pill:has(.sync-dot[style*="220, 38, 38"]) { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+  .sync-pill:has(.sync-dot[style*="22, 163, 74"]) .sync-dot { animation: rrpulse 2s cubic-bezier(.4,0,.6,1) infinite; }
+  @keyframes rrpulse { 50% { opacity: .45; } }
+
+  .hbtn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    min-height: 32px; padding: 0 14px; border-radius: 8px; white-space: nowrap;
+    border: 1px solid var(--s200); background: #fff; color: var(--s600);
+    font: 600 12px/1 var(--ui-sans); cursor: pointer; transition: background-color .15s, color .15s;
+  }
+  .hbtn:hover { background: var(--s100); color: var(--s900); }
+  .hbtn.primary { background: var(--brand-600); border-color: var(--brand-600); color: #fff; padding: 0 16px; box-shadow: 0 1px 2px rgba(225,29,72,.2); }
+  .hbtn.primary:hover { background: var(--brand-700); border-color: var(--brand-700); color: #fff; }
+  .hbtn svg { width: 14px; height: 14px; }
+
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  #userAvatar {
+    width: 30px; height: 30px; border-radius: 999px; flex: none; object-fit: cover;
+    background: var(--brand-50); color: var(--brand-600); border: 1px solid var(--brand-100);
+    font: 700 12px/28px var(--ui-sans); text-align: center;
+  }
+  .user-chip .un { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: var(--s700); }
+
+  /* ---------- Workspace ---------- */
+  .page { width: 100%; max-width: 1580px; margin: 0 auto; padding: 20px 24px 48px; flex: 1; }
+  .workspace { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: start; }
+  body:not([data-tab="bill"]) .workspace { grid-template-columns: minmax(0, 1fr); }
+  body:not([data-tab="bill"]) .right-pane { display: none; }
+  .center-pane { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+  .pg { display: none; flex-direction: column; gap: 24px; }
+  .pg.on { display: flex; }
+  .right-pane { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+  .card { background: #fff; border: 1px solid var(--card-line); border-radius: 16px; padding: 20px; box-shadow: var(--card-shadow); }
+  .card-hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--s100); }
+  .card-title { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--s900); line-height: 1.3; }
+  .fgrid { display: grid; gap: 16px; align-items: end; }
+  .f4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .f3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .span2 { grid-column: span 2; } .span3 { grid-column: span 3; } .span4 { grid-column: span 4; }
+  .fgrid > div { min-width: 0; }
+  .bl-card .fgrid { align-items: start; }
+  .bl-card.meta .fgrid { align-items: end; }
+  #cAddr { height: 88px; min-height: 88px; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .row > div { flex: 1 1 180px; min-width: 0; }
+  #btnQuickClient {
+    min-height: 32px; padding: 0 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    background: var(--brand-50); color: var(--brand-600); border-color: rgba(254,205,211,.7); box-shadow: none;
+  }
+  #btnQuickClient:hover { background: var(--brand-100); border-color: var(--brand-200); }
+
+  /* Add product */
+  .qa-card { position: relative; overflow: hidden; border-top: 2px solid var(--brand-600); }
+  .qa-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .qa-title { display: flex; align-items: center; gap: 10px; }
+  .qa-ico { width: 28px; height: 28px; border-radius: 8px; background: var(--brand-50); color: var(--brand-600); display: grid; place-items: center; flex: none; }
+  .qa-ico svg { width: 16px; height: 16px; }
+  .qa-sub { margin: 0; font-size: 11px; color: var(--s400); line-height: 1.4; }
+  .qa-key {
+    display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px;
+    background: var(--s100); border: 1px solid var(--s200); color: var(--s400);
+    font: 500 10px/1.6 var(--ui-mono); white-space: nowrap;
+  }
+  .qa-key kbd { font: inherit; color: var(--s500); }
+  .qa-card label { margin-bottom: 6px; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--s400); }
+  .qa-fields { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; align-items: end; }
+  .qa-fields > div { grid-column: span 3; min-width: 0; }
+  .qa-fields > .qa-f-part { grid-column: span 6; }
+  .qa-fields select { font-size: 12px; padding-left: 12px; }
+  .qa-search, .qa-affix { position: relative; }
+  .qa-search svg { position: absolute; left: 12px; top: 12px; width: 16px; height: 16px; color: var(--s400); pointer-events: none; }
+  .qa-search input { padding-left: 36px; }
+  .qa-affix > span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font: 500 14px var(--ui-mono); color: var(--s500); pointer-events: none; }
+  .qa-affix input { padding-left: 30px; padding-right: 6px; text-align: right; font-size: 14px; font-weight: 600; color: var(--s900); }
+  .qa-entry { display: flex; align-items: center; gap: 16px; padding-top: 8px; flex-wrap: wrap; }
+  .qa-weight {
+    flex: 1 1 220px; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 16px; border: 1px solid var(--s200); border-radius: 12px; background: rgba(248,250,252,.7);
+    transition: border-color .15s, box-shadow .15s, background-color .15s;
+  }
+  .qa-weight:focus-within { border-color: var(--brand-600); background: #fff; box-shadow: 0 0 0 3px rgba(225,29,72,.1); }
+  .qa-weight label { margin: 0; flex: none; }
+  .qa-wbox { display: flex; align-items: baseline; justify-content: flex-end; gap: 4px; min-width: 0; flex: 1; }
+  .qa-wbox input {
+    width: 100%; max-width: 160px; height: auto; min-height: 0; padding: 0; border: 0; border-radius: 0;
+    background: transparent; box-shadow: none; text-align: right;
+    font: 700 20px/1.3 var(--ui-mono); color: var(--s900);
+  }
+  .qa-wbox input:focus { box-shadow: none; background: transparent; }
+  .qa-wbox span { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--s400); }
+  .qa-amt { text-align: right; padding: 0 12px; flex: none; }
+  .qa-amt label { margin-bottom: 2px; }
+  .qa-amt strong { display: block; font: 700 20px/1.3 var(--ui-mono); color: var(--s900); }
+  .qa-go { flex: none; }
+  #btnQaAdd { min-height: 48px; padding: 0 24px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 8px -2px rgba(225,29,72,.28); }
+  #btnQaAdd span { font: 500 12px var(--ui-mono); opacity: .8; }
+  .qa-msg { margin-top: 12px; font-size: 12px; font-weight: 500; color: var(--brand-600); }
+  .qa-msg:empty { display: none; }
+
+  /* Invoice items */
+  .items-card .card-hdr { margin-bottom: 12px; }
+  .it-title { display: flex; align-items: center; gap: 8px; }
+  .count-pill { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin-left: 6px; border-radius: 999px; background: var(--brand-600); color: #fff; font-size: 11px; font-weight: 700; line-height: 1; vertical-align: 1px; }
+  .it-sub { margin: 0; font-size: 12px; color: var(--s400); }
+  .items-card .wrap { max-height: min(46vh, 440px); }
+
+  .app-frame .wrap { overflow: auto; -webkit-overflow-scrolling: touch; }
+  .app-frame table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+  .app-frame th {
+    padding: 10px 12px; text-align: left; white-space: nowrap;
+    font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--s400); background: rgba(248,250,252,.7);
+  }
+  .app-frame th:first-child { border-radius: 8px 0 0 8px; }
+  .app-frame th:last-child { border-radius: 0 8px 8px 0; }
+  .app-frame td { padding: 12px; border-bottom: 1px solid var(--s100); vertical-align: middle; color: var(--s800); }
+  .app-frame tbody tr:last-child td { border-bottom: 0; }
+  .app-frame tbody tr:hover td { background: #fbfcfe; }
+  .app-frame td strong { font-weight: 700; color: var(--s900); }
+  #billing-table th:nth-child(3), #billing-table td:nth-child(3) { text-align: right; }
+  #billing-table td:nth-child(3) { font-size: 12.5px; white-space: nowrap; }
+  #billing-table .mu { font-size: 11px; color: var(--s400); font-family: var(--ui-sans); }
+  .it-no { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 999px; background: var(--brand-50); color: var(--brand-600); font-size: 11px; font-weight: 700; }
+  .app-frame td.it-empty { padding: 56px 24px 52px; text-align: center; border-bottom: 0; font-size: 12px; line-height: 1.6; color: var(--s400); }
+  .app-frame tbody tr:hover td.it-empty { background: transparent; }
+  .it-empty-ico { width: 56px; height: 56px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 16px; background: rgba(255,241,242,.7); border: 1px solid var(--brand-100); color: var(--brand-600); }
+  .it-empty-ico svg { width: 28px; height: 28px; stroke-width: 1.75; }
+  .it-empty strong { display: block; margin-bottom: 4px; font-size: 14px; font-weight: 700; color: var(--s800); }
+
+  /* Totals */
+  .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .mcard { background: #fff; border: 1px solid var(--card-line); border-radius: 12px; padding: 14px; box-shadow: var(--card-shadow); min-width: 0; }
+  .mcard > span { display: block; margin-bottom: 4px; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--s400); }
+  .mcard > strong, .mcard > b { display: block; font: 700 18px/1.4 var(--ui-mono); letter-spacing: -.02em; color: var(--s900); overflow-wrap: anywhere; }
+  .grand {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: nowrap;
+    padding: 20px; border-radius: 16px; color: #fff; position: relative; overflow: hidden;
+    background: linear-gradient(to right, var(--brand-700), var(--brand-600), var(--brand-700));
+    box-shadow: 0 10px 15px -3px rgba(225,29,72,.25), 0 4px 6px -4px rgba(225,29,72,.25);
+  }
+  .grand > div { min-width: 0; flex: 1 1 auto; }
+  .grand .g-amt { flex: none; white-space: nowrap; }
+  .grand .g-lab { display: block; margin-bottom: 2px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--brand-100); }
+  .grand .g-words { margin: 0; font-size: 12px; font-style: italic; font-weight: 500; color: rgba(254,205,211,.9); }
+  .grand .g-amt { font: 800 30px/1.2 var(--ui-mono); letter-spacing: -.025em; }
+
+  /* Remarks + actions */
+  .command-bar { display: flex; flex-direction: column; gap: 12px; }
+  .cb-note { position: relative; }
+  .cb-note svg { position: absolute; left: 14px; top: 12px; width: 16px; height: 16px; color: var(--s400); pointer-events: none; }
+  .cb-note input { padding-left: 40px; background: #fff; font-size: 12px; font-weight: 500; box-shadow: var(--card-shadow); }
+  .command-pills { display: flex; align-items: center; gap: 10px; padding-top: 2px; }
+  .command-bar .btn-pill { min-height: 40px; padding: 0 16px; font-size: 12px; }
+  #btnSaveBill { flex: 1; font-weight: 700; }
+  #btnPrintDlg svg { color: var(--s500); }
+  #btnResetBill { background: var(--s50); border-color: rgba(226,232,240,.9); color: var(--s500); box-shadow: none; }
+  #btnResetBill:hover { background: var(--s100); color: var(--s800); }
+
+  /* Sign-in gate helpers, modal + toast, tuned to the same language */
+  #mbox { border: 1px solid var(--card-line); border-radius: 16px; box-shadow: 0 24px 48px rgba(15,23,42,.22); }
+  #mbox h2.modal-title { font: 700 16px/1.3 var(--ui-sans); color: var(--s900); letter-spacing: -.01em; }
+  #modal { background: rgba(15,23,42,.5); z-index: 40; }
+  #toast { z-index: 50; background: var(--s900); font-family: var(--ui-sans); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1360px) { .user-chip .un { display: none; } }
+  @media (max-width: 1199px) {
+    .tb-left { display: contents; }
+    .brand-row { order: 1; }
+    .tb-right { order: 2; margin-left: auto; }
+    .nav-group {
+      order: 3; flex: 1 0 100%; border-left: 0; padding: 0 0 12px; margin-top: -2px;
+      overflow-x: auto; scrollbar-width: none;
     }
-    .app-frame .center-pane { padding: 0; overflow-y: auto; }
-    #p-bill { gap: 12px; padding: 0; flex: 1 1 auto; min-height: 0; }
-    #p-bill .bl-card { padding: 14px 16px; }
-    #p-bill .card-hdr { margin-bottom: 10px; }
-    #p-bill .card-title { font-size: 14px; }
-    .app-frame .fgrid.f4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; }
-    .app-frame .fgrid .span2 { grid-column: span 2; }
-    .app-frame .fgrid .span4 { grid-column: 1 / -1; }
-    .app-frame .bill-head { display: none; }
-
-    #p-bill .qa-card { flex: 1 1 auto; align-content: start; display: block; background: #fff; border: 1px solid var(--line2); padding: 16px; }
-    #p-bill .qa-card .fgrid { align-items: end; }
-    .app-frame #qaWeight { font-size: 24px; font-weight: 700; min-height: 56px; text-align: right; }
-    .app-frame .qa-amt { display: flex; flex-direction: column; justify-content: flex-end; }
-    .app-frame .qa-amt strong { font-size: 20px; line-height: 56px; }
-    .app-frame .qa-go .btn-pill { width: 100%; min-height: 56px; font-size: 15px; }
-    .app-frame .qa-msg { margin: 10px 0 0; }
-
-    .app-frame .right-pane { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; gap: 12px; overflow: hidden; min-height: 0; }
-    .app-frame .items-card { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; padding: 14px 16px; }
-    .app-frame .items-card .card-hdr { margin-bottom: 8px; flex-wrap: nowrap; }
-    .app-frame .items-card .wrap { flex: 1 1 auto; min-height: 0; max-height: none; overflow: auto; }
-    .app-frame #billing-table { min-width: 0; }
-    .app-frame #billing-table td { padding: 9px 8px; font-size: 13.5px; }
-    .app-frame #billing-table td .mu { font-size: 12px; }
-    .app-frame #billing-table tbody tr:nth-child(even) { background: transparent; }
-    .app-frame .summary-box { flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 22px; padding: 14px 16px; }
-    .app-frame .summary-box .tot.gt { grid-column: 1 / -1; font-size: 22px; margin-top: 2px; padding-top: 10px; }
-    .app-frame .command-bar { flex: 0 0 auto; position: static; margin: 0; padding: 12px 14px; border: 1px solid var(--line2); border-radius: 16px; box-shadow: none; gap: 8px; }
-    .app-frame .command-actions { flex-wrap: wrap; gap: 8px; }
-    .app-frame .command-actions > div:first-child { flex: 1 1 100% !important; }
-    .app-frame .command-pills { width: 100%; }
-    .app-frame .command-pills .btn-pill { flex: 1 1 0; }
-    .app-frame #btnSaveBill { flex: 2 1 0; }
-
-    @media (max-height: 760px) and (min-width: 1081px) {
-      #p-bill { gap: 8px; }
-      #p-bill .bl-card { padding: 10px 14px; }
-      .app-frame input, .app-frame select { min-height: 38px; }
-      .app-frame #qaWeight { min-height: 48px; }
-    }
-    @media (max-width: 1080px) {
-      .app-frame .right-pane { overflow: visible; }
-      .app-frame .items-card .wrap { max-height: 360px; }
-    }
-    @media (max-width: 640px) { .app-frame .fgrid.f4 { grid-template-columns: 1fr 1fr; } }
-  </style>
-  <style id="ui-final">
-    /* Totals live inside the Added products card; amount in words sits under the grand total */
-    .app-frame .items-card .summary-box { margin-top: 10px; flex: 0 0 auto; }
-    .app-frame .summary-box .sum-words { grid-column: 1 / -1; margin-top: -2px; color: #fff; font-size: 13px; font-weight: 500; line-height: 1.4; }
-    .app-frame .summary-box #sumWords { color: #fff; font-weight: 500; }
-    .app-frame .command-bar { padding: 10px; }
-    .app-frame .command-pills { gap: 8px; }
-    .app-frame #btnSaveBill { flex: 2 1 0; }
-    .app-frame #btnPrintDlg { flex: 1.3 1 0; }
-    .app-frame #btnResetBill { flex: 1 1 0; }
-  </style>
-  <style id="ui-navbar">
-    /* Light floating bar: wordmark left, segmented link tray centre, status + actions right */
-    .app-frame .sidebar { background: #fff; border: 1px solid #e4dfd7; border-radius: 22px; box-shadow: 0 14px 30px -22px rgba(15, 23, 42, .45); padding: 9px 12px 9px 16px; min-height: 64px; gap: 14px; overflow: visible; }
-    .app-frame .brand-row { order: 0; margin: 0; padding: 0; gap: 11px; flex: 0 0 auto; }
-    .app-frame .brand-icon { width: auto; height: 38px; background: none; border-radius: 0; }
-    .app-frame .brand-icon img { width: auto; height: 38px; }
-    .app-frame .brand-title { display: flex; flex-direction: column; gap: 3px; color: #111; }
-    .app-frame .brand-title span { font: 700 15px/1 var(--sans); letter-spacing: -.01em; }
-    .app-frame .brand-title small { font: 600 9.5px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: #d71920; }
-
-    .app-frame .nav-group { order: 1; display: flex; align-items: center; gap: 2px; margin: 0 auto; padding: 4px; background: #f3f0ea; border-radius: 999px; flex: 0 1 auto; min-width: 0; }
-    .app-frame .nav-group .nav-btn { order: 0; color: #4b5563; padding: 9px 16px; font-size: 14px; font-weight: 600; border-radius: 999px; transition: background-color .2s, color .2s, box-shadow .2s; }
-    .app-frame .nav-group .nav-btn .nav-btn-left { gap: 8px; }
-    .app-frame .nav-group .nav-btn svg { display: block; width: 17px; height: 17px; opacity: .9; }
-    .app-frame .nav-group .nav-btn:hover { background: rgba(17, 17, 17, .06); color: #111; }
-    .app-frame .nav-group { background: linear-gradient(180deg, rgba(243, 240, 234, .95), rgba(234, 230, 222, .95)); box-shadow: inset 0 1px 3px rgba(0, 0, 0, .07); }
-    .app-frame .nav-group .nav-btn { border: 1px solid transparent; }
-    /* Active link: red glass (translucent red, light edge, top shine) */
-    .app-frame .nav-group .nav-btn.on {
-      color: #fff;
-      background: linear-gradient(135deg, rgba(240, 62, 68, .94) 0%, rgba(215, 25, 32, .82) 55%, rgba(176, 16, 22, .88) 100%);
-      border-color: rgba(255, 255, 255, .5);
-      -webkit-backdrop-filter: blur(10px) saturate(160%);
-      backdrop-filter: blur(10px) saturate(160%);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), inset 0 -10px 16px -8px rgba(120, 6, 10, .35), 0 10px 22px -10px rgba(215, 25, 32, .75);
-      text-shadow: 0 1px 1px rgba(110, 5, 10, .25);
-    }
-    .app-frame .nav-group .nav-btn.on .nav-badge { background: #fff; color: #d71920; }
-    .app-frame .nav-group .nav-badge { background: #d71920; color: #fff; margin-left: 8px; min-width: 20px; height: 20px; }
-
-    /* Fix: keep the tray on one horizontal row (the base style stacked the links in a column) */
-    .app-frame .nav-group { flex-direction: row; flex-wrap: nowrap; align-items: center; }
-    .app-frame .nav-group .nav-btn { width: auto; flex: 0 0 auto; white-space: nowrap; justify-content: center; }
-    .app-frame .nav-group .nav-btn .nav-btn-left { white-space: nowrap; }
-    .app-frame .nav-status { order: 2; margin-left: 0; gap: 8px; }
-    .app-frame .nav-status #btnSyncSheet { order: 1; background: #f6f3ee; border: 1px solid #e4dfd7; color: #374151; min-height: 40px; padding: 0 14px; font-weight: 600; }
-    .app-frame .nav-status #btnSyncSheet:hover { background: #ece8e1; }
-    .app-frame #syncDot { width: 8px !important; height: 8px !important; }
-    .app-frame .nav-status .user-chip { order: 2; background: none; padding: 0; }
-    .app-frame .nav-status .user-chip button { background: #fff; color: #111; border: 1px solid #d3cdc2; min-height: 40px; padding: 0 14px; font-size: 13px; font-weight: 600; }
-    .app-frame .nav-status .user-chip button:hover { background: #f3f0ea; }
-    .app-frame .nav-status #sideNewBill { order: 3; display: inline-flex; width: auto; background: #d71920; color: #fff; padding: 0 20px; min-height: 40px; margin: 0; border-radius: 999px; font-size: 14px; font-weight: 700; box-shadow: 0 12px 22px -14px rgba(215, 25, 32, .8); }
-    .app-frame .nav-status #sideNewBill:hover { background: #b9141a; }
-    .app-frame .nav-status #sideNewBill svg { display: block; width: 16px; height: 16px; opacity: 1; }
-    .app-frame .nav-status #sideNewBill .nav-btn-left { gap: 7px; }
-
-    @media (max-width: 1240px) {
-      .app-frame .brand-title small { display: none; }
-      .app-frame .nav-group .nav-btn { padding: 9px 12px; }
-      .app-frame .nav-group .nav-btn svg { display: none; }
-    }
-    @media (max-width: 1080px) {
-      .app-frame .sidebar { border-radius: 20px; padding: 8px; gap: 8px; overflow-x: auto; }
-      .app-frame .brand-title { display: none; }
-      .app-frame .nav-group { margin: 0; flex: 0 0 auto; }
-      .app-frame .nav-status { flex: 0 0 auto; }
-    }
-  </style>
-  <style id="ui-red">
-    /* Red theme: brand colour taken from the existing RR red (#d71920 / hover #b9141a) */
-    :root {
-      --brand: #d71920; --brand-d: #b9141a; --brand-soft: #fdecec;
-      --dark: #d71920;
-      --bg: #f7f2f1; --line: #eddcda; --line2: #e2c9c6;
-    }
-
-    /* Primary buttons */
-    .btn-pill, .app-frame .btn-pill { background: #d71920; border-color: #d71920; color: #fff; }
-    .btn-pill:hover, .app-frame .btn-pill:hover { background: #b9141a; border-color: #b9141a; }
-    .app-frame .btn-pill.soft:hover { background: #fdecec; border-color: #e08a8d; color: #b9141a; }
-    .app-frame #btnAddRow { background: #d71920; }
-    .app-frame #btnResetBill { background: transparent; border-color: transparent; color: var(--mu); }
-    .app-frame #btnResetBill:hover { background: #fdecec; color: #b9141a; }
-
-    /* Focus states */
-    .app-frame input:focus, .app-frame select:focus, .app-frame textarea:focus { border-color: #d71920; box-shadow: 0 0 0 4px rgba(215, 25, 32, .12); }
-    .app-frame :is(button, a):focus-visible { outline: 3px solid rgba(215, 25, 32, .45); outline-offset: 2px; }
-    .app-frame #billing-table input:hover, .app-frame #billing-table select:hover { border-color: #e08a8d; }
-
-    /* Accents */
-    .app-frame .step { background: #d71920; }
-    .app-frame .count-pill { background: #fdecec; color: #b9141a; }
-    .app-frame .qa-foot strong { color: #d71920; }
-    .app-frame .hist-item:hover { border-color: #d71920; background: #fdecec; }
-    .app-frame .nav-group .nav-btn:hover { background: rgba(215, 25, 32, .08); color: #b9141a; }
-    .app-frame .nav-group { background: linear-gradient(180deg, rgba(250, 238, 237, .95), rgba(244, 226, 224, .95)); }
-    .app-frame .sidebar { border-color: #eddcda; }
-    .app-frame .nav-status #btnSyncSheet { background: #fdf3f2; border-color: #eddcda; }
-    .app-frame .nav-status #btnSyncSheet:hover { background: #fbe4e3; }
-    .app-frame .nav-status .user-chip button { border-color: #e2c9c6; }
-    .app-frame .nav-status .user-chip button:hover { background: #fdecec; }
-
-    /* Bill summary panel: deep red instead of black */
-    .app-frame .summary-box { background: linear-gradient(135deg, #9e0f15 0%, #6f0a0e 100%); color: #f7d7d8; }
-
-    /* Toast stays dark for contrast */
-    #toast { background: #1a0a0b; }
-
-    /* Sign-in gate: red pill with white arrow */
-    #authGate .g-btn, #authGate .g-btn:hover { background: #d71920; box-shadow: 0 18px 34px -18px rgba(215, 25, 32, .8); }
-    #authGate .g-btn:hover { background: #b9141a; }
-    #authGate .g-btn::after { background: #fff; color: #d71920; }
-  </style>
-  <style id="ui-panels">
-    /* ---------- Add product (left) ---------- */
-    #p-bill .qa-card { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 18px 20px 20px; background: #fff; border: 1px solid #eddcda; border-radius: 20px; box-shadow: 0 18px 36px -30px rgba(120, 10, 14, .45); }
-    #p-bill .qa-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #f03e44, #d71920 55%, #9e0f15); }
-    .app-frame .qa-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .app-frame .qa-title { display: flex; align-items: center; gap: 12px; }
-    .app-frame .qa-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: #fdecec; color: #d71920; }
-    .app-frame .qa-ico svg { width: 21px; height: 21px; }
-    #p-bill .qa-card .card-title { font: 700 16px/1.2 var(--sans); letter-spacing: -.01em; color: #1a1a1a; }
-    .app-frame .qa-sub, .app-frame .it-sub { margin: 3px 0 0; font-size: 12.5px; color: var(--mu); }
-    .app-frame .qa-key { display: inline-flex; align-items: center; gap: 6px; background: #fdf6f5; border: 1px solid #f1d9d7; color: #8a5a57; padding: 6px 10px; font-weight: 600; }
-    .app-frame .qa-key kbd { font: 700 10.5px/1 var(--mono); color: #b9141a; background: #fff; border: 1px solid #e8c6c3; border-bottom-width: 2px; border-radius: 6px; padding: 3px 6px; }
-
-    .app-frame .qa-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px; }
-    .app-frame .qa-fields label, .app-frame .qa-entry label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8a7f7d; margin-bottom: 6px; }
-    .app-frame .qa-fields input, .app-frame .qa-fields select { min-height: 46px; border-radius: 12px; font-size: 14.5px; background: #fff; }
-    .app-frame .qa-fields select:disabled { background: #faf6f5; color: #a49896; }
-    .app-frame .qa-search, .app-frame .qa-affix { position: relative; }
-    .app-frame .qa-search svg { position: absolute; left: 14px; top: 50%; width: 17px; height: 17px; transform: translateY(-50%); color: #b3a5a3; pointer-events: none; }
-    .app-frame .qa-search input { padding-left: 40px; font-weight: 600; }
-    .app-frame .qa-affix span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-weight: 700; color: #b3a5a3; pointer-events: none; }
-    .app-frame .qa-affix input { padding-left: 28px; text-align: right; }
-
-    .app-frame .qa-entry { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(170px, auto); align-items: end; gap: 14px; padding: 16px; border-radius: 16px; background: linear-gradient(180deg, #fdf6f5, #fbefee); border: 1px solid #f1d9d7; }
-    .app-frame .qa-wbox { position: relative; }
-    .app-frame #qaWeight { min-height: 60px; padding-right: 52px; border-radius: 14px; border: 1.5px solid #e8c6c3; background: #fff !important; font-size: 26px; font-weight: 700; text-align: right; color: #1a1a1a; }
-    .app-frame #qaWeight:focus { border-color: #d71920; box-shadow: 0 0 0 4px rgba(215, 25, 32, .14); }
-    .app-frame .qa-wbox span { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font: 700 13px/1 var(--sans); color: #b9141a; letter-spacing: .04em; text-transform: uppercase; }
-    .app-frame .qa-amt { display: flex; flex-direction: column; justify-content: flex-end; min-height: 60px; padding: 0 4px; }
-    .app-frame .qa-amt strong { font-size: 24px; line-height: 1.1; color: #1a1a1a; font-weight: 700; padding-bottom: 14px; }
-    .app-frame .qa-go .btn-pill { width: 100%; min-height: 60px; border-radius: 14px; font-size: 15px; font-weight: 700; gap: 8px; box-shadow: 0 14px 24px -14px rgba(215, 25, 32, .9); }
-    .app-frame .qa-go .btn-pill span { font-size: 18px; opacity: .85; }
-    .app-frame .qa-msg { margin: -4px 0 0; padding: 9px 12px; border-radius: 10px; background: #fdecec; color: #b9141a; font-size: 13px; font-weight: 600; }
-    .app-frame .qa-msg:empty { display: none; }
-
-    @media (max-width: 1240px) {
-      .app-frame .qa-fields { grid-template-columns: 1fr 1fr; }
-      .app-frame .qa-f-part { grid-column: 1 / -1; }
-      .app-frame .qa-entry { grid-template-columns: 1fr 1fr; }
-      .app-frame .qa-go { grid-column: 1 / -1; }
-    }
-
-    /* ---------- Invoice panel (right) ---------- */
-    .app-frame .items-card { padding: 18px 18px 16px; border: 1px solid #eddcda; border-radius: 20px; box-shadow: 0 18px 36px -30px rgba(120, 10, 14, .45); }
-    .app-frame .items-card .card-hdr { margin-bottom: 12px; align-items: flex-start; }
-    .app-frame .items-card .card-title { font: 700 16px/1.2 var(--sans); letter-spacing: -.01em; color: #1a1a1a; }
-    .app-frame .count-pill { background: #d71920; color: #fff; height: 22px; min-width: 24px; }
-
-    .app-frame .items-card .wrap { border: 1px solid #f1e4e2; border-radius: 14px; background: #fff; }
-    .app-frame #billing-table thead th { position: sticky; top: 0; z-index: 1; background: #fdf6f5; color: #8a7f7d; font-size: 10.5px; letter-spacing: .07em; padding: 10px 10px; border-bottom: 1px solid #f1e4e2; }
-    .app-frame #billing-table td { padding: 11px 10px; border-bottom: 1px solid #f5eceb; vertical-align: middle; }
-    .app-frame #billing-table tbody tr:last-child td { border-bottom: 0; }
-    .app-frame #billing-table tbody tr { transition: background-color .15s; }
-    .app-frame #billing-table tbody tr:hover { background: #fdf6f5; }
-    .app-frame .it-no { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: #fdecec; color: #b9141a; font: 700 11px/1 var(--mono); }
-    .app-frame #billing-table td strong { color: #1a1a1a; }
-    .app-frame #billing-table td .mu { font-size: 12px; margin-top: 2px; }
-    .app-frame #billing-table .btn-del { width: 28px; height: 28px; color: #c4b5b3; opacity: .55; transition: opacity .15s, background-color .15s, color .15s; }
-    .app-frame #billing-table tr:hover .btn-del { opacity: 1; }
-    .app-frame #billing-table .btn-del:hover { background: #fdecec; color: #d71920; }
-    .app-frame .it-empty { text-align: center; padding: 36px 16px !important; color: var(--mu); font-size: 13px; line-height: 1.5; }
-    .app-frame .it-empty-ico { width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 14px; display: grid; place-items: center; background: #fdecec; color: #d71920; }
-    .app-frame .it-empty-ico svg { width: 22px; height: 22px; }
-    .app-frame .it-empty strong { display: block; color: #1a1a1a; font-size: 14px; margin-bottom: 2px; }
-
-    .app-frame .items-card .summary-box { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; padding: 0; background: none; border: 0; border-radius: 0; color: inherit; }
-    .app-frame .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .app-frame .summary-box .sum-grid .tot { flex-direction: column; justify-content: flex-start; gap: 4px; padding: 10px 12px; border-radius: 12px; background: #faf6f5; border: 1px solid #f1e4e2; color: #8a7f7d; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-    .app-frame .summary-box .sum-grid .tot strong, .app-frame .summary-box .sum-grid .tot .mono { color: #1a1a1a; font-size: 15px; font-weight: 700; letter-spacing: 0; text-transform: none; }
-    .app-frame .sum-grand { padding: 14px 16px; border-radius: 16px; color: #fff; background: linear-gradient(135deg, #e5262d 0%, #d71920 45%, #a50f15 100%); box-shadow: 0 16px 28px -18px rgba(215, 25, 32, .9), inset 0 1px 0 rgba(255, 255, 255, .25); }
-    .app-frame .summary-box .sum-grand .tot.gt { display: flex; justify-content: space-between; align-items: baseline; margin: 0; padding: 0; border: 0; color: #fff; font: 700 13px/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
-    .app-frame .summary-box .sum-grand .tot.gt .mono { font-size: 26px; letter-spacing: -.01em; text-transform: none; color: #fff; }
-    .app-frame .summary-box .sum-words { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .22); color: rgba(255, 255, 255, .92); font-size: 12.5px; font-weight: 500; font-style: italic; line-height: 1.4; }
-    .app-frame .summary-box #sumWords { color: inherit; }
-
-    .app-frame .command-bar { padding: 12px; border: 1px solid #eddcda; border-radius: 18px; background: #fff; }
-    .app-frame .cb-note { position: relative; }
-    .app-frame .cb-note svg { position: absolute; left: 13px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); color: #b3a5a3; pointer-events: none; }
-    .app-frame .command-actions .cb-note input { padding-left: 38px; background: #faf6f5; border-color: #f1e4e2; }
-    .app-frame .command-actions .cb-note input:focus { background: #fff; }
-    .app-frame .command-pills .btn-pill { min-height: 46px; border-radius: 12px; font-size: 14px; font-weight: 700; gap: 7px; }
-    .app-frame .command-pills .btn-pill svg { width: 17px; height: 17px; flex-shrink: 0; }
-    .app-frame #btnSaveBill { box-shadow: 0 12px 22px -14px rgba(215, 25, 32, .9); }
-    .app-frame #btnPrintDlg { background: #fff; border-color: #e2c9c6; color: #1a1a1a; }
-    .app-frame #btnResetBill[data-s="1"] { background: #fdecec; color: #b9141a; }
-  </style>
-  <style id="ui-responsive">
-    /* ---------- Right panel: one container (items, totals and actions together) ---------- */
-    .app-frame .right-pane { background: #fff; border: 1px solid #eddcda; border-radius: 20px; box-shadow: 0 18px 36px -30px rgba(120, 10, 14, .45); padding: 18px; gap: 0; }
-    .app-frame .right-pane .items-card { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; }
-    .app-frame .right-pane .command-bar { background: none; border: 0; border-top: 1px solid #f1e4e2; border-radius: 0; box-shadow: none; margin: 14px 0 0; padding: 14px 0 0; }
-
-    /* ---------- Nav bar: never spills out of its pill ---------- */
-    .app-frame .sidebar { min-width: 0; }
-    .app-frame .nav-group { min-width: 0; overflow-x: auto; scrollbar-width: none; }
-    .app-frame .nav-group::-webkit-scrollbar { display: none; }
-    .app-frame .nav-status #btnSyncSheet { max-width: 180px; }
-    .app-frame #syncLabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .app-frame #syncDot { flex-shrink: 0; }
-
-    @media (max-width: 1360px) {
-      .app-frame .brand-title small { display: none; }
-      .app-frame .nav-group .nav-btn svg { display: none; }
-      .app-frame .nav-group .nav-btn { padding: 9px 13px; }
-    }
-    @media (max-width: 1240px) and (min-width: 1081px) {
-      .app-frame .brand-title { display: none; }
-      .app-frame .sidebar { gap: 10px; padding: 9px 10px; }
-      .app-frame .nav-group .nav-btn { padding: 9px 11px; font-size: 13.5px; }
-      .app-frame .nav-status #btnSyncSheet, .app-frame .nav-status .user-chip button { padding: 0 12px; }
-      .app-frame .nav-status #sideNewBill { padding: 0 16px; }
-    }
-
-    /* Tablet and phone: logo + actions on the first row, full-width link tray below */
-    @media (max-width: 1080px) {
-      .app-frame { padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
-      .app-frame .sidebar { flex-wrap: wrap; overflow: visible; padding: 10px; gap: 10px; border-radius: 20px; }
-      .app-frame .brand-row { order: 0; flex: 1 1 auto; min-width: 0; }
-      .app-frame .brand-title { display: flex; min-width: 0; }
-      .app-frame .brand-title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .app-frame .nav-status { order: 1; margin-left: auto; flex: 0 0 auto; }
-      .app-frame .nav-group { order: 2; flex: 1 1 100%; width: 100%; margin: 0; justify-content: flex-start; }
-      .app-frame .nav-group .nav-btn { flex: 1 0 auto; padding: 9px 12px; }
-      .app-frame .nav-group .nav-btn svg { display: block; }
-      .app-frame .right-pane { padding: 16px; }
-    }
-
-    @media (max-width: 640px) {
-      /* Link tray becomes an app-style tab bar: icon over label, all five tabs visible */
-      .app-frame .nav-group { padding: 4px; gap: 2px; }
-      .app-frame .nav-group .nav-btn { position: relative; flex: 1 1 0; min-width: 0; padding: 7px 2px; border-radius: 14px; font-size: 11px; white-space: normal; }
-      .app-frame .nav-group .nav-btn .nav-btn-left { flex-direction: column; gap: 4px; white-space: normal; text-align: center; line-height: 1.15; }
-      .app-frame .nav-group .nav-btn svg { width: 18px; height: 18px; }
-      .app-frame .nav-group .nav-badge { position: absolute; top: 3px; right: 6px; margin: 0; min-width: 17px; height: 17px; padding: 0 4px; font-size: 9.5px; }
-      .app-frame .qa-key { display: none; }
-      .app-frame .right-pane { padding: 14px; border-radius: 18px; }
-      #mbox { padding: 14px; overflow-x: auto; }
-    }
-
-    @media (max-width: 480px) {
-      .app-frame .brand-title { display: none; }
-      .app-frame .brand-row { flex: 0 0 auto; }
-      .app-frame .nav-status { flex: 1 1 auto; justify-content: flex-end; gap: 6px; }
-      .app-frame .nav-status #btnSyncSheet { width: 40px; padding: 0; justify-content: center; }
-      .app-frame .nav-status #syncLabel { display: none; }
-      .app-frame .nav-status .user-chip button { padding: 0 11px; font-size: 12.5px; }
-      .app-frame .nav-status #sideNewBill { padding: 0 14px; font-size: 13px; }
-      .app-frame .qa-fields { grid-template-columns: 1fr; }
-      .app-frame .command-pills { flex-wrap: wrap; }
-      .app-frame #btnSaveBill { flex: 1 1 100%; }
-    }
-
-    @media (max-width: 360px) {
-      .app-frame .nav-status #sideNewBill { width: 40px; padding: 0; justify-content: center; }
-      .app-frame .nav-status #sideNewBill .nav-btn-left { font-size: 0; gap: 0; }
-      .app-frame .nav-group .nav-btn { font-size: 10px; }
-      .app-frame .fgrid.f4 { grid-template-columns: 1fr; }
-      .app-frame .fgrid .span2 { grid-column: 1 / -1; }
-    }
-  </style>
+    .nav-group::-webkit-scrollbar { display: none; }
+    .tb-in { flex-wrap: wrap; padding-top: 12px; padding-bottom: 0; min-height: 0; row-gap: 10px; }
+    .f4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .span4 { grid-column: span 2; }
+    .qa-fields > div, .qa-fields > .qa-f-part { grid-column: span 6; }
+    .qa-fields > .qa-f-part { grid-column: 1 / -1; }
+  }
+  @media (max-width: 1023px) {
+    .workspace { grid-template-columns: minmax(0, 1fr); }
+    .right-pane { order: 2; }
+  }
+  @media (max-width: 767px) {
+    .topbar { position: static; }
+    .page { padding: 14px 14px 36px; }
+    .tb-in { padding-left: 14px; padding-right: 14px; }
+    .f3 { grid-template-columns: minmax(0, 1fr); }
+    .span3 { grid-column: auto; }
+    .card { padding: 16px; }
+    .grand .g-amt { font-size: 26px; }
+  }
+  @media (max-width: 520px) {
+    .f4 { grid-template-columns: minmax(0, 1fr); }
+    .span2, .span4 { grid-column: auto; }
+    .qa-fields > div { grid-column: 1 / -1; }
+    .qa-go, #btnQaAdd { width: 100%; }
+    .qa-amt { text-align: left; padding: 0; flex: 1 1 100%; order: 3; }
+    .qa-go { order: 4; }
+    .tb-right { gap: 8px; }
+    .command-pills { flex-wrap: wrap; }
+    #btnSaveBill { flex: 1 1 100%; }
+    .command-pills .btn-pill:not(#btnSaveBill) { flex: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  
+</style>
 </head>
 <body data-tab="bill" class="gated">
 
@@ -1532,101 +730,83 @@
   </div>
 
   <div class="app-frame">
-    <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
-      <div>
-        <div class="brand-row">
-          <div class="brand-icon"><img src="data:image/png;base64,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" alt="RR" /></div>
-          <div class="brand-title"><span>R.R. Industries</span><small>Electro Polish Works</small></div>
+    <!-- TOP HEADER -->
+    <header class="topbar">
+      <div class="tb-in">
+        <div class="tb-left">
+          <div class="brand-row">
+            <div class="brand-icon" aria-hidden="true">RR</div>
+            <div class="brand-title"><span>R.R. Industries</span><small>Electro Polish Works</small></div>
+          </div>
+
+          <nav class="nav-group" id="navGroup" aria-label="Main">
+            <button type="button" class="nav-btn on" data-t="bill">
+              <span class="nav-btn-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Billing
+              </span>
+            </button>
+            <button type="button" class="nav-btn" data-t="parts">
+              <span class="nav-btn-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Product Information
+              </span>
+            </button>
+            <button type="button" class="nav-btn" data-t="clients">
+              <span class="nav-btn-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Dealers
+              </span>
+            </button>
+            <button type="button" class="nav-btn" data-t="sales">
+              <span class="nav-btn-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Saved Bills
+              </span>
+              <span class="nav-badge" id="billCountBadge">0</span>
+            </button>
+            <button type="button" class="nav-btn" data-t="set">
+              <span class="nav-btn-left">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Settings
+              </span>
+            </button>
+          </nav>
         </div>
 
-        <div class="nav-group" id="navGroup">
-          <button type="button" class="nav-btn on" data-t="bill">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/></svg>
-              Billing
-            </span>
-          </button>
-          <button type="button" class="nav-btn" data-t="parts">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-              Product Information
-            </span>
-          </button>
-          <button type="button" class="nav-btn" data-t="clients">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-4-4h-1m-4 6H2v-2a4 4 0 014-4h7a4 4 0 014 4v2zm-5-10a4 4 0 110-8 4 4 0 010 8zm7 0a3 3 0 110-6 3 3 0 010 6z"/></svg>
-              Dealers
-            </span>
-          </button>
-          <button type="button" class="nav-btn" data-t="sales">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              Saved Bills
-            </span>
-            <span class="nav-badge" id="billCountBadge">0</span>
-          </button>
-          <button type="button" class="nav-btn" data-t="set">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-              Settings
-            </span>
-          </button>
-
-          <div class="nav-divider-label">Quick tools</div>
-          
-          <button type="button" class="nav-btn" id="sideQuickClient">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-              Add Dealer
-            </span>
-          </button>
-        </div>
-      </div>
-
-
-      <div class="nav-status">
-          <button type="button" class="nav-btn" id="sideNewBill">
-            <span class="nav-btn-left">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-              New Invoice
-            </span>
+        <div class="tb-right">
+          <button type="button" class="sync-pill" id="btnSyncSheet" title="Sync with Google Sheet">
+            <span class="sync-dot" id="syncDot"></span>
+            <span id="syncLabel">Signed out</span>
           </button>
           <div class="user-chip" id="userChip" hidden>
             <span class="ua" id="userAvatar">R</span>
             <span class="un" id="userName"></span>
-            <button type="button" id="btnSignOut" title="Sign out of this device">Sign out</button>
+            <button type="button" class="hbtn" id="btnSignOut" title="Sign out of this device">Sign out</button>
           </div>
-          <button type="button" class="btn-pill soft sm" id="btnSyncSheet" title="Sync with Google Sheet">
-            <span id="syncDot" style="width:7px;height:7px;border-radius:999px;background:#94a3b8;display:inline-block"></span>
-            <span id="syncLabel">Signed out</span>
+          <button type="button" class="hbtn primary" id="sideNewBill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Invoice
           </button>
-      </div>
-    </aside>
-
-    <!-- CENTER WORKSPACE -->
-    <main class="center-pane">
-      <!-- Company Header Strip -->
-      <div class="hero-bar">
-        <div style="display:flex;align-items:center;gap:12px">
-          <button type="button" class="sidebar-toggle" id="btnToggleSidebar" title="Hide / Open Sidebar" aria-label="Hide or open sidebar">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-          </button>
-          <div>
-            <h1 class="hero-title" id="hdrName">R.R. INDUSTRIES</h1>
-            <div class="hero-sub" id="hdrAddr">No.96/6, Mangaliamman Koil Street, St. Thomas Mount, Chennai - 600 016.</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <div class="hero-pills" id="hdrPills"></div>
-          
         </div>
       </div>
+    </header>
 
+    <!-- Kept so the app's existing scripts keep working; not shown in this layout -->
+    <div hidden>
+      <span id="hdrName"></span><span id="hdrAddr"></span><span id="hdrPills"></span>
+      <button type="button" id="btnToggleSidebar" aria-label="Toggle sidebar"></button>
+      <button type="button" id="sideQuickClient" aria-label="Add dealer"></button>
+    </div>
+
+    <div class="page">
+      <div class="workspace">
+        <!-- LEFT: forms -->
+        <main class="center-pane">
       <!-- 1. BILLING VIEW -->
       <section class="pg on" id="p-bill">
         <!-- Invoice details -->
-        <div class="card bl-card">
+        <div class="card bl-card meta">
           <div class="fgrid f4">
             <div><label for="invNo">Invoice No.</label><input id="invNo" class="mono" style="font-weight:700" /></div>
             <div><label for="invDate">Invoice Date</label><input id="invDate" type="date" class="mono" /></div>
@@ -1641,11 +821,11 @@
             <h3 class="card-title">Bill to (M/S)</h3>
             <button type="button" class="btn-pill soft sm" id="btnQuickClient">+ Add Dealer</button>
           </div>
-          <div class="fgrid f4">
-            <div class="span2"><label for="clientSel">Dealer</label><select id="clientSel"></select></div>
+          <div class="fgrid f3">
+            <div><label for="clientSel">Dealer</label><select id="clientSel"></select></div>
             <div><label for="cGst">GSTIN</label><input id="cGst" class="mono" readonly /></div>
             <div><label for="cMobile">Mobile</label><input id="cMobile" class="mono" readonly /></div>
-            <div class="span4"><label for="cAddr">Billing address</label><textarea id="cAddr" rows="2" readonly style="min-height:50px;resize:none"></textarea></div>
+            <div class="span3"><label for="cAddr">Billing address</label><textarea id="cAddr" rows="3" readonly></textarea></div>
           </div>
         </div>
 
@@ -1653,7 +833,7 @@
         <div class="card qa-card">
           <div class="qa-head">
             <div class="qa-title">
-              <span class="qa-ico" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></span>
+              <span class="qa-ico" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
               <div>
                 <h3 class="card-title">Add product</h3>
                 <p class="qa-sub">Pick a part, enter the weight, press Enter</p>
@@ -1666,7 +846,7 @@
             <div class="qa-f-part">
               <label for="qaPart">Part number</label>
               <div class="qa-search">
-                <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/></svg>
+                <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input id="qaPart" list="partsDatalist" placeholder="Search part no..." autocomplete="off" />
               </div>
             </div>
@@ -1794,51 +974,54 @@
           </div>
         </div>
       </section>
-    </main>
+        </main>
 
-    <!-- RIGHT FLOATING PANEL (Tax Summary + Recent Bills History, matching reference right panel) -->
-    <aside class="right-pane">
-      <div class="card items-card">
-        <div class="card-hdr">
-          <div class="it-title">
-            <h3 class="card-title">Invoice items <span class="count-pill" id="itemCount">0</span></h3>
-            <p class="it-sub">Products added to this bill</p>
+        <!-- RIGHT: items, totals, actions -->
+        <aside class="right-pane">
+          <div class="card items-card">
+            <div class="card-hdr">
+              <div class="it-title">
+                <h3 class="card-title">Invoice items <span class="count-pill" id="itemCount">0</span></h3>
+              </div>
+              <p class="it-sub">Products added to this bill</p>
+              <button type="button" id="btnAddRow" hidden>+ Blank row</button>
+            </div>
+            <div class="wrap">
+              <table id="billing-table">
+                <thead><tr><th style="width:44px">#</th><th>Product</th><th>Weight</th><th style="text-align:right">Amount</th><th style="width:40px"></th></tr></thead>
+                <tbody id="billTbody"></tbody>
+              </table>
+              <datalist id="partsDatalist"></datalist>
+            </div>
           </div>
-          <button type="button" id="btnAddRow" hidden>+ Blank row</button>
-        </div>
-        <div class="wrap">
-          <table id="billing-table">
-            <thead><tr><th style="width:34px">#</th><th>Product</th><th>Weight</th><th style="text-align:right">Amount</th><th style="width:40px"></th></tr></thead>
-            <tbody id="billTbody"></tbody>
-          </table>
-          <datalist id="partsDatalist"></datalist>
-        </div>
-        <div class="summary-box">
-          <div class="sum-grid">
-            <div class="tot"><span>Total weight</span><strong id="sumWeight" class="mono">0.00 kg</strong></div>
-            <div class="tot"><span>Basic amount</span><strong id="sumBasic" class="mono">&#8377;0.00</strong></div>
-            <div class="tot"><span>CGST @ 9%</span><span id="sumCgst" class="mono">&#8377;0.00</span></div>
-            <div class="tot"><span>SGST @ 9%</span><span id="sumSgst" class="mono">&#8377;0.00</span></div>
+
+          <div class="metrics">
+            <div class="mcard"><span>Total weight</span><strong id="sumWeight" class="mono">0.00 kg</strong></div>
+            <div class="mcard"><span>Basic amount</span><strong id="sumBasic" class="mono">&#8377;0.00</strong></div>
+            <div class="mcard"><span>CGST @ 9%</span><strong id="sumCgst" class="mono">&#8377;0.00</strong></div>
+            <div class="mcard"><span>SGST @ 9%</span><strong id="sumSgst" class="mono">&#8377;0.00</strong></div>
           </div>
-          <div class="sum-grand">
-            <div class="tot gt"><span>Grand total</span><span id="sumGrand" class="mono">&#8377;0.00</span></div>
-            <div class="sum-words"><span id="sumWords">Zero Rupees Only</span></div>
+
+          <div class="grand">
+            <div>
+              <span class="g-lab">Grand total</span>
+              <p class="g-words"><span id="sumWords">Zero Rupees Only</span></p>
+            </div>
+            <span id="sumGrand" class="g-amt mono">&#8377;0.00</span>
           </div>
-        </div>
-      </div>
-      <div class="command-bar">
-          <div class="command-actions">
+
+          <div class="command-bar">
             <div class="cb-note">
-              <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.4-9.6a2 2 0 112.8 2.8L11.8 15H9v-2.8l8.6-8.6z"/></svg>
+              <svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               <input id="invNote" placeholder="Remarks / delivery notes (optional)" />
             </div>
             <div class="command-pills">
-              <button type="button" class="btn-pill sm" id="btnSaveBill"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Save invoice</button>
-              <button type="button" class="btn-pill soft sm" id="btnPrintDlg"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4"/></svg>Print</button>
+              <button type="button" class="btn-pill sm" id="btnSaveBill"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Save invoice</button>
+              <button type="button" class="btn-pill soft sm" id="btnPrintDlg"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print</button>
               <button type="button" class="btn-pill soft sm" id="btnResetBill" data-label="Reset">Reset</button>
             </div>
           </div>
-        </div>
+
       <div class="hist-hidden" hidden>
       <div class="right-hdr" style="margin-top:4px">
         <h2>Bill history</h2>
@@ -1854,7 +1037,9 @@
         Print A4 Invoice
       </button>
       </div>
-    </aside>
+        </aside>
+      </div>
+    </div>
   </div>
 
   <!-- Modal & Standardized A4 Print Dialog -->
