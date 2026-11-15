@@ -1007,6 +1007,64 @@
     }
     @media (prefers-reduced-motion: reduce) { .app-frame * { transition: none !important; } }
   </style>
+  <style id="ui-nav">
+    /* Floating black pill navigation (brand left, links centre, actions right) on a warm background */
+    :root { --bg: #f2efeb; --brand: #111111; --brand-d: #000000; --brand-soft: #ebe7e0; --side: #0a0a0a; --line: #e4dfd7; --line2: #d3cdc2; }
+    body { background: var(--bg); }
+    .app-frame { background: var(--bg); padding: 16px 20px 20px; gap: 16px; grid-template-rows: auto minmax(0, 1fr); }
+    .app-frame .center-pane { background: transparent; padding: 0 4px 0 0; }
+    .app-frame .hero-bar { background: rgba(242, 239, 235, .94); margin: 0 0 16px; padding: 4px 0 14px; }
+    .app-frame .right-pane { border: 1px solid var(--line); border-radius: 20px; }
+    .app-frame .command-bar { margin: 0; border: 1px solid var(--line2); border-radius: 18px; padding: 14px 18px; }
+    .app-frame .card { border-color: var(--line); }
+    .app-frame .sidebar-toggle { display: none; }
+    body.sidebar-collapsed .app-frame .sidebar { display: flex; }
+
+    .app-frame .sidebar {
+      grid-column: 1 / -1; grid-row: 1;
+      flex-direction: row; align-items: center; justify-content: flex-start; gap: 6px;
+      background: #000; border-radius: 999px; padding: 10px 12px 10px 10px; min-height: 66px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .app-frame .sidebar::-webkit-scrollbar { display: none; }
+    .app-frame .sidebar > div, .app-frame .nav-group { display: contents; }
+    .app-frame .brand-row { order: 0; margin: 0 auto 0 0; padding: 0 20px 0 0; border: 0; gap: 12px; }
+    .app-frame .brand-icon { width: 46px; height: 46px; border-radius: 999px; background: #fff; color: #000; font-size: 14px; }
+    .app-frame .brand-title { color: #fff; font: 500 20px/1 var(--sans); letter-spacing: 0; white-space: nowrap; }
+    .app-frame .nav-divider-label { display: none; }
+    .app-frame .nav-btn { width: auto; flex: 0 0 auto; order: 1; color: #fff; font-size: 15px; font-weight: 500; padding: 10px 18px; border-radius: 999px; white-space: nowrap; box-shadow: none; }
+    .app-frame .nav-btn svg { display: none; }
+    .app-frame .nav-btn:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+    .app-frame .nav-btn.on { background: rgba(255, 255, 255, .18); color: #fff; font-weight: 600; box-shadow: none; }
+    .app-frame .nav-btn.on::before { display: none; }
+    .app-frame .nav-badge { background: #fff; color: #000; margin-left: 8px; }
+    .app-frame #sideQuickClient { order: 2; margin-left: auto; }
+    .app-frame #sideNewBill { order: 3; background: #fff; color: #000; font-weight: 600; padding: 12px 24px; margin-left: 4px; }
+    .app-frame #sideNewBill:hover { background: #ece8e1; }
+
+    /* Monochrome focus + summary to match */
+    .app-frame input:focus, .app-frame select:focus, .app-frame textarea:focus { border-color: #111; box-shadow: 0 0 0 4px rgba(17, 17, 17, .1); }
+    .app-frame :is(button, a):focus-visible { outline-color: rgba(17, 17, 17, .5); }
+    .app-frame .summary-box { background: #0a0a0a; }
+    .app-frame th { background: #f1eee8; }
+    .app-frame tbody tr:hover { background: #faf8f4; }
+
+    @media (min-width: 1081px) {
+      body[data-tab="bill"] .app-frame { grid-template-columns: minmax(0, 1fr) var(--right-w, 332px) !important; }
+      body:not([data-tab="bill"]) .app-frame { grid-template-columns: minmax(0, 1fr) !important; }
+    }
+    @media (max-width: 1080px) {
+      .app-frame { padding: 10px; gap: 12px; }
+      .app-frame .sidebar { position: static; border-radius: 28px; min-height: 0; padding: 8px; }
+      .app-frame .brand-row { padding-right: 10px; margin-right: 0; }
+      .app-frame .brand-title { display: none; }
+      .app-frame #sideQuickClient { margin-left: 0; }
+      .app-frame .center-pane { padding: 0; }
+      .app-frame .hero-bar { position: static; margin: 0 0 12px; padding: 4px 0 12px; }
+      .app-frame .right-pane { border-top: 1px solid var(--line); }
+      .app-frame .command-bar { margin: 0; }
+    }
+  </style>
 </head>
 <body data-tab="bill" class="gated">
 
