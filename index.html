@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>R.R. Industries · Billing &amp; A4 Tax Invoice</title>
+  <title>R.R. Industries · Billing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -989,7 +989,7 @@
           <div class="card-hdr">
             <h3 class="card-title">Google Sheet Database Connection</h3>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <a href="https://docs.google.com/spreadsheets/d/1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU/edit" target="_blank" rel="noopener" class="btn-pill soft sm" style="text-decoration:none">Open RR INDUSTRIES Sheet</a>
+              <a href="https://docs.google.com/spreadsheets/d/1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU/edit" target="_blank" rel="noopener" class="btn-pill soft sm" style="text-decoration:none">Open RR DATA Sheet</a>
               <button type="button" class="btn-pill soft sm" id="btnShowGas">View Apps Script (Code.gs)</button>
             </div>
           </div>
@@ -1073,7 +1073,7 @@ const TABS = {
 };
 
 function ensureTabs() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = SpreadsheetApp.openById('1eXR0yKM93E4IL0ckL41DesVUEaSrxEXNySvLEh_g6TU');
   Object.keys(TABS).forEach(name => {
     let sh = ss.getSheetByName(name);
     if (!sh) {
