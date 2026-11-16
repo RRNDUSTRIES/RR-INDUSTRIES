@@ -72,7 +72,29 @@
 /* DC items: fixed-length panel, scrolls inside instead of growing */
 .items-card .wrap{height:min(58vh,540px);max-height:none;overflow-y:auto}
 .items-card thead th{position:sticky;top:0;z-index:2;background:#fff}
-.items-card .it-empty{height:min(40vh,380px);text-align:center;vertical-align:middle}
+.items-card .it-empty{text-align:center;vertical-align:middle}
+/* Fit-to-screen desktop layout: no page scrolling; only the DC items list scrolls */
+@media screen and (min-width:901px) and (min-height:560px){
+html,body{height:100%;overflow:hidden}
+.app-frame{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+.page{flex:1 1 auto;min-height:0;overflow:auto;padding:12px 18px 16px}
+body[data-tab=bill] .page{overflow:hidden;display:flex;flex-direction:column}
+body[data-tab=bill] .workspace{flex:1 1 auto;min-height:0;align-items:stretch;gap:16px;width:100%}
+body[data-tab=bill] .center-pane{min-height:0;overflow:auto;padding:14px 16px;gap:12px}
+body[data-tab=bill] .center-pane .card{padding:14px 16px}
+body[data-tab=bill] .center-pane .card-hdr{padding-bottom:10px;margin-bottom:12px}
+body[data-tab=bill] .right-pane{min-height:0;padding:14px;gap:10px;overflow:hidden}
+body[data-tab=bill] .right-pane>*{flex:0 0 auto}
+body[data-tab=bill] .right-pane>.items-card{flex:1 1 0;min-height:130px;display:flex;flex-direction:column;padding:14px 16px}
+body[data-tab=bill] .items-card .card-hdr{padding-bottom:8px;margin-bottom:8px}
+body[data-tab=bill] .items-card .wrap{flex:1 1 0;min-height:0;height:auto;max-height:none;overflow-y:auto}
+body[data-tab=bill] .items-card td.it-empty{padding:28px 16px}
+body[data-tab=bill] .metrics{gap:8px}
+body[data-tab=bill] .mcard{padding:8px 12px}
+body[data-tab=bill] .mcard>strong{font-size:15px;line-height:1.25}
+body[data-tab=bill] .grand{padding-top:12px;padding-bottom:12px}
+body[data-tab=bill] .command-bar{padding:10px 12px;gap:8px}
+}
 /* part number combobox */
 .qa-card{overflow:visible}
 .qa-search input#qaPart{padding-right:38px}
