@@ -198,10 +198,22 @@ input, select, textarea, button { max-width: 100%; }
   min-width:0;
   max-width:100%;
 }
-.app-frame input[type="date"]::-webkit-date-and-time-value {
+.app-frame input[type="date"],
+.app-frame input[type="datetime-local"],
+.app-frame input[type="month"],
+.app-frame input[type="week"] {
+  text-align:center !important;
+  text-align-last:center !important;
+}
+.app-frame input[type="date"]::-webkit-date-and-time-value,
+.app-frame input[type="datetime-local"]::-webkit-date-and-time-value,
+.app-frame input[type="month"]::-webkit-date-and-time-value,
+.app-frame input[type="week"]::-webkit-date-and-time-value {
+  display:block;
   width:100%;
   min-width:0;
-  text-align:left;
+  margin:0 auto;
+  text-align:center !important;
 }
 @media (max-width:900px) {
   .app-frame input[type="date"],
