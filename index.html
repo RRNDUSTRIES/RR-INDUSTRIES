@@ -937,82 +937,113 @@ Print A4 Invoice
               <span>${c(n.date)}</span>
               <span>${(Number(n.totals.weight)||0).toFixed(2)} kg</span>
             </div>
-          </div>`).join("")||'<div class="mu" style="text-align:center;padding:18px 8px">No saved bills yet. Click Save or Print A4 to store an invoice.</div>'}o("histSearch").addEventListener("input",it),o("histList").addEventListener("click",t=>{const e=t.target.closest("[data-hist-idx]");if(!e)return;const n=s.bills[+e.getAttribute("data-hist-idx")];n&&It(n)}),o("btnSaveBill").addEventListener("click",()=>{const t=re();if(!t)return;const e=s.bills.findIndex(n=>String(n.invNo)===String(t.invNo));e>=0?s.bills[e]=t:s.bills.unshift(t);it();U({action:"saveBill",bill:t});const savedNo=t.invNo;se();y((e>=0?"Updated DC #":"Saved DC #")+savedNo+" · New DC ready");});function je(t){const e=t.items.map((n,a)=>`<div class="dc-row dc-item"><div class="dc-center">${a+1}</div><div>${c(n.partNo)}${n.color?` - ${c(n.color)}`:""}</div><div class="dc-center dc-mono">${(Number(n.weight)||0).toFixed(2)}</div><div class="dc-center">—</div></div>`).join("");return `
-<style>.dc-preview-wrap{width:100%;max-width:100%;overflow:hidden;display:flex;justify-content:center;align-items:flex-start} .dc-sheet{box-sizing:border-box;width:194mm;height:277mm;min-height:277mm;flex:0 0 194mm;margin:0 auto;padding:8mm;background:#fff;color:#25213c;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.35;display:flex;flex-direction:column;border:1.5px solid #39304f;transform-origin:top center;-webkit-print-color-adjust:exact;print-color-adjust:exact} .dc-sheet *{box-sizing:border-box}.dc-title{text-align:center;margin:0 auto 4mm;font-weight:800;font-size:15px;letter-spacing:.5px;border:1.5px solid #39304f;padding:2px 9px;line-height:1.1} .dc-head{display:grid;grid-template-columns:1fr 2fr 1fr;align-items:start;gap:5px;min-height:29mm;border-bottom:1px solid #5a5068;padding-bottom:3mm} .dc-meta{font-size:10px;line-height:1.6}.dc-meta strong{font-weight:700}.dc-brand{text-align:center}.dc-logo{height:16mm;max-width:55mm;object-fit:contain;display:block;margin:0 auto 1mm}.dc-company{font-size:18px;font-weight:900;letter-spacing:.2px;margin:1mm 0}.dc-address{font-size:10px;line-height:1.35}.dc-client{display:grid;grid-template-columns:1.15fr .85fr;gap:2mm;margin:3mm 0 2mm}.dc-box{border:1px solid #5a5068;border-radius:0;min-height:27mm;padding:2.5mm 3mm;line-height:1.55;overflow-wrap:anywhere}.dc-box-title{font-weight:700;margin-bottom:1mm}.dc-line{border-bottom:1px dotted #8c8495;min-height:5mm;overflow-wrap:anywhere}.dc-table{border:1px solid #5a5068;border-radius:0;overflow:hidden;display:flex;flex-direction:column;flex:1 1 auto;min-height:0}.dc-row{display:grid;grid-template-columns:12% 48% 18% 22%;min-height:8mm}.dc-row>div{padding:1.6mm 2mm;border-right:1px solid #5a5068;min-width:0;overflow-wrap:anywhere}.dc-row>div:last-child{border-right:0}.dc-table .dc-row{border-bottom:1px solid #5a5068}.dc-table .dc-row:last-child{border-bottom:0}.dc-colhead{font-weight:700;text-align:center;min-height:8mm;background:#faf9fc}.dc-item{min-height:7mm}.dc-center{text-align:center}.dc-mono{font-variant-numeric:tabular-nums}.dc-filler{flex:1 1 auto;min-height:35mm}.dc-bottom-note{font-size:10px;font-weight:600;padding:1.5mm 3mm;align-self:flex-start}.dc-sign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:4mm;min-height:15mm;padding:0 3mm}.dc-sign>div{width:43%;border-top:1px solid #5a5068;padding-top:2mm}.dc-sign .dc-for{text-align:right;font-weight:800;border:0;padding:0}.dc-footer-note{font-size:9px;color:#39304f} @media print{.dc-preview-wrap{width:194mm!important;height:277mm!important;overflow:visible!important;display:block!important}.dc-sheet{width:194mm!important;height:277mm!important;min-height:277mm!important;margin:0 auto!important;padding:6mm!important;transform:none!important;break-after:avoid!important;page-break-after:avoid!important;overflow:hidden!important}} @media screen and (max-width:700px){.dc-sheet{transform:scale(var(--dc-scale,1));}}</style>
-<div class="dc-sheet">
- <div class="dc-title">DELIVERY CHALLAN</div>
- <div class="dc-head">
-  <div class="dc-meta"><div><strong>GSTIN :</strong> ${c(s.cfg.gst)}</div><div><strong>Mobile :</strong> ${c(s.cfg.phone)}</div><div style="margin-top:5px"><strong>Date :</strong> ${c(j(t.date))}</div><div><strong>No. :</strong> <b style="font-size:15px">${c(t.invNo)}</b></div></div>
-  <div class="dc-brand"><img class="dc-logo" src="${xt}" alt="Company logo"><div class="dc-company">${c(s.cfg.name)}</div><div class="dc-address">${c(s.cfg.addr)}</div></div>
-  <div></div>
- </div>
- <div class="dc-client">
-  <div class="dc-box"><div class="dc-box-title">To,</div><div><b>${c(t.client.name)}</b></div><div class="dc-line">${c(t.client.addr||"")}</div><div><b>Mobile :</b> ${c(t.client.mobile||"")}</div></div>
-  <div class="dc-box"><div><b>CUSTOMER GSTIN :</b></div><div class="dc-line">${c(t.client.gst||"")}</div><div style="margin-top:2mm"><b>CUSTOMER DC No. :</b> ${c(t.dcNo||"")}</div><div class="dc-line"></div><div><b>CUSTOMER DC Date :</b> ${c(t.dcDate?j(t.dcDate):"")}</div></div>
- </div>
- <div class="dc-table"><div class="dc-row dc-colhead"><div>Sl.No.</div><div>DESCRIPTION</div><div>KG.</div><div>QUANTITY</div></div>${e}<div class="dc-filler"></div><div class="dc-bottom-note">Not for Sale For Labour Work Only</div></div>
- <div class="dc-sign"><div>Receiver's Signature</div><div class="dc-for">For ${c(s.cfg.name)}</div></div>
-</div>`}function It(t){const e=je(t),n=o("mbox");n.classList.remove("narrow"),n.innerHTML=`
+          </div>`).join("")||'<div class="mu" style="text-align:center;padding:18px 8px">No saved bills yet. Click Save or Print A4 to store an invoice.</div>'}o("histSearch").addEventListener("input",it),o("histList").addEventListener("click",t=>{const e=t.target.closest("[data-hist-idx]");if(!e)return;const n=s.bills[+e.getAttribute("data-hist-idx")];n&&It(n)}),o("btnSaveBill").addEventListener("click",()=>{const t=re();if(!t)return;const e=s.bills.findIndex(n=>String(n.invNo)===String(t.invNo));e>=0?s.bills[e]=t:s.bills.unshift(t);it();U({action:"saveBill",bill:t});const savedNo=t.invNo;se();y((e>=0?"Updated DC #":"Saved DC #")+savedNo+" · New DC ready");});function dcPageLayout(t,items,startIdx,pageNum,totalPages){
+  const p=[],isLast=pageNum===totalPages,m=s.cfg,cl=t.client||{};
+  const v=(g,M,F,D,w=.3,dash)=>p.push({k:"l",x1:g,y1:M,x2:F,y2:D,w:w,dash:dash});
+  const r=(g,M,F,D,opts={})=>{g=Ve(g);const rt=ht(g,D,opts.b,opts.i);return p.push({k:"t",s:g,x:opts.al==="c"?M-rt/2:opts.al==="r"?M-rt:M,y:F,size:D,bold:!!opts.b,italic:!!opts.i}),rt};
+  // Outer A4 page border (square)
+  p.push({k:"s",x:z,y:be,w:H-z,h:q-be,lw:.45});
+  // Title box (square)
+  p.push({k:"s",x:81,y:10.5,w:48,h:6.5,lw:.4});
+  r("DELIVERY CHALLAN",105,15.0,9.8,{b:1,al:"c"});
+  totalPages>1&&r("Page "+pageNum+" of "+totalPages,199,15.0,7.5,{b:1,al:"r"});
+  // Header left metadata
+  const g1=r("GSTIN : ",12,23.5,8,{b:1});r(m.gst||"",12+g1,23.5,8);
+  const m1=r("Mobile : ",12,28,8,{b:1});r(m.phone||"",12+m1,28,8);
+  const d1=r("Date : ",12,35.5,8,{b:1});r(j(Je(t.date))||t.date||"",12+d1,35.5,8);
+  const n1=r("No. : ",12,41.5,8.5,{b:1});r(String(t.invNo||""),12+n1,41.5,11.5,{b:1});
+  // Header center logo + company
+  p.push({k:"i",key:"logo",x:105-9.5,y:19.5,w:19,h:4218/300});
+  r(m.name||"R.R. INDUSTRIES",105,39.2,14.5,{b:1,al:"c"});
+  let ay=43.2;
+  vt(m.addr||"",7.4,!1,90).slice(0,2).forEach(line=>{r(line,105,ay,7.4,{al:"c"}),ay+=3.5});
+  v(11,53,199,53,.32);
+  // Client & Customer DC boxes (square)
+  p.push({k:"s",x:11,y:56,w:105,h:28,lw:.32});
+  p.push({k:"s",x:118,y:56,w:81,h:28,lw:.32});
+  r("To,",14,60.8,8.2,{b:1});
+  r(zt(cl.name||"",9.5,!0,99),14,65.5,9.5,{b:1});
+  let cy=69.8;
+  vt(cl.addr||"",8,!1,99).slice(0,2).forEach(line=>{r(line,14,cy,8),cy+=3.8});
+  v(14,75,113,75,.2,[.35,.45]);
+  const cm1=r("Mobile : ",14,81,8,{b:1});r(cl.mobile||"",14+cm1,81,8);
+  r("CUSTOMER GSTIN :",121,60.8,7.8,{b:1});
+  r(cl.gst||"",121,65.2,8.5);
+  v(121,66.4,196,66.4,.2,[.35,.45]);
+  const cd1=r("CUSTOMER DC No. : ",121,72.5,7.8,{b:1});r(zt(t.dcNo||"",8,!1,75-cd1),121+cd1,72.5,8);
+  v(121,73.7,196,73.7,.2,[.35,.45]);
+  const cdt1=r("CUSTOMER DC Date : ",121,80.5,7.8,{b:1});r(t.dcDate?j(Je(t.dcDate)):"",121+cdt1,80.5,8);
+  // Items table (square)
+  const tblTop=87,tblBot=isLast?264:q-10,colX=[11,31,127,161,199],colMid=i=>(colX[i]+colX[i+1])/2;
+  p.push({k:"s",x:11,y:tblTop,w:188,h:tblBot-tblTop,lw:.35});
+  p.push({k:"r",x:11.2,y:tblTop+.2,w:187.6,h:7.8,fill:"#f3f4fa"});
+  v(11,tblTop+8,199,tblTop+8,.32);
+  r("Sl.No.",colMid(0),tblTop+5.3,8,{b:1,al:"c"});
+  r("DESCRIPTION",colMid(1),tblTop+5.3,8,{b:1,al:"c"});
+  r("KG.",colMid(2),tblTop+5.3,8,{b:1,al:"c"});
+  r("QUANTITY",colMid(3),tblTop+5.3,8,{b:1,al:"c"});
+  const colEnd=isLast?tblBot-7:tblBot;
+  [1,2,3].forEach(idx=>v(colX[idx],tblTop,colX[idx],colEnd,.3));
+  items.forEach((it,idx)=>{
+    const ry=tblTop+8+idx*7.5;
+    r(String(startIdx+idx+1),colMid(0),ry+5,8.5,{al:"c"});
+    r(zt(String(it.partNo||"")+(it.color?" - "+it.color:""),8.5,!1,colX[2]-colX[1]-4),colX[1]+2,ry+5,8.5);
+    r((Number(it.weight)||0).toFixed(2),colMid(2),ry+5,8.5,{al:"c"});
+    r("-",colMid(3),ry+5,8.5,{al:"c"});
+    v(11,ry+7.5,199,ry+7.5,.2);
+  });
+  if(!isLast){
+    r("Continued on next page ...",199,q-3,8,{b:1,al:"r"});
+    return p;
+  }
+  v(11,tblBot-7,199,tblBot-7,.25);
+  r("Not for Sale For Labour Work Only",14,tblBot-2.3,8,{b:1});
+  // Signature footer
+  v(14,278,82,278,.32);
+  r("Receiver's Signature",14,283,8.5);
+  r("For "+(m.name||"R.R. INDUSTRIES"),196,283,9,{b:1,al:"r"});
+  return p;
+}
+function buildDcPages(t){
+  const list=(t.items||[]).slice(),pages=[],perPage=21;
+  if(!list.length)pages.push([]);
+  else while(list.length)pages.push(list.splice(0,perPage));
+  let offset=0;
+  return pages.map((chunk,idx)=>{const pg=dcPageLayout(t,chunk,offset,idx+1,pages.length);offset+=chunk.length;return pg});
+}
+async function It(t){
+  const n=o("mbox");
+  let l="";
+  n.classList.remove("narrow");
+  n.innerHTML=`
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-            <h2 class="modal-title">Standardized A4 Print Preview \xB7 #${c(t.invNo)}</h2>
+            <h2 class="modal-title">Delivery Challan &middot; #${c(t.invNo)}</h2>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button type="button" class="btn-pill sm" id="mPrintNow">Print (A4)</button>
-              <button type="button" class="btn-pill soft sm" id="mDlHtml">Download HTML</button>
-              <button type="button" class="btn-pill soft sm" id="mClose">Close</button>
+              <button type="button" class="btn-pill sm" id="dcPrintNow" disabled>Print / Open PDF</button>
+              <button type="button" class="btn-pill soft sm" id="dcDlPdf" disabled>Download PDF</button>
+              <button type="button" class="btn-pill soft sm" id="dcClose">Close</button>
             </div>
           </div>
-          <div class="dc-preview-wrap" id="dcPreviewWrap">${e}</div>
-        `,o("modal").classList.add("on");const dcWrap=o("dcPreviewWrap"),dcSheet=dcWrap&&dcWrap.querySelector(".dc-sheet");if(dcWrap&&dcSheet){const fit=()=>{const pagePx=194*96/25.4,scale=Math.min(1,(dcWrap.clientWidth||pagePx)/pagePx);dcSheet.style.setProperty("--dc-scale",String(scale));dcSheet.style.transform=`scale(${scale})`;dcWrap.style.height=(277*96/25.4*scale)+"px"};fit();if(window.ResizeObserver){const ro=new ResizeObserver(fit);ro.observe(dcWrap);dcWrap._ro=ro}}o("mClose").onclick=()=>o("modal").classList.remove("on"),o("mPrintNow").onclick=()=>{o("printArea").innerHTML=e;try{window.print()}catch{y("Use Download HTML to print")}},o("mDlHtml").onclick=()=>{const a=document.querySelector("style").innerHTML,i=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Invoice-${c(t.invNo)}</title><style>${a}body{background:#fff;display:block;padding:0;margin:0;height:auto;overflow:visible}.inv-sheet{border:0;width:194mm;min-height:277mm;padding:0;margin:0 auto}.dc-preview-wrap{width:194mm;height:277mm;overflow:visible;display:block}.dc-sheet{width:194mm;height:277mm;min-height:277mm;padding:6mm;margin:0 auto;transform:none!important;break-after:avoid!important;page-break-after:avoid!important}@page{size:A4 portrait;margin:8mm}@media print{.dc-preview-wrap{width:194mm!important;height:277mm!important}.dc-sheet{width:194mm!important;height:277mm!important;min-height:277mm!important;transform:none!important;break-after:avoid!important;page-break-after:avoid!important}}:root{--tx: #172b25;--mu: #75827b;--bd: #e4e9e2;--bd-input: #d9e1d9;--surface: #ffffff;--canvas: #f5f7f2;--dark: #173d32;--serif: "Cormorant Garamond", Georgia, serif;--sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;--mono: "IBM Plex Mono", ui-monospace, monospace;--accent: #b58b52;--accent-soft: #f5eee2;--green-soft: #eaf1eb;--shadow-soft: 0 12px 34px rgba(31, 55, 43, .055)}html,body{background:#f2f5ef}body{color:var(--tx);background:radial-gradient(ellipse at 8% 0%,rgba(224,234,221,.72),transparent 38%),radial-gradient(ellipse at 100% 100%,rgba(239,230,211,.48),transparent 38%),#f2f5ef;font-size:13px;letter-spacing:-.01em}.app-frame{gap:14px;padding:14px;background:#f7f9f5f0;grid-template-columns:var(--side-w, 238px) minmax(0,1fr) var(--right-w, 316px)}.sidebar{padding:12px 8px 8px;gap:22px}.brand-row{padding:8px 10px 18px;gap:12px}.brand-icon{width:38px;height:38px;border-radius:13px;background:linear-gradient(145deg,#245545,#12372d);box-shadow:0 7px 16px #173d3233;font-size:13px;letter-spacing:.02em}.brand-title{font-size:14px;letter-spacing:.075em}.nav-group{gap:5px}.nav-btn{border-radius:12px;padding:11px 13px;color:#78857e;font-size:12.5px;transition:.2s ease}.nav-btn:hover{background:#edf2ec;color:var(--dark)}.nav-btn.on{color:#fff;background:linear-gradient(105deg,#1e4a3d,#173d32);box-shadow:0 7px 18px #173d3229}.nav-btn.on svg{color:#e9d6b6}.nav-badge{background:#d7b47d;color:#263b30}.nav-divider-label{color:#9aa49c;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:18px 13px 7px}.side-profile{background:linear-gradient(145deg,#285747,#163b30);border:1px solid rgba(255,255,255,.14);border-radius:17px;padding:14px;box-shadow:0 12px 24px #173d3224}.side-avatar{background:#e6d4b4;color:#234336;border:2px solid rgba(255,255,255,.6)}.side-pill-btn{border-radius:10px;background:#ffffff21}.center-pane{border:1px solid #e7ebe4;border-radius:22px;padding:24px 26px;gap:19px;background:linear-gradient(180deg,#ffffffeb,#f9faf7f7);box-shadow:0 2px 8px #21362a06}.hero-bar{padding:2px 0 17px;border-bottom:1px solid #e9ede7}.hero-title{font-size:clamp(22px,2vw,29px);letter-spacing:-.045em;color:#18382e}.hero-sub{margin-top:5px;color:#849088;font-size:12px}.hero-pills{gap:8px}.soft-pill{border:1px solid #e7ebe4;background:#f8faf6;border-radius:8px;padding:6px 10px;font-size:10.5px;box-shadow:none}.card{border:1px solid #e7ebe5;border-radius:16px;padding:18px;box-shadow:0 5px 18px #1c342709;background:#fff}.card-hdr{margin-bottom:14px}.card-title{font-size:13px;letter-spacing:-.015em}label{color:#78857d;font-size:10px;letter-spacing:.045em;text-transform:uppercase;margin-bottom:6px}input,select,textarea{color:#263b31;background:#fbfcfa;border:1px solid #dfe6dd;border-radius:9px;min-height:40px;padding:9px 12px;font-size:12.5px}input:hover,select:hover,textarea:hover{border-color:#c4d2c5}input[readonly],textarea[readonly]{background:#f2f5f0;color:#69766e}input:focus,select:focus,textarea:focus{border-color:#729783;box-shadow:0 0 0 3px #57856821}.btn-pill{border:1px solid #1d493a;background:linear-gradient(120deg,#245544,#173d32);color:#fff;min-height:39px;padding:9px 17px;border-radius:9px;font-size:11.5px;box-shadow:0 4px 10px #173d321a;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.btn-pill:hover{background:#285c49;border-color:#285c49;transform:translateY(-1px);box-shadow:0 7px 15px #173d3226}.btn-pill.soft{background:#fff;color:#345343;border:1px solid #dce5dc;box-shadow:none}.btn-pill.soft:hover{background:#f2f6f1;border-color:#b9cbbb}.btn-pill.sm{min-height:32px;padding:6px 11px}.btn-del{border-radius:8px}.wrap{border-radius:12px}table{border-collapse:separate;border-spacing:0}th,td{border-bottom:1px solid #edf0eb;padding:11px 9px}th{background:#f5f7f3;color:#78867d;font-size:9.5px;letter-spacing:.11em;padding-top:12px;padding-bottom:12px}#billing-table th:first-child{border-radius:8px 0 0}#billing-table th:last-child{border-radius:0 8px 0 0}#billing-table td{padding:7px 6px}#billing-table input,#billing-table select{background:#fbfcfa;border-color:#e3e9e1;border-radius:8px}.weight-inp{background:#fbf6e9!important;border-color:#e9d8b4!important;color:#735a31}.command-bar{border:1px solid #e5ebe3;border-radius:16px;padding:14px 16px;box-shadow:0 7px 22px #1c34270b}.command-top{color:#64736a}.right-pane{border:1px solid #e6ebe4;border-radius:22px;padding:20px;gap:16px;box-shadow:0 8px 28px #1c34270b;background:#fffffff5}.right-hdr h2{color:#1d3d31;font-size:16px;letter-spacing:-.025em}.summary-box{background:linear-gradient(145deg,#f5f8f3,#f0f4ed);border:1px solid #e2e9df;border-radius:13px;padding:14px}.tot{color:#78857d}.tot strong{color:#294638}.tot.gt{color:#1b3d30;border-top-color:#dce5da;font-size:19px}.search-pill input{background:#f7f9f6;border-color:#e7ece5}.hist-item{border:1px solid #e8ede6;border-radius:12px;padding:12px;background:#fff;transition:.18s ease}.hist-item:hover{background:#f6f9f4;border-color:#c8d8ca;transform:translateY(-1px)}.hist-top{color:#294638;font-size:12px}.hist-sub{color:#8a968e}.sidebar-toggle{border:1px solid #e0e7df;border-radius:10px;background:#fff;color:#355746;box-shadow:none}.sidebar-toggle:hover{background:#f2f6f1;border-color:#c6d5c7}#authGate{background:radial-gradient(circle at 15% 15%,rgba(198,218,198,.34),transparent 34%),radial-gradient(circle at 85% 85%,rgba(214,190,151,.23),transparent 32%),#f2f5ef}.gate-card{max-width:470px;padding:clamp(30px,6vw,54px);border:1px solid rgba(222,231,220,.95);border-radius:25px;background:#ffffffe0;box-shadow:0 28px 75px #1d3a2b1a;backdrop-filter:blur(12px)}.gate-mark{width:66px;height:42px;color:#f8f5ec;border:0;border-radius:13px;background:linear-gradient(145deg,#285b47,#153a2f);box-shadow:0 8px 18px #173d3233;font-size:20px;margin-bottom:25px}.gate-co{color:#1b3e31;font-size:clamp(38px,8vw,58px);letter-spacing:.035em}.gate-rule{width:52px;height:3px;margin:19px auto;border:0;border-radius:5px;background:#bd9b67}.gate-card h2{color:#89948c;font-size:9.5px;letter-spacing:.19em;margin-bottom:28px}.g-btn{max-width:100%;min-height:49px;border-radius:11px;border-color:#1c4939;background:linear-gradient(110deg,#245544,#173d32);box-shadow:0 9px 20px #173d3229;font-size:12.5px}.g-btn:hover{background:#285d49;box-shadow:0 12px 24px #173d3233}.gate-note{color:#96a098;font-size:11px}.gate-err{border-radius:10px}.user-chip{border-color:#e2e9e1;background:#f8faf7}.user-chip .ua,.user-chip img{background:#1e493a}.user-chip button{background:#eaf1e9;color:#315443}.user-chip button:hover{background:#dce9dc}#modal{background:#10261d7a;backdrop-filter:blur(7px)}#mbox{border:1px solid #e2e9e1;border-radius:18px;box-shadow:0 28px 80px #10261d38}#toast{background:#173d32;border:1px solid rgba(255,255,255,.12);border-radius:10px;box-shadow:0 12px 28px #10261d38}@media(max-width:1320px){.app-frame{--side-w: 210px;--right-w: 290px}}@media(max-width:1080px){.app-frame{gap:10px;padding:10px}.sidebar{border:1px solid #e5ebe3;border-radius:15px;background:#ffffffe6;padding:7px}.brand-row{padding:4px 7px}.brand-icon{width:32px;height:32px}.nav-btn{border-radius:9px}.center-pane{border-radius:18px;padding:20px}.right-pane{border-radius:18px}}@media(max-width:640px){.app-frame{padding:8px;gap:8px}.center-pane{padding:16px 13px;gap:14px}.hero-title{font-size:21px}.hero-bar{align-items:flex-start}.card{padding:14px;border-radius:13px}.right-pane{padding:15px}.gate-card{padding:32px 23px;border-radius:20px}.gate-co{font-size:clamp(35px,11vw,49px)}}@media print{.inv-sheet{color:#111827!important;background:#fff!important}.a4-head{background:#f3f4f6!important}}</style>
-<style id="rr-date-field-fit-fix">
-/* Keep native date controls inside every responsive form/card. */
-.app-frame input[type="date"],
-.app-frame input[type="datetime-local"],
-.app-frame input[type="month"],
-.app-frame input[type="week"] {
-  display:block !important;
-  box-sizing:border-box !important;
-  width:100% !important;
-  min-width:0 !important;
-  max-width:100% !important;
-  min-inline-size:0 !important;
-  max-inline-size:100% !important;
-  padding-inline:10px !important;
-  -webkit-appearance:none;
-  appearance:none;
-}
-/* Allow grid/flex field wrappers to shrink to the card's content width. */
-.app-frame .fgrid > div,
-.app-frame .row > div,
-.app-frame .db-grid > *,
-.app-frame .card,
-.app-frame .card > *,
-.app-frame .pg,
-.app-frame .pg > *,
-.app-frame .workspace,
-.app-frame .center-pane,
-.app-frame .right-pane {
-  min-width:0;
-  max-width:100%;
-}
-.app-frame input[type="date"]::-webkit-date-and-time-value {
-  width:100%;
-  min-width:0;
-  text-align:left;
-}
-@media (max-width:900px) {
-  .app-frame input[type="date"],
-  .app-frame input[type="datetime-local"],
-  .app-frame input[type="month"],
-  .app-frame input[type="week"] {
-    width:100% !important;
-    min-width:0 !important;
-    max-width:100% !important;
-    font-size:14px;
+          <div class="mg-note" id="dcNote">Preparing A4 pages&hellip;</div>
+          <div id="dcPages"></div>`;
+  o("modal").classList.add("on");
+  o("dcClose").onclick=()=>{o("modal").classList.remove("on");l&&URL.revokeObjectURL(l)};
+  try{
+    const[d,p]=await Promise.all([xe(ze),xe(Xe)]),N=buildDcPages(t),m=o("dcPages");
+    N.forEach(f=>{const E=document.createElement("canvas");E.className="mg-pv",m.appendChild(E),nn(E,f,7,{logo:d,cert:p})});
+    const T=on(N,{logo:ye(d,600,Math.round(600*222/300)),cert:ye(p,380,251)});
+    l=URL.createObjectURL(T);
+    const fname="Delivery-Challan-"+String(t.invNo||"DC").replace(/[^\w-]+/g,"-")+".pdf";
+    const dl=()=>{const f=document.createElement("a");f.href=l,f.download=fname,document.body.appendChild(f),f.click(),f.remove()};
+    o("dcPrintNow").onclick=()=>{window.open(l,"_blank")||dl()};
+    o("dcDlPdf").onclick=dl;
+    o("dcPrintNow").disabled=!1;
+    o("dcDlPdf").disabled=!1;
+    o("dcNote").textContent=N.length+" A4 page"+(N.length>1?"s":"")+" ready. Tap Print / Open PDF, then use the viewer’s Print or Share button.";
+  }catch(err){
+    o("dcNote").textContent="Could not build the PDF: "+err.message;
   }
-}
-</style>
-
-</head><body>${e}<script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>`,l=URL.createObjectURL(new Blob([i],{type:"text/html"})),d=document.createElement("a");d.href=l,d.download="Invoice-"+t.invNo+".html",document.body.appendChild(d),d.click(),setTimeout(()=>{URL.revokeObjectURL(l),d.remove()},1500),y("Downloaded Invoice-"+t.invNo+".html")}}function le(){const t=re();if(!t)return;const e=s.bills.findIndex(n=>n.invNo===t.invNo);e>=0?s.bills[e]=t:s.bills.unshift(t),it(),U({action:"saveBill",bill:t}),It(t)}o("btnPrintDlg").addEventListener("click",le),o("btnRightPrint").addEventListener("click",le);function de(){const t=o("mbox");t.classList.add("narrow"),t.innerHTML=`
+}function le(){const t=re();if(!t)return;const e=s.bills.findIndex(n=>n.invNo===t.invNo);e>=0?s.bills[e]=t:s.bills.unshift(t),it(),U({action:"saveBill",bill:t}),It(t)}o("btnPrintDlg").addEventListener("click",le),o("btnRightPrint").addEventListener("click",le);function de(){const t=o("mbox");t.classList.add("narrow"),t.innerHTML=`
           <h2 class="modal-title" style="margin-bottom:14px">Add New Dealer</h2>
           <div style="margin-bottom:10px"><label>Dealer / Company Name</label><input id="qcName" placeholder="Company name" /></div>
           <div class="row">
