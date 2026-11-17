@@ -228,6 +228,36 @@ input, select, textarea, button { max-width: 100%; }
 }
 </style>
 
+<style id="rr-date-true-center-fix">
+/* Center native date controls in both axes, including iOS Safari. */
+.app-frame input[type="date"],
+.app-frame input[type="datetime-local"],
+.app-frame input[type="month"],
+.app-frame input[type="week"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  padding-block: 0 !important;
+  line-height: normal !important;
+}
+.app-frame input[type="date"]::-webkit-date-and-time-value,
+.app-frame input[type="datetime-local"]::-webkit-date-and-time-value,
+.app-frame input[type="month"]::-webkit-date-and-time-value,
+.app-frame input[type="week"]::-webkit-date-and-time-value {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  line-height: normal !important;
+  text-align: center !important;
+}
+</style>
 </head>
 <body data-tab="bill" class="gated">
 <div id="authGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
