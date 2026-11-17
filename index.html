@@ -258,21 +258,6 @@ input, select, textarea, button { max-width: 100%; }
   text-align: center !important;
 }
 </style>
-
-<style id="monthly-invoice-print">
-.monthly-invoice-print-page{break-after:page;page-break-after:always;width:194mm;margin:0 auto;padding:0;}
-.monthly-invoice-print-page:last-child{break-after:auto;page-break-after:auto;}
-.monthly-invoice-print-page canvas{display:block;width:194mm;height:274mm;margin:0 auto;}
-.monthly-print-note{display:none;}
-@media print{
-  body>*:not(#printArea){display:none!important;}
-  #printArea{display:block!important;width:194mm;margin:0 auto;}
-  #printArea .monthly-invoice-print-page{display:block!important;width:194mm;height:274mm;margin:0;padding:0;break-after:page;page-break-after:always;}
-  #printArea .monthly-invoice-print-page:last-child{break-after:auto;page-break-after:auto;}
-  #printArea .monthly-invoice-print-page canvas{width:194mm!important;height:274mm!important;display:block!important;}
-  #printArea .monthly-print-note{display:none!important;}
-}
-</style>
 </head>
 <body data-tab="bill" class="gated">
 <div id="authGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
@@ -537,11 +522,11 @@ New DC
 </div>
 <div id="mgAuditView" hidden>
 <div class="card">
-<div class="card-hdr"><h3 class="card-title">Monthly GST Invoices</h3></div>
-<p class="mu" style="margin:-4px 0 14px">Print every saved dealer invoice for the selected period. Each saved invoice is printed as an individual A4 page.</p>
+<div class="card-hdr"><h3 class="card-title">Monthly GST Audit Report</h3></div>
+<p class="mu" style="margin:-4px 0 14px">Generate a dealer-wise monthly GST summary using the monthly consolidated tax calculations for every dealer.</p>
 <div class="fgrid f3"><div><label for="auditFrom">From date</label><input id="auditFrom" type="date" class="mono"></div><div><label for="auditTo">To date</label><input id="auditTo" type="date" class="mono"></div><div style="display:flex;align-items:end"><button type="button" class="btn-pill" id="auditGenerate">Generate Monthly GST Report</button></div></div>
 </div>
-<div class="card" id="auditResult"><div class="card-hdr"><h3 class="card-title">Saved Dealer Invoices</h3><button type="button" class="btn-pill soft sm" id="auditPrint" disabled>Print Invoices</button></div><div id="auditBody"><div class="mg-empty">Choose a month and generate the report.</div></div></div>
+<div class="card" id="auditResult"><div class="card-hdr"><h3 class="card-title">GST Audit Summary</h3><button type="button" class="btn-pill soft sm" id="auditPrint" disabled>Print Report</button></div><div id="auditBody"><div class="mg-empty">Choose a month and generate the report.</div></div></div>
 </div>
 </section>
 <section class="pg" id="p-set">
@@ -745,21 +730,6 @@ Print A4 Invoice
 }
 </style>
 
-
-<style id="monthly-invoice-print">
-.monthly-invoice-print-page{break-after:page;page-break-after:always;width:194mm;margin:0 auto;padding:0;}
-.monthly-invoice-print-page:last-child{break-after:auto;page-break-after:auto;}
-.monthly-invoice-print-page canvas{display:block;width:194mm;height:274mm;margin:0 auto;}
-.monthly-print-note{display:none;}
-@media print{
-  body>*:not(#printArea){display:none!important;}
-  #printArea{display:block!important;width:194mm;margin:0 auto;}
-  #printArea .monthly-invoice-print-page{display:block!important;width:194mm;height:274mm;margin:0;padding:0;break-after:page;page-break-after:always;}
-  #printArea .monthly-invoice-print-page:last-child{break-after:auto;page-break-after:auto;}
-  #printArea .monthly-invoice-print-page canvas{width:194mm!important;height:274mm!important;display:block!important;}
-  #printArea .monthly-print-note{display:none!important;}
-}
-</style>
 </head><body>${e}<script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>`,l=URL.createObjectURL(new Blob([i],{type:"text/html"})),d=document.createElement("a");d.href=l,d.download="Invoice-"+t.invNo+".html",document.body.appendChild(d),d.click(),setTimeout(()=>{URL.revokeObjectURL(l),d.remove()},1500),y("Downloaded Invoice-"+t.invNo+".html")}}function le(){const t=re();if(!t)return;const e=s.bills.findIndex(n=>n.invNo===t.invNo);e>=0?s.bills[e]=t:s.bills.unshift(t),it(),U({action:"saveBill",bill:t}),It(t)}o("btnPrintDlg").addEventListener("click",le),o("btnRightPrint").addEventListener("click",le);function de(){const t=o("mbox");t.classList.add("narrow"),t.innerHTML=`
           <h2 class="modal-title" style="margin-bottom:14px">Add New Dealer</h2>
           <div style="margin-bottom:10px"><label>Dealer / Company Name</label><input id="qcName" placeholder="Company name" /></div>
@@ -898,63 +868,59 @@ startxref
 function mgShowTab(which){const audit=which==="audit";o("mgConsolidatedView").hidden=audit;o("mgAuditView").hidden=!audit;o("mgTabConsolidated").classList.toggle("on",!audit);o("mgTabAudit").classList.toggle("on",audit);if(!audit)ve()}
 o("mgTabConsolidated").addEventListener("click",()=>mgShowTab("consolidated"));
 o("mgTabAudit").addEventListener("click",()=>mgShowTab("audit"));
-async function generateAudit(){
- const from=o("auditFrom").value,to=o("auditTo").value;
- if(!from||!to||from>to){y("Choose a valid date range");return}
- const records=s.consol.filter(rec=>{
-   const rf=String(rec.from||rec.invDate||"");
-   const rt=String(rec.to||rec.invDate||rec.from||"");
-   return rf<=to && rt>=from && Array.isArray(rec.lines) && rec.lines.length;
- }).sort((a,b)=>String(a.dealerName||"").localeCompare(String(b.dealerName||""))||String(a.invDate||a.from||"").localeCompare(String(b.invDate||b.from||"")));
- if(!records.length){
-   o("auditBody").innerHTML='<div class="mg-empty">No saved dealer invoices found for this period.</div>';
-   o("auditPrint").disabled=true;
-   y("No saved dealer invoices found for this period");
-   return;
- }
- o("auditBody").innerHTML=`<div class="mg-sum"><span class="mg-pill"><b>${records.length}</b> saved dealer invoice${records.length===1?"":"s"}</span><span class="mg-pill">Period <b>${j(from)} to ${j(to)}</b></span></div><div class="mg-note">${records.map(r=>`#${c(r.invNo||"-")} · ${c(r.dealerName||"")}`).join("<br>")}</div>`;
- o("auditPrint").disabled=false;
- await printSavedMonthlyInvoices(records,from,to);
-}
-async function printSavedMonthlyInvoices(records,from,to){
- const area=o("printArea");
- area.innerHTML="";
- const old={dealer:o("mgDealer").value,from:o("mgFrom").value,to:o("mgTo").value};
+async function printMonthlySavedInvoices(from,to){
+ const saved=s.consol.filter(r=>{
+  const rf=String(r.from||"");
+  const rt=String(r.to||"");
+  return rf && rt && rf>=from && rt<=to && Array.isArray(r.lines) && r.lines.length;
+ }).sort((a,b)=>String(a.dealerName||"").localeCompare(String(b.dealerName||""))||String(a.from).localeCompare(String(b.from)));
+ if(!saved.length){y("No saved monthly invoices found for this period");return}
  try{
-   const [logo,cert]=await Promise.all([xe(ze),xe(Xe)]);
-   records.forEach(rec=>{
-     const t=tn(rec);
-     const e={invNo:rec.invNo,invDate:rec.invDate||rec.to||rec.from,hsn:rec.hsn||"998898"};
-     const pages=en(t,e);
-     pages.forEach((page,pageIndex)=>{
-       const wrap=document.createElement("div");
-       wrap.className="monthly-invoice-print-page";
-       const cv=document.createElement("canvas");
-       cv.className="mg-pv";
-       wrap.appendChild(cv);
-       area.appendChild(wrap);
-       nn(cv,page,7,{logo,cert});
-     });
-   });
-   const note=document.createElement("div");
-   note.className="monthly-print-note";
-   note.textContent=`Monthly GST invoices: ${records.length} saved dealer invoice${records.length===1?"":"s"} · ${from} to ${to}`;
-   area.prepend(note);
-   setTimeout(()=>window.print(),120);
- }catch(err){
-   y("Could not prepare the saved invoices for printing: "+err.message);
- }finally{
-   o("mgDealer").value=old.dealer;o("mgFrom").value=old.from;o("mgTo").value=old.to;
-   Ut();ve();
- }
+  const[logo,cert]=await Promise.all([xe(ze),xe(Xe)]);
+  const pages=[];
+  saved.forEach(rec=>{
+   const data=tn(rec);
+   const inv={invNo:rec.invNo,invDate:rec.invDate||rec.to,hsn:rec.hsn||"998898"};
+   pages.push(...en(data,inv));
+  });
+  const pdf=on(pages,{logo:ye(logo,600,Math.round(600*222/300)),cert:ye(cert,380,251)});
+  const url=URL.createObjectURL(pdf);
+  const name="Monthly-GST-Invoices-"+from+"-to-"+to+".pdf";
+  const download=()=>{const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove()};
+  const w=window.open(url,"_blank");
+  if(!w)download();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+ }catch(err){y("Could not prepare the invoice print PDF: "+err.message)}
 }
-o("auditGenerate").addEventListener("click",generateAudit);
-o("auditPrint").addEventListener("click",()=>{
+
+function generateAudit(){
  const from=o("auditFrom").value,to=o("auditTo").value;
  if(!from||!to||from>to){y("Choose a valid date range");return}
- const records=s.consol.filter(rec=>{const rf=String(rec.from||rec.invDate||"");const rt=String(rec.to||rec.invDate||rec.from||"");return rf<=to&&rt>=from&&Array.isArray(rec.lines)&&rec.lines.length;});
- if(records.length) printSavedMonthlyInvoices(records,from,to); else y("No saved dealer invoices found for this period");
+ const old={dealer:o("mgDealer").value,from:o("mgFrom").value,to:o("mgTo").value};
+ o("mgFrom").value=from;o("mgTo").value=to;
+ const rows=[];
+ s.clients.forEach(dealer=>{
+  o("mgDealer").value=dealer.id;
+  const data=ue();if(data.error||!data.bills.length)return;
+  const totals=jt(data);
+  rows.push({dealer,bills:data.bills.length,kg:data.kg,basic:totals.before,cgst:totals.gst,sgst:totals.gst,grand:totals.total,issues:data.bills.filter(x=>x.notes.length).length});
+ });
+ o("mgDealer").value=old.dealer;o("mgFrom").value=old.from;o("mgTo").value=old.to;Ut();ve();
+ const sum=k=>rows.reduce((a,r)=>a+(Number(r[k])||0),0);
+ const money=v=>"₹"+Number(v||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+ o("auditBody").innerHTML=rows.length?`
+ <div class="mg-sum"><span class="mg-pill"><b>${rows.length}</b> dealers</span><span class="mg-pill"><b>${rows.reduce((a,r)=>a+r.bills,0)}</b> bills</span><span class="mg-pill"><b>${K(sum("kg"))}</b> kg</span><span class="mg-pill">GST total <b>${money(sum("cgst")+sum("sgst"))}</b></span></div>
+ <div class="wrap"><table id="auditTable"><thead><tr><th>Dealer</th><th>GSTIN</th><th class="r">Bills</th><th class="r">KG</th><th class="r">Taxable Value</th><th class="r">CGST</th><th class="r">SGST</th><th class="r">Invoice Total</th><th>Audit</th></tr></thead><tbody>
+ ${rows.map(r=>`<tr><td><strong>${c(r.dealer.name)}</strong></td><td class="mono">${c(r.dealer.gst||"-")}</td><td class="mono r">${r.bills}</td><td class="mono r">${K(r.kg)}</td><td class="mono r">${money(r.basic)}</td><td class="mono r">${money(r.cgst)}</td><td class="mono r">${money(r.sgst)}</td><td class="mono r"><strong>${money(r.grand)}</strong></td><td>${r.issues?`<span class="mg-warn">${r.issues} issue(s)</span>`:'<span class="mg-ok">Clear</span>'}</td></tr>`).join("")}
+ </tbody><tfoot><tr><th colspan="2">Monthly total</th><th class="r">${rows.reduce((a,r)=>a+r.bills,0)}</th><th class="r">${K(sum("kg"))}</th><th class="r">${money(sum("basic"))}</th><th class="r">${money(sum("cgst"))}</th><th class="r">${money(sum("sgst"))}</th><th class="r">${money(sum("grand"))}</th><th></th></tr></tfoot></table></div>`:'<div class="mg-empty">No dealer bills found for this period.</div>';
+ o("auditPrint").disabled=!rows.length;
+}
+o("auditGenerate").addEventListener("click",async()=>{
+ const from=o("auditFrom").value,to=o("auditTo").value;
+ if(!from||!to||from>to){y("Choose a valid date range");return}
+ await printMonthlySavedInvoices(from,to);
 });
+o("auditPrint").addEventListener("click",()=>printMonthlySavedInvoices(o("auditFrom").value,o("auditTo").value));
 if(["mgDealer","mgFrom","mgTo"].forEach(t=>{o(t).addEventListener("change",()=>{Ut(),ve()}),o(t).addEventListener("input",()=>{Ut(),ve()})}),o("mgInvDate").addEventListener("input",()=>{o("mgInvDate").dataset.touched="1"}),o("mgGenerate").addEventListener("click",()=>{const t=ue();if(t.error){y(t.error);return}if(!t.bills.length){y("No DCs found for this dealer in that period");return}const e={invNo:o("mgInvNo").value.trim(),invDate:o("mgInvDate").value||t.to,hsn:o("mgHsn").value.trim()||"998898"},n=_e(t,e),a=s.consol.findIndex(i=>i.key===n.key);a>=0?s.consol[a]=n:s.consol.unshift(n),s.consol.sort((i,l)=>String(l.created).localeCompare(String(i.created))),ve(),we(t,e,U({action:"saveConsol",rec:n}))}),o("mgSavedBody").addEventListener("click",t=>{const e=t.target.closest("[data-mg-open]");if(!e)return;const n=s.consol.find(a=>a.key===e.getAttribute("data-mg-open"));if(!n||!n.lines.length){y("This saved invoice has no line details to print");return}we(tn(n),{invNo:n.invNo,invDate:n.invDate,hsn:n.hsn})}),o("invNo").value=s.invNo,o("invDate").value=s.invDate,o("invNote").value="",At(),at(),Q(),it(),Dt("bill"),o("lnkSheet").href="https://docs.google.com/spreadsheets/d/"+s.sheetId+"/edit",nt()&&dt())Ot(),Gt(),_(!0);else if(nt()){Ot(),Gt(),B("busy","Click anywhere to load"),y("Welcome back \xB7 click anywhere to load your data");const t=()=>{document.removeEventListener("pointerdown",t,!0),document.removeEventListener("keydown",t,!0),_(!0)};document.addEventListener("pointerdown",t,!0),document.addEventListener("keydown",t,!0)}else Bt()})();</script>
 </body>
 </html>
