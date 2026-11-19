@@ -957,6 +957,7 @@ Print A4 Invoice
   const n1=r("No. : ",12,41.5,8.5,{b:1});r(String(t.invNo||""),12+n1,41.5,11.5,{b:1});
   // Header center logo + company
   p.push({k:"i",key:"logo",x:105-9.5,y:19.5,w:19,h:4218/300});
+  p.push({k:"i",key:"cert",x:199-25.7,y:19,w:25.7,h:17});
   rnm("",m.name||"R.R. INDUSTRIES",105,39.2,14.5,"c");
   let ay=43.2;
   vt(m.addr||"",7.4,!1,90).slice(0,2).forEach(line=>{r(line,105,ay,7.4,{al:"c"}),ay+=3.5});
