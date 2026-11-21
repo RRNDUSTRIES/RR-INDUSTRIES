@@ -987,32 +987,32 @@ window.RR_CONFIG={
   r("DELIVERY CHALLAN",105,15.0,9.8,{b:1,al:"c"});
   totalPages>1&&r("Page "+pageNum+" of "+totalPages,199,15.0,7.5,{b:1,al:"r"});
   // Header left metadata
-  const g1=r("GSTIN : ",12,23.5,8,{b:1});r(m.gst||"",12+g1,23.5,8);
-  const m1=r("Mobile : ",12,28,8,{b:1});r(m.phone||"",12+m1,28,8);
-  const d1=r("Date : ",12,35.5,8,{b:1});r(j(Je(t.date))||t.date||"",12+d1,35.5,8);
-  const n1=r("No. : ",12,41.5,8.5,{b:1});r(String(t.invNo||""),12+n1,41.5,11.5,{b:1});
-  // Header center logo + company
-  p.push({k:"i",key:"logo",x:105-9.5,y:19.5,w:19,h:4218/300});
+  const n1=r("No. : ",12,25.5,8.5,{b:1});r(String(t.invNo||""),12+n1,25.5,11.5,{b:1});
+  const d1=r("Date : ",12,32,8,{b:1});r(j(Je(t.date))||t.date||"",12+d1,32,8);
+  // Header center logo + company (matches Tax Invoice company info)
+  p.push({k:"i",key:"logoB",x:105-9.5,y:18.5,w:19,h:4218/300});
   p.push({k:"i",key:"cert",x:199-25.7,y:19,w:25.7,h:17});
-  rnm("",m.name||"R.R. INDUSTRIES",105,39.2,14.5,"c");
-  let ay=43.2;
-  vt(m.addr||"",7.4,!1,90).slice(0,2).forEach(line=>{r(line,105,ay,7.4,{al:"c"}),ay+=3.5});
-  v(11,53,199,53,.32);
+  rnm("",m.name||"R.R. INDUSTRIES",105,38.8,16.5,"c");
+  let ay=43;
+  vt(m.addr||"",7.4,!1,92).slice(0,2).forEach(line=>{r(line,105,ay,7.4,{al:"c"}),ay+=3.5});
+  r("Phone : "+(m.phone||""),105,ay,7.8,{al:"c"});ay+=4;
+  r("GSTIN : "+(m.gst||""),105,ay,7.8,{b:1,al:"c"});
+  v(11,56.5,199,56.5,.32);
   // Client & Customer DC boxes (square)
-  p.push({k:"s",x:11,y:56,w:105,h:28,lw:.32});
-  p.push({k:"s",x:118,y:56,w:81,h:28,lw:.32});
-  r("To,",14,60.8,8.2,{b:1});
-  r(zt(cl.name||"",9.5,!0,99),14,65.5,9.5,{b:1});
-  let cy=69.8;
-  vt(cl.addr||"",8,!1,99).slice(0,2).forEach(line=>{r(line,14,cy,8),cy+=3.8});
-  v(14,75,113,75,.2,[.35,.45]);
-  const cm1=r("Mobile : ",14,81,8,{b:1});r(cl.mobile||"",14+cm1,81,8);
-  r("CUSTOMER GSTIN :",121,60.8,7.8,{b:1});
-  r(cl.gst||"",121,65.2,8.5);
-  v(121,66.4,196,66.4,.2,[.35,.45]);
-  const cd1=r("CUSTOMER DC No. : ",121,72.5,7.8,{b:1});r(zt(t.dcNo||"",8,!1,75-cd1),121+cd1,72.5,8);
-  v(121,73.7,196,73.7,.2,[.35,.45]);
-  const cdt1=r("CUSTOMER DC Date : ",121,80.5,7.8,{b:1});r(t.dcDate?j(Je(t.dcDate)):"",121+cdt1,80.5,8);
+  p.push({k:"s",x:11,y:59,w:105,h:25.5,lw:.32});
+  p.push({k:"s",x:118,y:59,w:81,h:25.5,lw:.32});
+  r("To,",14,63.5,8.2,{b:1});
+  r(zt(cl.name||"",9.5,!0,99),14,68,9.5,{b:1});
+  let cy=72;
+  vt(cl.addr||"",8,!1,99).slice(0,2).forEach(line=>{r(line,14,cy,8),cy+=3.6});
+  v(14,76.8,113,76.8,.2,[.35,.45]);
+  const cm1=r("Mobile : ",14,82,8,{b:1});r(cl.mobile||"",14+cm1,82,8);
+  r("CUSTOMER GSTIN :",121,63.2,7.8,{b:1});
+  r(cl.gst||"",121,67.2,8.5);
+  v(121,68.4,196,68.4,.2,[.35,.45]);
+  const cd1=r("CUSTOMER DC No. : ",121,74,7.8,{b:1});r(zt(t.dcNo||"",8,!1,75-cd1),121+cd1,74,8);
+  v(121,75.2,196,75.2,.2,[.35,.45]);
+  const cdt1=r("CUSTOMER DC Date : ",121,81.5,7.8,{b:1});r(t.dcDate?j(Je(t.dcDate)):"",121+cdt1,81.5,8);
   // Items table (square)
   const tblTop=87,tblBot=isLast?264:q-10,colX=[11,31,127,161,199],colMid=i=>(colX[i]+colX[i+1])/2;
   p.push({k:"s",x:11,y:tblTop,w:188,h:tblBot-tblTop,lw:.35});
@@ -1069,9 +1069,9 @@ async function It(t){
   o("modal").classList.add("on");
   o("dcClose").onclick=()=>{o("modal").classList.remove("on");l&&URL.revokeObjectURL(l)};
   try{
-    const[d,p]=await Promise.all([xe(ze),xe(Xe),bhLoad()]),N=buildDcPages(t),m=o("dcPages");
-    N.forEach(f=>{const E=document.createElement("canvas");E.className="mg-pv",m.appendChild(E),nn(E,f,10,{logo:d,cert:p})});
-    const T=on(N,{logo:ye(d,600,Math.round(600*222/300)),cert:ye(p,760,502)});
+    const[d,p]=await Promise.all([xe(ze),xe(Xe),bhLoad()]),N=buildDcPages(t),m=o("dcPages"),dB=rcl(d);
+    N.forEach(f=>{const E=document.createElement("canvas");E.className="mg-pv",m.appendChild(E),nn(E,f,10,{logo:d,logoB:dB,cert:p})});
+    const T=on(N,{logo:ye(d,600,Math.round(600*222/300)),logoB:ye(dB,600,Math.round(600*222/300)),cert:ye(p,760,502)});
     l=URL.createObjectURL(T);
     const fname="Delivery-Challan-"+String(t.invNo||"DC").replace(/[^\w-]+/g,"-")+".pdf";
     const dl=()=>{const f=document.createElement("a");f.href=l,f.download=fname,document.body.appendChild(f),f.click(),f.remove()};
